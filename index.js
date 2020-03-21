@@ -52,7 +52,7 @@ async function idol(ev) {
   PREFIX imas: <https://sparql.crssnky.xyz/imasrdf/URIs/imas-schema.ttl#>
   PREFIX foaf: <http://xmlns.com/foaf/0.1/>
   PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
-  SELECT DISTINCT ?名前 ?名前ルビ ?ニックネーム ?ニックネームルビ ?テーマカラー ?シリーズ名 ?性別 ?年齢 ?身長 ?体重 ?B ?W ?H ?誕生日 ?星座 ?血液型 ?利き手 ?出身地 ?説明 (GROUP_CONCAT(distinct ?Favorite;separator=",") as ?好きなもの) (GROUP_CONCAT(distinct ?Hobby;separator=",") as ?趣味) ?CV 
+  SELECT DISTINCT ?名前 ?名前ルビ ?ニックネーム ?ニックネームルビ ?テーマカラー ?所属 ?性別 ?年齢 ?身長 ?体重 ?B ?W ?H ?誕生日 ?星座 ?血液型 ?利き手 ?出身地 ?説明 (GROUP_CONCAT(distinct ?Favorite;separator=",") as ?好きなもの) (GROUP_CONCAT(distinct ?Hobby;separator=",") as ?趣味) ?CV 
   WHERE {
     { ?data schema:name ?名前 . FILTER( lang(?名前) = 'ja' ) .
       ?data imas:nameKana ?名前ルビ .
@@ -63,7 +63,7 @@ async function idol(ev) {
       FILTER(CONTAINS(?ニックネーム, "${text}") || CONTAINS(?ニックネームルビ, "${text}")) .
     }
     OPTIONAL { ?data imas:Color ?テーマカラー . }
-    OPTIONAL { ?data imas:Title ?シリーズ名 . }
+    OPTIONAL { ?data imas:Title ?所属 . }
     OPTIONAL { ?data schema:gender ?性別 . }
     OPTIONAL { ?data foaf:age ?年齢 . }
     OPTIONAL { ?data schema:height ?身長 . }
@@ -80,7 +80,7 @@ async function idol(ev) {
     OPTIONAL { ?data imas:Favorite ?Favorite . }
     OPTIONAL { ?data schema:description ?説明 . }
     OPTIONAL { ?data imas:cv ?CV . FILTER( lang(?CV) = 'ja' ) . }
-  }GROUP BY ?名前 ?名前ルビ ?ニックネーム ?ニックネームルビ ?テーマカラー ?シリーズ名 ?性別 ?年齢 ?身長 ?体重 ?B ?W ?H ?誕生日 ?星座 ?血液型 ?利き手 ?出身地 ?説明 ?CV LIMIT 5
+  }GROUP BY ?名前 ?名前ルビ ?ニックネーム ?ニックネームルビ ?テーマカラー ?所属 ?性別 ?年齢 ?身長 ?体重 ?B ?W ?H ?誕生日 ?星座 ?血液型 ?利き手 ?出身地 ?説明 ?CV LIMIT 5
   `;
   const url = `https://sparql.crssnky.xyz/spql/imas/query?output=json&query=${encodeURIComponent(query)}`;
  
@@ -145,8 +145,8 @@ async function idol(ev) {
                   "type": "text",
                   "text": keys[j],
                   "size": "sm",
-                  "color": "#aaaaaa",
-                  "flex": 3
+                  "color": "#949494",
+                  "flex": 2
                 },
                 {
                   "type": "text",
@@ -180,7 +180,7 @@ async function idol(ev) {
                   "type": "text",
                   "text": i[keys[1]]['value'], // よみがな
                   "size": "xs",
-                  "color": "#aaaaaa"
+                  "color": "#949494"
                 },
                 {
                   "type": "separator",
@@ -260,7 +260,7 @@ function errorMsg() {
           "type": "text",
           "text": "ごめんなさい…(´+ω+｀)",
           "size": "xs",
-          "color": "#aaaaaa",
+          "color": "#949494",
           "margin": "sm"
         }
       ]
@@ -292,7 +292,7 @@ function replyLeon() {
                 "type": "text",
                 "text": "れおん",
                 "size": "xs",
-                "color": "#aaaaaa"
+                "color": "#949494"
               },
               {
                 "type": "separator",
@@ -310,7 +310,7 @@ function replyLeon() {
                         "type": "text",
                         "text": "所属",
                         "size": "sm",
-                        "color": "#aaaaaa",
+                        "color": "#949494",
                         "flex": 2
                       },
                       {
@@ -332,7 +332,7 @@ function replyLeon() {
                         "type": "text",
                         "text": "性別",
                         "size": "sm",
-                        "color": "#aaaaaa",
+                        "color": "#949494",
                         "flex": 2
                       },
                       {
@@ -354,7 +354,7 @@ function replyLeon() {
                         "type": "text",
                         "text": "CV",
                         "size": "sm",
-                        "color": "#aaaaaa",
+                        "color": "#949494",
                         "flex": 2
                       },
                       {
