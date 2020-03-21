@@ -1,0 +1,17 @@
+{
+        "name": "linebot-produce-note",
+        "version": "0.0.1",
+        "private": true,
+        "scripts": {
+                "start": "node app"
+        },
+        "engines": {
+                "node": "~10"
+        },
+        "dependencies": {
+                "@line/bot-sdk": "^6.8.4",
+                "express": "^4.17.1",
+                "q": "^1.5.1",
+                "request": "^2.88.2"
+        }
+}
