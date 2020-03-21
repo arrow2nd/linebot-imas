@@ -7,26 +7,26 @@ const PORT = process.env.PORT || 5000
 const config = {
   channelAccessToken: process.env.ACCESS_TOKEN,
   channelSecret: process.env.SECRET_KEY
-}
-const client = new line.Client(config)
+};
+const client = new line.Client(config);
 
 express()
   .post('/hook/', line.middleware(config), (req, res) => lineBot(req, res)) // webhook
-  .listen(PORT, () => console.log(`Listening on ${PORT}`))
+  .listen(PORT, () => console.log(`Listening on ${PORT}`));
 
 // リクエスト受付
 function lineBot(req, res) {
-  res.status(200).end()
-  const events = req.body.events
-  const promises = []
+  res.status(200).end();
+  const events = req.body.events;
+  const promises = [];
   for (let i = 0, l = events.length; i < l; i++) {
-    const ev = events[i]
+    const ev = events[i];
     promises.push(
       idol(ev)
     )
-  }
-  Promise.all(promises).then(console.log('ok!')) // ログ
-}
+  };
+  Promise.all(promises).then(console.log('ok!')); // ログ
+};
 
 // 検索
 async function idol(ev) {
@@ -106,7 +106,7 @@ async function idol(ev) {
       } else {
         json.forEach((i, index) => {
           const profile = [];
-          const keys = Object.keys(i)
+          const keys = Object.keys(i);
           const name = i[keys[0]]['value'];
           const imageColor = (keys[2] === 'テーマカラー') ? `#${i[keys[2]]['value']}` : '#ff8c75';
 
@@ -153,7 +153,7 @@ async function idol(ev) {
                   "text": profValue,
                   "wrap": true,
                   "size": "sm",
-                  "flex": 5,
+                  "flex": 4,
                   "color": "#666666"
                 }
               ],
@@ -161,7 +161,7 @@ async function idol(ev) {
             };
             // 追加
             profile.push(profileContents);
-          }
+          };
           
           // Flex MessageのJSONデータを作る
           const flexJsonData = {
@@ -211,7 +211,7 @@ async function idol(ev) {
                 }
               ]
             }
-          }
+          };
           
           // オブジェクト配列に追加
           contents.push(flexJsonData);
@@ -222,7 +222,7 @@ async function idol(ev) {
             d.resolve(contents);
           };
         });
-      }
+      };
       return d.promise;
     })
     // 結果を返信
@@ -318,7 +318,7 @@ function replyLeon() {
                         "text": "961ProIdol",
                         "wrap": true,
                         "size": "sm",
-                        "flex": 5,
+                        "flex": 4,
                         "color": "#666666"
                       }
                     ],
@@ -340,7 +340,7 @@ function replyLeon() {
                         "text": "女性",
                         "wrap": true,
                         "size": "sm",
-                        "flex": 5,
+                        "flex": 4,
                         "color": "#666666"
                       }
                     ],
@@ -362,7 +362,7 @@ function replyLeon() {
                         "text": "茅原実里",
                         "wrap": true,
                         "size": "sm",
-                        "flex": 5,
+                        "flex": 4,
                         "color": "#666666"
                       }
                     ],
