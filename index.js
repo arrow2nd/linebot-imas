@@ -25,7 +25,7 @@ function lineBot(req, res) {
       idol(ev)
     )
   }
-  Promise.all(promises).then(console.log('pass')) // ログ
+  Promise.all(promises).then(console.log('ok!')) // ログ
 }
 
 // 検索
@@ -39,6 +39,13 @@ async function idol(ev) {
       text: 'テキストでお願いします…！'
     });
   };
+
+  // 玲音さん
+  if (text === '玲音' || text === 'れおん') {
+    console.log('玲音さんのプロフィールを取得');
+    return client.replyMessage(ev.replyToken, replyLeon());
+  };
+
   // 受け取ったテキストから検索クエリを作成
   const query = `
   PREFIX schema: <http://schema.org/>
@@ -102,6 +109,29 @@ async function idol(ev) {
           const keys = Object.keys(i)
           const name = i[keys[0]]['value'];
           const imageColor = (keys[2] === 'テーマカラー') ? `#${i[keys[2]]['value']}` : '#ff8c75';
+
+          // 性別を日本語化する(性別が男性/女性のみであることを想定)
+          if (i['性別']) {
+            i['性別']['value'] = i['性別']['value'] === 'female' ?  '女性' : '男性';
+          };
+          // 利き手を日本語化する（右利き、左利き、両利き）
+          if (i['利き手']) {
+            i['利き手']['value'] = i['利き手']['value'] === 'right' ? '右利き' : (i['利き手']['value'] === 'left' ? '左利き' : '両利き');
+          };
+          // 誕生日を日本語形式に整形
+          if (i['誕生日']) {
+            const month =Number(i['誕生日']['value'].substr(2,2));
+            const day =Number(i['誕生日']['value'].substr(5,2));
+            i['誕生日']['value'] =`${month}月${day}日`;
+          };
+          // それぞれのキーが存在するか確認して、単位を追加する
+          const chkKey =['年齢', '身長', '体重', '血液型'];
+          const unit = ['歳', 'cm', 'kg', '型'];
+          for (let j= 0; j < chkKey.length; j++) {
+            if (i[chkKey[j]]) {
+              i[chkKey[j]]['value'] += unit[j];
+            };
+          };
           
           // プロフィール情報のオブジェクト配列を作る
           for (let j = 3; j < keys.length; j++) {
@@ -235,5 +265,133 @@ function errorMsg() {
         }
       ]
     }
+  }
+};
+
+// 玲音さんのプロフィール
+function replyLeon() {
+  return {
+    "type": "flex",
+    "altText": "こちらが見つかりました！",
+    "contents": {
+      "type": "carousel",
+      "contents": [
+        {
+          "type": "bubble",
+          "body": {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+              {
+                "type": "text",
+                "text": "玲音",
+                "weight": "bold",
+                "size": "xl"
+              },
+              {
+                "type": "text",
+                "text": "れおん",
+                "size": "xs",
+                "color": "#aaaaaa"
+              },
+              {
+                "type": "separator",
+                "margin": "sm"
+              },
+              {
+                "type": "box",
+                "layout": "vertical",
+                "contents": [
+                  {
+                    "type": "box",
+                    "layout": "baseline",
+                    "contents": [
+                      {
+                        "type": "text",
+                        "text": "所属",
+                        "size": "sm",
+                        "color": "#aaaaaa",
+                        "flex": 2
+                      },
+                      {
+                        "type": "text",
+                        "text": "961ProIdol",
+                        "wrap": true,
+                        "size": "sm",
+                        "flex": 5,
+                        "color": "#666666"
+                      }
+                    ],
+                    "spacing": "sm"
+                  },
+                  {
+                    "type": "box",
+                    "layout": "baseline",
+                    "contents": [
+                      {
+                        "type": "text",
+                        "text": "性別",
+                        "size": "sm",
+                        "color": "#aaaaaa",
+                        "flex": 2
+                      },
+                      {
+                        "type": "text",
+                        "text": "女性",
+                        "wrap": true,
+                        "size": "sm",
+                        "flex": 5,
+                        "color": "#666666"
+                      }
+                    ],
+                    "spacing": "sm"
+                  },
+                  {
+                    "type": "box",
+                    "layout": "baseline",
+                    "contents": [
+                      {
+                        "type": "text",
+                        "text": "CV",
+                        "size": "sm",
+                        "color": "#aaaaaa",
+                        "flex": 2
+                      },
+                      {
+                        "type": "text",
+                        "text": "茅原実里",
+                        "wrap": true,
+                        "size": "sm",
+                        "flex": 5,
+                        "color": "#666666"
+                      }
+                    ],
+                    "spacing": "sm"
+                  }
+                ]
+              }
+            ],
+            "margin": "lg",
+            "spacing": "sm"
+          },
+          "footer": {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+              {
+                "type": "button",
+                "action": {
+                  "type": "uri",
+                  "label": "Googleで検索",
+                  "uri": `http://www.google.co.jp/search?hl=ja&source=hp&q=${encodeURIComponent(`アイドルマスター 玲音`)}`
+                },
+                "style": "primary",
+                "color": "#5f2a96"
+              }
+            ]
+          }
+        }
+      ]
+    }    
   }
 };
