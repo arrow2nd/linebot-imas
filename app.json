@@ -1,0 +1,8 @@
+{
+  "name": "linebot-produce-note",
+  "description": "アイマスキャラのプロフィールを検索するLINEBOT",
+  "repository": "https://git.heroku.com/tranquil-mountain-37693.git",
+  "logo": "",
+  "keywords": ["node"],
+  "image": "heroku/nodejs"
+}
