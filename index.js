@@ -31,6 +31,7 @@ function lineBot(req, res) {
 // 検索
 async function idol(ev) {
   const text = ev.message.text;
+  
   // テキスト以外ならreturn
   if (ev.message.type !== 'text') {
     return client.replyMessage(ev.replyToken, {
