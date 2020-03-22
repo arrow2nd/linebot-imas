@@ -24,7 +24,7 @@ function lineBot(req, res) {
     // メッセージイベント以外、webhook検証ならreturn
     if (ev.type !== 'message' || ev.replyToken === '00000000000000000000000000000000') {
       console.log('メッセージイベントではありません');
-      return;
+      continue;
     }; 
     promises.push(
       idol(ev)
@@ -51,7 +51,7 @@ async function idol(ev) {
   PREFIX imas: <https://sparql.crssnky.xyz/imasrdf/URIs/imas-schema.ttl#>
   PREFIX foaf: <http://xmlns.com/foaf/0.1/>
   PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
-  SELECT DISTINCT ?名前 ?名前ルビ ?ニックネーム ?ニックネームルビ ?テーマカラー ?所属 ?性別 ?年齢 ?身長 ?体重 ?B ?W ?H ?誕生日 ?星座 ?血液型 ?利き手 ?出身地 ?説明 (GROUP_CONCAT(distinct ?Favorite;separator=",") as ?好きなもの) (GROUP_CONCAT(distinct ?Hobby;separator=",") as ?趣味) ?CV 
+  SELECT DISTINCT ?data ?名前 ?名前ルビ ?ニックネーム ?ニックネームルビ ?テーマカラー ?所属 ?性別 ?年齢 ?身長 ?体重 ?B ?W ?H ?誕生日 ?星座 ?血液型 ?利き手 ?出身地 ?説明 (GROUP_CONCAT(distinct ?Favorite;separator=",") as ?好きなもの) (GROUP_CONCAT(distinct ?Hobby;separator=",") as ?趣味) ?CV 
   WHERE {
     {
       ?data rdfs:label ?名前 .
@@ -78,7 +78,7 @@ async function idol(ev) {
     OPTIONAL { ?data imas:Favorite ?Favorite . }
     OPTIONAL { ?data schema:description ?説明 . }
     OPTIONAL { ?data imas:cv ?CV . FILTER( lang(?CV) = 'ja' ) . }
-  }GROUP BY ?名前 ?名前ルビ ?ニックネーム ?ニックネームルビ ?テーマカラー ?所属 ?性別 ?年齢 ?身長 ?体重 ?B ?W ?H ?誕生日 ?星座 ?血液型 ?利き手 ?出身地 ?説明 ?CV LIMIT 5
+  }GROUP BY ?data ?名前 ?名前ルビ ?ニックネーム ?ニックネームルビ ?テーマカラー ?所属 ?性別 ?年齢 ?身長 ?体重 ?B ?W ?H ?誕生日 ?星座 ?血液型 ?利き手 ?出身地 ?説明 ?CV LIMIT 5
   `;
   const url = `https://sparql.crssnky.xyz/spql/imas/query?output=json&query=${encodeURIComponent(query)}`;
   
@@ -105,8 +105,8 @@ async function idol(ev) {
         json.forEach((i, index) => {
           const profile = [];
           const keys = Object.keys(i);
-          const name = i[keys[0]]['value'];
-          const imageColor = (keys[2] === 'テーマカラー') ? `#${i[keys[2]]['value']}` : '#ff8c75';
+          const name = i[keys[1]]['value'];
+          const imageColor = (keys[3] === 'テーマカラー') ? `#${i[keys[3]]['value']}` : '#ff8c75';
 
           // 性別を日本語化する(性別が男性/女性のみであることを想定)
           if (i['性別']) {
@@ -134,6 +134,10 @@ async function idol(ev) {
           // プロフィール情報のオブジェクト配列を作る
           for (let j = 3; j < keys.length; j++) {
             const profValue = i[keys[j]]['value'];
+            // テーマカラーなら表示しない
+            if (keys[j] === 'テーマカラー') {
+              continue;
+            };
             // プロフィール情報
             const profileContents = {
               "type": "box",
@@ -176,7 +180,7 @@ async function idol(ev) {
                 },
                 {
                   "type": "text",
-                  "text": i[keys[1]]['value'], // よみがな
+                  "text": i[keys[2]]['value'], // よみがな
                   "size": "xs",
                   "color": "#949494"
                 },
