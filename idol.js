@@ -2,29 +2,23 @@
 const request = require('request');
 const Q = require('q');
 const fs = require('fs');
-const idolName = process.argv[2];
+const text = process.argv[2];
 const query = `
 PREFIX schema: <http://schema.org/>
 PREFIX imas: <https://sparql.crssnky.xyz/imasrdf/URIs/imas-schema.ttl#>
 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
-SELECT DISTINCT ?名前 ?名前ルビ ?ニックネーム ?ニックネームルビ ?テーマカラー ?シリーズ名 ?性別 ?年齢 ?身長 ?体重 ?B ?W ?H ?誕生日 ?星座 ?血液型 ?利き手 ?出身地 ?説明 (GROUP_CONCAT(distinct ?Favorite;separator=',') as ?好きなもの) (GROUP_CONCAT(distinct ?Hobby;separator=',') as ?趣味) ?CV 
+SELECT DISTINCT ?名前 ?名前ルビ ?ニックネーム ?ニックネームルビ ?テーマカラー ?所属 ?性別 ?年齢 ?身長 ?体重 ?B ?W ?H ?誕生日 ?星座 ?血液型 ?利き手 ?出身地 ?説明 (GROUP_CONCAT(distinct ?Favorite;separator=',') as ?好きなもの) (GROUP_CONCAT(distinct ?Hobby;separator=',') as ?趣味) ?CV 
 WHERE {
-  { ?data schema:name ?名前 . FILTER( lang(?名前) = 'ja' ) .
-    ?data imas:nameKana ?名前ルビ .
-    FILTER(CONTAINS(?名前, '${idolName}') || CONTAINS(?名前ルビ, '${idolName}')) .
-  } UNION {
-    ?data schema:alternateName ?ニックネーム . FILTER( lang(?ニックネーム) = 'ja' ) .
-    ?data imas:alternateNameKana ?ニックネームルビ .
-    FILTER(CONTAINS(?ニックネーム, '${idolName}') || CONTAINS(?ニックネームルビ, '${idolName}')) .
-  } UNION {
-    ?data schema:givenName ?名前下. FILTER( lang(?名前下) = 'ja' )
-    ?data imas:givenNameKana ?名前下ルビ .
-    FILTER(CONTAINS(?名前下, '${idolName}') || CONTAINS(?名前下ルビ, '${idolName}')) .
+  {
+    ?data rdfs:label ?名前 .
+    OPTIONAL { ?data imas:nameKana ?名前ルビ . }
+    OPTIONAL { ?data imas:alternateNameKana ?名前ルビ . }
+    OPTIONAL { ?data imas:givenNameKana ?名前ルビ . }
+    FILTER(CONTAINS(?名前, "${text}") || CONTAINS(?名前ルビ, "${text}")) .
   }
-
   OPTIONAL { ?data imas:Color ?テーマカラー . }
-  OPTIONAL { ?data imas:Title ?シリーズ名 . }
+  OPTIONAL { ?data imas:Title ?所属 . }
   OPTIONAL { ?data schema:gender ?性別 . }
   OPTIONAL { ?data foaf:age ?年齢 . }
   OPTIONAL { ?data schema:height ?身長 . }
@@ -41,7 +35,7 @@ WHERE {
   OPTIONAL { ?data imas:Favorite ?Favorite . }
   OPTIONAL { ?data schema:description ?説明 . }
   OPTIONAL { ?data imas:cv ?CV . FILTER( lang(?CV) = 'ja' ) . }
-}GROUP BY ?名前 ?名前ルビ ?ニックネーム ?ニックネームルビ ?テーマカラー ?シリーズ名 ?性別 ?年齢 ?身長 ?体重 ?B ?W ?H ?誕生日 ?星座 ?血液型 ?利き手 ?出身地 ?説明 ?CV LIMIT 5
+}GROUP BY ?名前 ?名前ルビ ?ニックネーム ?ニックネームルビ ?テーマカラー ?所属 ?性別 ?年齢 ?身長 ?体重 ?B ?W ?H ?誕生日 ?星座 ?血液型 ?利き手 ?出身地 ?説明 ?CV LIMIT 5
 `;
 const url = `https://sparql.crssnky.xyz/spql/imas/query?output=json&query=${encodeURIComponent(query)}`;
 
@@ -59,28 +53,7 @@ Q.when(url)
     const contents = [];
     // データがあるかどうか確認
     if (!json.length) {
-      contents.push({
-        'type': 'bubble',
-        'body': {
-          'type': 'box',
-          'layout': 'vertical',
-          'contents': [
-            {
-              'type': 'text',
-              'weight': 'bold',
-              'size': 'md',
-              'text': '見つかりませんでした。'
-            },
-            {
-              'type': 'text',
-              'text': 'ごめんなさい…(´+ω+｀)',
-              'size': 'xs',
-              'color': '#aaaaaa',
-              'margin': 'sm'
-            }
-          ]
-        }
-      });
+      contents.push(errorMsg());
       d.resolve(contents); // これ多分おかしい
     } else {
       json.forEach((i, index) => {
@@ -217,19 +190,8 @@ Q.when(url)
       'altText': 'こちらが見つかりました！',
       'contents': contents
     }
+    // 出力
     fs.writeFileSync('test.json', JSON.stringify(result, null, '  '));
-    // メッセージオブジェクトを返して終了
-    //console.log('return');
-
-    
-    /* 送信するオブジェクト
-    {
-      type: 'carousel',
-      altText: 'こちらが見つかりました！',
-      contents: contents
-    }
-    */
-
   });
 
 

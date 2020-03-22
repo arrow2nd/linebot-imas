@@ -3,7 +3,7 @@ const request = require('request');
 const Q = require('q');
 const line = require('@line/bot-sdk');
 
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT || 5000;
 const config = {
   channelAccessToken: process.env.ACCESS_TOKEN,
   channelSecret: process.env.SECRET_KEY
@@ -40,12 +40,6 @@ async function idol(ev) {
     });
   };
 
-  // 玲音さん
-  if (text === '玲音' || text === 'れおん') {
-    console.log('玲音さんのプロフィールを取得');
-    return client.replyMessage(ev.replyToken, replyLeon());
-  };
-
   // 受け取ったテキストから検索クエリを作成
   const query = `
   PREFIX schema: <http://schema.org/>
@@ -54,14 +48,13 @@ async function idol(ev) {
   PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
   SELECT DISTINCT ?名前 ?名前ルビ ?ニックネーム ?ニックネームルビ ?テーマカラー ?所属 ?性別 ?年齢 ?身長 ?体重 ?B ?W ?H ?誕生日 ?星座 ?血液型 ?利き手 ?出身地 ?説明 (GROUP_CONCAT(distinct ?Favorite;separator=",") as ?好きなもの) (GROUP_CONCAT(distinct ?Hobby;separator=",") as ?趣味) ?CV 
   WHERE {
-    { ?data schema:name ?名前 . FILTER( lang(?名前) = 'ja' ) .
-      ?data imas:nameKana ?名前ルビ .
+    {
+      ?data rdfs:label ?名前 .
+      OPTIONAL { ?data imas:nameKana ?名前ルビ . }
+      OPTIONAL { ?data imas:alternateNameKana ?名前ルビ . }
+      OPTIONAL { ?data imas:givenNameKana ?名前ルビ . }
       FILTER(CONTAINS(?名前, "${text}") || CONTAINS(?名前ルビ, "${text}")) .
-    } UNION {
-      ?data schema:alternateName ?ニックネーム . FILTER( lang(?ニックネーム) = 'ja' ) .
-      ?data imas:alternateNameKana ?ニックネームルビ .
-      FILTER(CONTAINS(?ニックネーム, "${text}") || CONTAINS(?ニックネームルビ, "${text}")) .
-    }
+    } 
     OPTIONAL { ?data imas:Color ?テーマカラー . }
     OPTIONAL { ?data imas:Title ?所属 . }
     OPTIONAL { ?data schema:gender ?性別 . }
@@ -265,133 +258,5 @@ function errorMsg() {
         }
       ]
     }
-  }
-};
-
-// 玲音さんのプロフィール
-function replyLeon() {
-  return {
-    "type": "flex",
-    "altText": "こちらが見つかりました！",
-    "contents": {
-      "type": "carousel",
-      "contents": [
-        {
-          "type": "bubble",
-          "body": {
-            "type": "box",
-            "layout": "vertical",
-            "contents": [
-              {
-                "type": "text",
-                "text": "玲音",
-                "weight": "bold",
-                "size": "xl"
-              },
-              {
-                "type": "text",
-                "text": "れおん",
-                "size": "xs",
-                "color": "#949494"
-              },
-              {
-                "type": "separator",
-                "margin": "sm"
-              },
-              {
-                "type": "box",
-                "layout": "vertical",
-                "contents": [
-                  {
-                    "type": "box",
-                    "layout": "baseline",
-                    "contents": [
-                      {
-                        "type": "text",
-                        "text": "所属",
-                        "size": "sm",
-                        "color": "#949494",
-                        "flex": 2
-                      },
-                      {
-                        "type": "text",
-                        "text": "961ProIdol",
-                        "wrap": true,
-                        "size": "sm",
-                        "flex": 4,
-                        "color": "#666666"
-                      }
-                    ],
-                    "spacing": "sm"
-                  },
-                  {
-                    "type": "box",
-                    "layout": "baseline",
-                    "contents": [
-                      {
-                        "type": "text",
-                        "text": "性別",
-                        "size": "sm",
-                        "color": "#949494",
-                        "flex": 2
-                      },
-                      {
-                        "type": "text",
-                        "text": "女性",
-                        "wrap": true,
-                        "size": "sm",
-                        "flex": 4,
-                        "color": "#666666"
-                      }
-                    ],
-                    "spacing": "sm"
-                  },
-                  {
-                    "type": "box",
-                    "layout": "baseline",
-                    "contents": [
-                      {
-                        "type": "text",
-                        "text": "CV",
-                        "size": "sm",
-                        "color": "#949494",
-                        "flex": 2
-                      },
-                      {
-                        "type": "text",
-                        "text": "茅原実里",
-                        "wrap": true,
-                        "size": "sm",
-                        "flex": 4,
-                        "color": "#666666"
-                      }
-                    ],
-                    "spacing": "sm"
-                  }
-                ]
-              }
-            ],
-            "margin": "lg",
-            "spacing": "sm"
-          },
-          "footer": {
-            "type": "box",
-            "layout": "vertical",
-            "contents": [
-              {
-                "type": "button",
-                "action": {
-                  "type": "uri",
-                  "label": "Googleで検索",
-                  "uri": `http://www.google.co.jp/search?hl=ja&source=hp&q=${encodeURIComponent(`アイドルマスター 玲音`)}`
-                },
-                "style": "primary",
-                "color": "#5f2a96"
-              }
-            ]
-          }
-        }
-      ]
-    }    
   }
 };
