@@ -21,16 +21,20 @@ function lineBot(req, res) {
   const promises = [];
   for (let i = 0, l = events.length; i < l; i++) {
     const ev = events[i];
+    // メッセージイベント以外、webhook検証ならreturn
+    if (ev.type !== 'message' || ev.replyToken === '00000000000000000000000000000000') {
+      console.log('メッセージイベントではありません');
+      return;
+    }; 
     promises.push(
       idol(ev)
     )
   };
-  Promise.all(promises).then(console.log('ok!')); // ログ
+  Promise.all(promises).then(console.log('ok!')); // 処理完了
 };
 
 // 検索
 async function idol(ev) {
-  const text = ev.message.text;
   
   // テキスト以外ならreturn
   if (ev.message.type !== 'text') {
@@ -41,6 +45,7 @@ async function idol(ev) {
   };
 
   // 受け取ったテキストから検索クエリを作成
+  const text = ev.message.text;
   const query = `
   PREFIX schema: <http://schema.org/>
   PREFIX imas: <https://sparql.crssnky.xyz/imasrdf/URIs/imas-schema.ttl#>
@@ -76,7 +81,7 @@ async function idol(ev) {
   }GROUP BY ?名前 ?名前ルビ ?ニックネーム ?ニックネームルビ ?テーマカラー ?所属 ?性別 ?年齢 ?身長 ?体重 ?B ?W ?H ?誕生日 ?星座 ?血液型 ?利き手 ?出身地 ?説明 ?CV LIMIT 5
   `;
   const url = `https://sparql.crssnky.xyz/spql/imas/query?output=json&query=${encodeURIComponent(query)}`;
- 
+  
   Q.when(url)
     // クエリを投げてJSONを受け取る
     .then((url) => {
