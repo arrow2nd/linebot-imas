@@ -122,11 +122,12 @@ async function idol(ev) {
             const day =Number(i['誕生日']['value'].substr(5,2));
             i['誕生日']['value'] =`${month}月${day}日`;
           };
-          // それぞれのキーが存在するか確認して、単位を追加する
+          // それぞれのキーが存在するか、単位が必要かを確認して、単位を追加する
+          const regex = /[a-zA-Z0-9!-/:-@¥[-`{-~]/mu; // 英数字記号を含む
           const chkKey =['年齢', '身長', '体重', '血液型'];
           const unit = ['歳', 'cm', 'kg', '型'];
           for (let j= 0; j < chkKey.length; j++) {
-            if (i[chkKey[j]]) {
+            if (i[chkKey[j]] && regex.test(i[chkKey[j]]['value'])) {
               i[chkKey[j]]['value'] += unit[j];
             };
           };
