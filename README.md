@@ -4,6 +4,8 @@
 
 名前の一部やひらがなでも検索できます。
 
+![Screenshot_20200401-120439](https://user-images.githubusercontent.com/44780846/78095222-5f475d80-7411-11ea-8ac4-65a9e22cbee6.png)
+
 （ソースは汚いっていうレベルではないですが…）
 
 ## 使い方
