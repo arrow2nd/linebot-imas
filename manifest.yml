@@ -1,6 +1,0 @@
-applications:
-- path: .
-  name: LINEBot-imas
-  random-route: true
-  instances: 1
-  memory: 256M
