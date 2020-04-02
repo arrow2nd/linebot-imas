@@ -1,3 +1,4 @@
+'use strict';
 const express = require('express');
 const request = require('request');
 const Q = require('q');
@@ -11,7 +12,7 @@ const config = {
 const client = new line.Client(config);
 
 express()
-  .post('/hook/', line.middleware(config), (req, res) => lineBot(req, res)) // webhook
+  .post('/hook/', line.middleware(config), (req, res) => lineBot(req, res))
   .listen(PORT, () => console.log(`Listening on ${PORT}`));
 
 // リクエスト受付
@@ -28,14 +29,13 @@ function lineBot(req, res) {
     }; 
     promises.push(
       idol(ev)
-    )
+    );
   };
-  Promise.all(promises).then(console.log('ok!')); // 処理完了
+  Promise.all(promises).then(console.log('ok!'));
 };
 
 // 検索
 async function idol(ev) {
-  
   // テキスト以外ならreturn
   if (ev.message.type !== 'text') {
     return client.replyMessage(ev.replyToken, {
@@ -44,7 +44,7 @@ async function idol(ev) {
     });
   };
 
-  // 受け取ったテキストから検索クエリを作成
+  // 検索クエリを作成
   const text = ev.message.text;
   const query = `
   PREFIX schema: <http://schema.org/>
@@ -81,17 +81,22 @@ async function idol(ev) {
   }GROUP BY ?data ?名前 ?名前ルビ ?ニックネーム ?ニックネームルビ ?テーマカラー ?所属 ?性別 ?年齢 ?身長 ?体重 ?B ?W ?H ?誕生日 ?星座 ?血液型 ?利き手 ?出身地 ?説明 ?CV LIMIT 5
   `;
   const url = `https://sparql.crssnky.xyz/spql/imas/query?output=json&query=${encodeURIComponent(query)}`;
-  
+
   Q.when(url)
     // クエリを投げてJSONを受け取る
     .then((url) => {
       var d = Q.defer();
       request.get(url, (err, res, body) => {
-        const json = JSON.parse(body)['results']['bindings'];
-        d.resolve(json);
+        if (!err && res.statusCode === 200) {
+          const json = JSON.parse(body)['results']['bindings'];
+          d.resolve(json);
+        } else {
+          console.error('im@sparqlにアクセスできませんでした');
+          d.reject(errorMsg('検索できませんでした', 'im@sparqlにアクセスできません…(ﾟﾛﾟ;)'));
+        };
       });
       return d.promise;
-    })
+      })
     // JSONを解析
     .then((json) => {
       var d = Q.defer();
@@ -99,15 +104,13 @@ async function idol(ev) {
       // データがあるか確認
       if (!json.length) {
         console.log(`${text} : Not Found`);
-        contents.push(errorMsg());
-        d.resolve(contents); // (?)
+        d.reject(errorMsg('見つかりませんでした', 'ごめんなさい…(´+ω+｀)'));
       } else {
         json.forEach((i, index) => {
           const profile = [];
           const keys = Object.keys(i);
           const name = i[keys[1]]['value'];
           const imageColor = (keys[3] === 'テーマカラー') ? `#${i[keys[3]]['value']}` : '#ff8c75';
-
           // 性別を日本語化する(性別が男性/女性のみであることを想定)
           if (i['性別']) {
             i['性別']['value'] = i['性別']['value'] === 'female' ?  '女性' : '男性';
@@ -131,7 +134,6 @@ async function idol(ev) {
               i[chkKey[j]]['value'] += unit[j];
             };
           };
-          
           // プロフィール情報のオブジェクト配列を作る
           for (let j = 3; j < keys.length; j++) {
             const profValue = i[keys[j]]['value'];
@@ -162,10 +164,8 @@ async function idol(ev) {
               ],
               "spacing": "sm"
             };
-            // 追加
             profile.push(profileContents);
           };
-          
           // Flex MessageのJSONデータを作る
           const flexJsonData = {
             "type": "bubble",
@@ -215,58 +215,60 @@ async function idol(ev) {
               ]
             }
           };
-          
-          // オブジェクト配列に追加
           contents.push(flexJsonData);
-          
-          // 完了を確認
+          // 完了
           if (index === json.length - 1) {
             console.log(`${text}から${index + 1}件のプロフィールを取得`);
-            d.resolve(contents);
+            const result = {
+              'type': 'flex',
+              'altText': 'こちらが見つかりました！',
+              'contents': {
+                'type': 'carousel',
+                'contents': contents
+              }
+            };
+            d.resolve(result);
           };
         });
       };
       return d.promise;
     })
-    // 結果を返信
-    .done((contents) => {
-      if (!contents) {
-        console.log('コンテンツが空です');
-        contents.push(errorMsg());
-      };
-      return client.replyMessage(ev.replyToken, {
-        "type": "flex",
-        "altText": "こちらが見つかりました！",
-        "contents": {
-          "type": "carousel",
-          "contents": contents
-        }
-      });
+    .fail((contents) => {
+      var d = Q.defer();
+      d.resolve(contents);
+      return d.promise;
+    })
+    .done((result) => {
+      return client.replyMessage(ev.replyToken, result);
     });
 };
 
-// 見つからなかったメッセージ
-function errorMsg() {
+// エラーメッセージ
+function errorMsg(title, msg) {
   return {
-    "type": "bubble",
-    "body": {
-      "type": "box",
-      "layout": "vertical",
-      "contents": [
-        {
-          "type": "text",
-          "weight": "bold",
-          "size": "md",
-          "text": "見つかりませんでした。"
-        },
-        {
-          "type": "text",
-          "text": "ごめんなさい…(´+ω+｀)",
-          "size": "xs",
-          "color": "#949494",
-          "margin": "sm"
-        }
-      ]
+    'type': 'flex',
+    'altText': title,
+    'contents': {
+      'type': 'bubble',
+      'body': {
+        'type': 'box',
+        'layout': 'vertical',
+        'contents': [
+          {
+            'type': 'text',
+            'weight': 'bold',
+            'size': 'md',
+            'text': title
+          },
+          {
+            'type': 'text',
+            'text': msg,
+            'size': 'xs',
+            'color': '#aaaaaa',
+            'margin': 'sm'
+          }
+        ]
+      }
     }
-  }
+  };
 };
