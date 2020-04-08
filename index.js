@@ -21,7 +21,7 @@ function lineBot(req, res) {
     const ev = events[i];
     // メッセージイベント以外、webhook検証ならreturn
     if (ev.type !== 'message' || ev.replyToken === '00000000000000000000000000000000') {
-      console.log('メッセージイベントではありません');
+      console.log(`メッセージイベントではありません : ${ev.type}`);
       continue;
     }; 
     idol(ev);
@@ -106,7 +106,7 @@ function createSendMessage(json) {
     const contents = [];
     // データがあるか確認
     if (!json.length){
-      reject(errorMsg('見つかりませんでした', 'ごめんなさい…(´+ω+｀)'));
+      reject(errorMsg('みつかりませんでした', 'ごめんなさい…(´+ω+｀)'));
     };
     json.forEach((i, index) => {
       const profile = [];
@@ -221,7 +221,7 @@ function createSendMessage(json) {
       if (index === json.length - 1) {
         const result = {
           'type': 'flex',
-          'altText': 'こちらが見つかりました！',
+          'altText': `${index + 1}件みつかりました！`,
           'contents': {
             'type': 'carousel',
             'contents': contents
@@ -254,7 +254,7 @@ function errorMsg(title, msg) {
             'type': 'text',
             'text': msg,
             'size': 'xs',
-            'color': '#666666',
+            'color': '#949494',
             'margin': 'sm'
           }
         ]
