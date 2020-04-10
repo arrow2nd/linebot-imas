@@ -97,7 +97,6 @@ function searchIdolProfile (mode, idolName) {
       OPTIONAL { ?data imas:cv ?CV. FILTER( lang(?CV) = 'ja' ). }
     }GROUP BY ?名前 ?名前ルビ ?ニックネーム ?ニックネームルビ ?テーマカラー ?所属 ?性別 ?年齢 ?身長 ?体重 ?B ?W ?H ?誕生日 ?星座 ?血液型 ?利き手 ?出身地 ?説明 ?CV LIMIT 5
     `;
-    console.log(query)
     const url = `https://sparql.crssnky.xyz/spql/imas/query?output=json&query=${encodeURIComponent(query)}`;
     request.get(url, (err, res, body) => {
       if (!err && res.statusCode === 200) {
