@@ -12,6 +12,8 @@ https://t.co/GoeFFCmFy3
 
 名前の一部やひらがなからでも検索できます。
 
+また、「誕生日」を含む文を送ると、今日が誕生日のアイドルのプロフィールを返信します。
+
 ![Screenshot_20200401-120439](https://user-images.githubusercontent.com/44780846/78095222-5f475d80-7411-11ea-8ac4-65a9e22cbee6.png)
 
 
