@@ -4,13 +4,8 @@ const request = require('request');
 const line = require('@line/bot-sdk');
 const PORT = process.env.PORT || 5000;
 const config = {
-<<<<<<< HEAD
-  channelAccessToken: process.env.ACCESS_TOKEN || 'access_token',
-  channelSecret: process.env.SECRET_KEY || 'secret_key'
-=======
   channelAccessToken: process.env.ACCESS_TOKEN || 'xxxx',
   channelSecret: process.env.SECRET_KEY || 'xxxx'
->>>>>>> 14e8161... バグ修正とAPIキーの削除
 };
 const client = new line.Client(config);
 
@@ -61,11 +56,7 @@ function idol(ev) {
 // im@sparqlからプロフィールを取得
 function searchIdolProfile (mode, idolName) {
   return new Promise((resolve, reject) => {
-<<<<<<< HEAD
-    // 検索条件
-=======
     // 検索条件 (0:名前検索/1:昨日が誕生日/2:今日が誕生日/3:明日が誕生日)
->>>>>>> 14e8161... バグ修正とAPIキーの削除
     let searchCriteria = '';
     if (mode === 0){
       searchCriteria = `?data rdfs:label ?名前;rdf:type ?type.FILTER(?type IN (imas:Idol,imas:Staff)).OPTIONAL{?data imas:nameKana ?名前ルビ.}OPTIONAL{?data imas:alternateNameKana ?名前ルビ.}OPTIONAL{?data imas:givenNameKana ?名前ルビ.}FILTER(CONTAINS(?名前,"${idolName}")||CONTAINS(?名前ルビ,"${idolName}")).`;
