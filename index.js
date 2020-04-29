@@ -39,7 +39,10 @@ function idol(ev) {
   };
   const text = ev.message.text;
   // "誕生日"が含まれているか
-  const mode = text.match(/誕生日/) ? 1 : 0;
+  let mode = 0;
+  if (text.match(/誕生日/)) {
+    mode = text.match(/明日/) ? 3 : text.match(/昨日/) ? 1 : 2;
+  };
   // 検索
   searchIdolProfile(mode, text)
     .then((json) => createSendMessage(json))
@@ -62,8 +65,9 @@ function searchIdolProfile (mode, idolName) {
       searchCriteria = `?data rdfs:label ?名前;rdf:type ?type.FILTER(?type IN (imas:Idol,imas:Staff)).OPTIONAL{?data imas:nameKana ?名前ルビ.}OPTIONAL{?data imas:alternateNameKana ?名前ルビ.}OPTIONAL{?data imas:givenNameKana ?名前ルビ.}FILTER(CONTAINS(?名前,"${idolName}")||CONTAINS(?名前ルビ,"${idolName}")).`;
     } else {
       const date = new Date();
+      mode = mode - 2;
       const mon = ('00' + (date.getMonth() + 1)).slice(-2);
-      const day = ('00' + date.getDate()).slice(-2);
+      const day = ('00' + (date.getDate() + mode)).slice(-2);
       const nowDate = `${mon}-${day}`;
       searchCriteria = `?data rdfs:label ?名前;schema:birthDate ?BD.FILTER(regex(str(?BD),"${nowDate}")).OPTIONAL{?data imas:nameKana ?名前ルビ.}OPTIONAL{?data imas:alternateNameKana ?名前ルビ.}OPTIONAL{?data imas:givenNameKana ?名前ルビ.}`;
     };
