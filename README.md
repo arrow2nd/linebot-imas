@@ -1,4 +1,4 @@
-# LINEBot-imas
+# linebot-imas
 
 アイマスキャラのプロフィールを検索するLINEBotです。
 
