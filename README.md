@@ -1,6 +1,10 @@
 # LINEBot-imas
 
-友だち登録はこちらから。
+アイマスキャラのプロフィールを検索するLINEBotです。
+
+プロフィール情報はim@sparql様 (https://sparql.crssnky.xyz/imas/) より取得しています。
+
+## 友だち登録
 
 https://t.co/GoeFFCmFy3
 
@@ -24,3 +28,4 @@ https://t.co/GoeFFCmFy3
 - サーバーの都合上、最初の返信に10秒程かかる場合があります。
 - Botは予告なく停止する可能性があります。
 - コミットコメントがめちゃくちゃなのは気にしないで下さい…
+
