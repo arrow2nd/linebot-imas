@@ -6,9 +6,9 @@
 
 ## 友だち登録
 
-https://t.co/GoeFFCmFy3
-
 ![319rwvnv](https://user-images.githubusercontent.com/44780846/78094124-bac41c00-740e-11ea-9c0c-0a3704e44e31.png)
+
+https://line.me/R/ti/p/@319rwvnv
 
 ## 使い方
 
@@ -26,6 +26,5 @@ https://t.co/GoeFFCmFy3
 
 - 複数のプロフィールが見つかった場合、上位5件までを返信します。
 - サーバーの都合上、最初の返信に10秒程かかる場合があります。
-- Botは予告なく停止する可能性があります。
 - コミットコメントがめちゃくちゃなのは気にしないで下さい…
 
