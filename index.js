@@ -47,11 +47,11 @@ function idol(ev) {
   searchIdolProfile(mode, text)
     .then((json) => createSendMessage(json))
     .then((flexMesseage) => {
-      console.log(`ok! : ${text}`);
+      console.log('ok!');
       return client.replyMessage(ev.replyToken, flexMesseage);
     })
     .catch((errorFlexMesseage) => {
-      console.log(`NotFound : ${text}`);
+      console.log('NotFound');
       return client.replyMessage(ev.replyToken, errorFlexMesseage);
     });
 };
