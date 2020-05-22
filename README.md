@@ -2,13 +2,13 @@
 
 アイマスキャラのプロフィールを検索するLINEBotです。
 
-プロフィール情報はim@sparql様 (https://sparql.crssnky.xyz/imas/) より取得しています。
+プロフィール情報は[im@sparql](https://sparql.crssnky.xyz/imas/)より取得しています。
 
 ## 友だち登録
 
 ![319rwvnv](https://user-images.githubusercontent.com/44780846/78094124-bac41c00-740e-11ea-9c0c-0a3704e44e31.png)
 
-https://line.me/R/ti/p/@319rwvnv
+<a href="https://lin.ee/gsEi1Ik"><img src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png" alt="友だち追加" height="36" border="0"></a>
 
 ## 使い方
 
@@ -26,4 +26,3 @@ https://line.me/R/ti/p/@319rwvnv
 
 - 複数のプロフィールが見つかった場合、上位5件までを返信します。
 - サーバーの都合上、最初の返信に10秒程かかる場合があります。
-
