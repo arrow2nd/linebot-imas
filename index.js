@@ -4,8 +4,8 @@ const request = require('request');
 const line = require('@line/bot-sdk');
 const PORT = process.env.PORT || 5000;
 const config = {
-  channelAccessToken: process.env.ACCESS_TOKEN || 'xxx',
-  channelSecret: process.env.SECRET_KEY || 'xxx'
+  channelAccessToken: process.env.ACCESS_TOKEN || 'shiragiku',
+  channelSecret: process.env.SECRET_KEY || 'hotaru'
 };
 const client = new line.Client(config);
 
@@ -78,14 +78,14 @@ function searchIdolProfile (mode, idolName) {
     // 検索条件を指定
     let searchCriteria = '';
     if (mode === 0){
-      searchCriteria = `?data rdfs:label ?名前;rdf:type ?type.FILTER(?type IN (imas:Idol,imas:Staff)).OPTIONAL{?data imas:nameKana ?名前ルビ.}OPTIONAL{?data imas:alternateNameKana ?名前ルビ.}OPTIONAL{?data imas:givenNameKana ?名前ルビ.}FILTER(CONTAINS(?名前,"${idolName}")||CONTAINS(?名前ルビ,"${idolName}")).`;
+      searchCriteria = `?data rdfs:label ?名前; rdf:type ?type.FILTER(?type IN (imas:Idol,imas:Staff)).OPTIONAL{?data imas:nameKana ?名前ルビ.}OPTIONAL{?data imas:alternateNameKana ?名前ルビ.}OPTIONAL{?data imas:givenNameKana ?名前ルビ.}FILTER(CONTAINS(?名前,"${idolName}")||CONTAINS(?名前ルビ,"${idolName}")).`;
     } else {
       const date = new Date();
       mode = mode - 2;
       const mon = ('00' + (date.getMonth() + 1)).slice(-2);
       const day = ('00' + (date.getDate() + mode)).slice(-2);
       const nowDate = `${mon}-${day}`;
-      searchCriteria = `?data rdfs:label ?名前;schema:birthDate ?BD.FILTER(regex(str(?BD),"${nowDate}")).OPTIONAL{?data imas:nameKana ?名前ルビ.}OPTIONAL{?data imas:alternateNameKana ?名前ルビ.}OPTIONAL{?data imas:givenNameKana ?名前ルビ.}`;
+      searchCriteria = `?data rdfs:label ?名前; rdf:type ?type; schema:birthDate ?BD.FILTER(?type IN (imas:Idol,imas:Staff)).FILTER(regex(str(?BD),"${nowDate}")).OPTIONAL{?data imas:nameKana ?名前ルビ.}OPTIONAL{?data imas:alternateNameKana ?名前ルビ.}OPTIONAL{?data imas:givenNameKana ?名前ルビ.}`;
     };
 
     // クエリを作成
