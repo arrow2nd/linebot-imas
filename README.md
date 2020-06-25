@@ -16,7 +16,7 @@
 
 名前の一部やひらがなからでも検索できます。
 
-![Screenshot_20200401-120439](https://user-images.githubusercontent.com/44780846/78095222-5f475d80-7411-11ea-8ac4-65a9e22cbee6.png)
+![ダウンロード](https://user-images.githubusercontent.com/44780846/85632405-3baf4e80-b6b2-11ea-83fd-f6b864f344aa.png)
 
 ## おまけ
 
