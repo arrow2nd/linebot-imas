@@ -94,7 +94,7 @@ function search(mode, word) {
                 const data = JSON.parse(body).results.bindings;
                 resolve(data);
             } else {
-                console.error(`im@sparqlにアクセスできませんでした : ${res.statusCode}`);
+                console.error('Error: im@sparqlにアクセスできませんでした');
                 reject(errorMsg('検索できませんでした', 'im@sparqlにアクセスできません…(ﾟﾛﾟ;)'));
             };
         });
