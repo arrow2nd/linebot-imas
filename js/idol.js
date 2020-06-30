@@ -95,7 +95,7 @@ function search(mode, word) {
                 resolve(data);
             } else {
                 console.error('Error: im@sparqlにアクセスできませんでした');
-                reject(errorMsg('検索できませんでした', 'im@sparqlにアクセスできません…(ﾟﾛﾟ;)'));
+                reject(errorMsg('検索できませんでした', '現在im@sparqlにアクセスできない状況です'));
             };
         });
     });
@@ -111,7 +111,7 @@ function createMessage(profileData){
         let contents = [];
         // 検索結果が無い場合
         if (!profileData.length) {
-            reject(errorMsg('みつかりませんでした', 'ごめんなさい…(´+ω+｀)'));
+            reject(errorMsg('みつかりませんでした…', '検索ワードを変えるとみつかるかもしれません'));
         };
         // flexMessageをつくる
         for (let data of profileData){

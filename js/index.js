@@ -45,7 +45,7 @@ async function reply(ev){
     if (ev.message.type !== 'text') {
         client.replyMessage(ev.replyToken, {
           type: 'text',
-          text: 'テキストでお願いします…！'
+          text: 'テキストでお願いします…（·□·；）'
         });
         return;
     };
