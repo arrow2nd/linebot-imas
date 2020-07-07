@@ -111,7 +111,7 @@ function createMessage(profileData){
         let contents = [];
         // 検索結果が無い場合
         if (!profileData.length) {
-            reject(errorMsg('みつかりませんでした…', '検索ワードを変えるとみつかるかもしれません'));
+            reject(errorMsg('みつかりませんでした…', 'ワードを変えるとみつかるかもしれません'));
         };
         // flexMessageをつくる
         for (let data of profileData){
