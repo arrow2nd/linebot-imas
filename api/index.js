@@ -11,10 +11,10 @@ const config = {
 };
 const client = new line.Client(config);
 
-// webhook受け付け
-express()
-    .post('/hook/', line.middleware(config), (req, res) => lineBot(req, res))
-    .listen(PORT, () => console.log(`Listening on ${PORT}`));
+
+const app = express();
+app.get('/', (req, res) => res.send("It's working fine! (GET)"));
+app.post('/hook/', line.middleware(config), (req, res) => lineBot(req, res));
 
 
 /**
@@ -23,17 +23,16 @@ express()
  * @param {Object} res レスポンス
  */
 async function lineBot(req, res){
-    // 200番を返しておく
-    res.status(200).end();
     const events = req.body.events;
     for (let ev of events){
-        // メッセージイベント以外、webhook検証の場合はreturn
+        // メッセージ以外、検証の場合
         if (ev.type !== 'message' || ev.replyToken === '00000000000000000000000000000000' || ev.replyToken === 'ffffffffffffffffffffffffffffffff') {
             console.log(`メッセージイベントではありません : ${ev.type}`);
             continue;
         };
         await reply(ev);
     };
+    res.status(200).end();
 };
 
 /**
@@ -41,9 +40,9 @@ async function lineBot(req, res){
  * @param {Object} ev イベント
  */
 async function reply(ev){
-    // テキスト以外の場合はretrun
+    // テキスト以外の場合
     if (ev.message.type !== 'text') {
-        client.replyMessage(ev.replyToken, {
+        await client.replyMessage(ev.replyToken, {
           type: 'text',
           text: 'テキストでお願いします…（·□·；）'
         });
@@ -52,5 +51,8 @@ async function reply(ev){
     // メッセージテキストを取得
     const text = ev.message.text;
     const object = await idol.getIdolProfile(text);
-    client.replyMessage(ev.replyToken, object);
+    await client.replyMessage(ev.replyToken, object);
 };
+
+// vercel
+(process.env.NOW_REGION) ? module.exports = app : app.listen(PORT);
