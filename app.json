@@ -1,8 +1,0 @@
-{
-  "name": "linebot-imas",
-  "description": "アイマスキャラのプロフィールを検索するLINEBOT",
-  "repository": "https://github.com/arrow2nd/LINEBot-imas.git",
-  "logo": "",
-  "keywords": ["node"],
-  "image": "heroku/nodejs"
-}

@@ -4,7 +4,7 @@ const request = require('request');
 /**
  * アイドルのプロフィールを取得
  * @param  {String} text 検索キーワード
- * @return {Object}      LINEflexMessageのJSON
+ * @return {Object}      flexMessage
  */
 async function getIdolProfile(text){
     let mode = 0;
@@ -27,7 +27,7 @@ async function getIdolProfile(text){
     try {
         flexMessage = await createMessage(profile);
     } catch(err) {
-        console.error('NotFound');
+        console.log('NotFound');
         return err;
     };
 
@@ -38,9 +38,9 @@ async function getIdolProfile(text){
 
 /**
  * プロフィールを検索
- * @param  {Number} mode 0: 名前検索 1: 昨日が誕生日 2: 今日が誕生日 3: 明日が誕生日
+ * @param  {Number} mode 0: 名前検索/1: 昨日が誕生日/2: 今日が誕生日/3: 明日が誕生日
  * @param  {String} word 検索ワード
- * @return {Object}      成功時: プロフィールデータ 失敗時: LINEflexMessage
+ * @return {Object}      成功時: プロフィールデータ/失敗時: LINEflexMessage
  */
 function search(mode, word) {
     return new Promise((resolve, reject) => {
