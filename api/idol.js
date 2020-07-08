@@ -32,7 +32,7 @@ async function getIdolProfile(text){
     };
 
     // 取得したプロフィールを返信
-    console.log('ok!');
+    console.log('success!');
     return flexMessage;
 };
 
