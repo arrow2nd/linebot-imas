@@ -2,7 +2,7 @@
 const request = require('request');
 
 /**
- * アイドルのプロフィールを取得
+ * キーワードからプロフィールを検索
  * @param  {String} text 検索キーワード
  * @return {Object}      flexMessage
  */
@@ -31,16 +31,16 @@ async function getIdolProfile(text){
         return err;
     };
 
-    // 取得したプロフィールを返信
+    // flexMessageを返す
     console.log('success!');
     return flexMessage;
 };
 
 /**
- * プロフィールを検索
+ * 検索
  * @param  {Number} mode 0: 名前検索/1: 昨日が誕生日/2: 今日が誕生日/3: 明日が誕生日
  * @param  {String} word 検索ワード
- * @return {Object}      成功時: プロフィールデータ/失敗時: LINEflexMessage
+ * @return {Object}      成功時: プロフィールデータ/失敗時: flexMessage
  */
 function search(mode, word) {
     return new Promise((resolve, reject) => {
@@ -88,6 +88,7 @@ function search(mode, word) {
         
         // URL
         const url = `https://sparql.crssnky.xyz/spql/imas/query?output=json&query=${encodeURIComponent(query)}`;
+
         // imasparqlにアクセス
         request.get(url, (err, res, body) => {
             if (!err && res.statusCode === 200) {
@@ -102,24 +103,28 @@ function search(mode, word) {
 };
 
 /**
- * flexMessageをつくる
+ * flexMessageを作成
  * @param  {Object} profileData 取得したプロフィールデータ
  * @return {Object}             flexMessage
  */
 function createMessage(profileData){
     return new Promise((resolve, reject) => {
         let contents = [];
+
         // 検索結果が無い場合
         if (!profileData.length) {
-            reject(errorMsg('みつかりませんでした…', 'ワードを変えるとみつかるかもしれません'));
+            reject(errorMsg('みつかりませんでした', 'すみません...'));
         };
-        // flexMessageをつくる
+
+        // flexMessageを作成
         for (let data of profileData){
             let profile = [];
             const name = data.名前.value;
             const colorCode = (data.カラー) ? `#${data.カラー.value}` : '#ff73cc';
+
             // 読みやすい表現に変換
             data = conversion(data);
+
             // プロフィール内容
             for (let key in data){
                 // スキップ
@@ -150,6 +155,7 @@ function createMessage(profileData){
                 };
                 profile.push(profileContents);
             };
+
             // flexMessage
             const flexMessage = {
                 "type": "bubble",
@@ -200,6 +206,7 @@ function createMessage(profileData){
             };
             contents.push(flexMessage);
         };
+
         // オブジェクトを返す
         const result = {
             'type': 'flex',
