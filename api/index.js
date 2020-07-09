@@ -35,14 +35,16 @@ async function reply(ev){
     if (ev.message.type !== 'text') {
         await client.replyMessage(ev.replyToken, {
           type: 'text',
-          text: 'テキストでお願いします…（·□·；）'
+          text: 'テキストでお願いします…。'
         });
         return;
     };
 
-    // メッセージテキストを取得
+    // プロフィールを検索
     const text = ev.message.text;
     const object = await idol.getIdolProfile(text);
+
+    // 返信
     await client.replyMessage(ev.replyToken, object);
 };
 
