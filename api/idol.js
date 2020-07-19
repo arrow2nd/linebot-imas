@@ -1,5 +1,6 @@
 'use strict';
 const request = require('request');
+const moment = require('moment-timezone');
 
 /**
  * キーワードからプロフィールを検索
@@ -49,12 +50,9 @@ function search(mode, word) {
         if (mode === 0) {
             searchCriteria = `?data rdfs:label ?名前;rdf:type ?type.FILTER(?type IN (imas:Idol,imas:Staff)).OPTIONAL{?data imas:nameKana ?名前ルビ.}OPTIONAL{?data imas:alternateNameKana ?名前ルビ.}OPTIONAL{?data imas:givenNameKana ?名前ルビ.}FILTER(CONTAINS(?名前,"${word}")||CONTAINS(?名前ルビ,"${word}")).`;
         } else {
-            const date = new Date();
-            mode = mode - 2;
-            const mon = ('00' + (date.getMonth() + 1)).slice(-2);
-            const day = ('00' + (date.getDate() + mode)).slice(-2);
-            const nowDate = `${mon}-${day}`;
-            searchCriteria = `?data rdfs:label ?名前;rdf:type ?type;schema:birthDate ?BD.FILTER(?type IN (imas:Idol,imas:Staff)).FILTER(regex(str(?BD),"${nowDate}")).OPTIONAL{?data imas:nameKana ?名前ルビ.}OPTIONAL{?data imas:alternateNameKana ?名前ルビ.}OPTIONAL{?data imas:givenNameKana ?名前ルビ.}`;
+            const addDays = mode - 2;
+            const searchDate = moment().add(addDays, 'days').tz('Asia/Tokyo').format('MM-DD');
+            searchCriteria = `?data rdfs:label ?名前;rdf:type ?type;schema:birthDate ?BD.FILTER(?type IN (imas:Idol,imas:Staff)).FILTER(regex(str(?BD),"${searchDate}")).OPTIONAL{?data imas:nameKana ?名前ルビ.}OPTIONAL{?data imas:alternateNameKana ?名前ルビ.}OPTIONAL{?data imas:givenNameKana ?名前ルビ.}`;
         };
 
         // クエリ(ながい)

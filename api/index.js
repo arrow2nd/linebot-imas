@@ -4,6 +4,7 @@ const line = require('@line/bot-sdk');
 const idol = require('./idol.js');
 const PORT = process.env.PORT || 5000;
 
+
 // 認証
 const config = {
     channelAccessToken: process.env.ACCESS_TOKEN || 'shiragiku',
