@@ -50,4 +50,4 @@ async function reply(ev){
 };
 
 // vercel
-(process.env.NOW_REGION) ? module.exports = app : app.listen(PORT);
+(process.env.NOW_REGION) ? module.exports = app : app.listen(PORT, () => {console.log(`Listening on ${PORT}`)});
