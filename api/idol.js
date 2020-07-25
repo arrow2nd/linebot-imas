@@ -179,7 +179,7 @@ function conversion(data){
     };
 
     // 単位を追加
-    const regex = /[a-zA-Z0-9!-/:-@¥[-`{-~]/mu;
+    const regex = /[a-zA-Z0-9]/;
     const chkKey = ['年齢', '身長', '体重', '血液型'];
     const unit = ['歳', 'cm', 'kg', '型'];
     for (let i = 0; i < chkKey.length; i++) {
