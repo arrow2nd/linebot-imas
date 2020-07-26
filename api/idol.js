@@ -88,14 +88,14 @@ function search(words) {
         PREFIX imas: <https://sparql.crssnky.xyz/imasrdf/URIs/imas-schema.ttl#>
         PREFIX foaf: <http://xmlns.com/foaf/0.1/>
         PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
-        SELECT DISTINCT ?名前 ?名前ルビ ?ニックネーム ?ニックネームルビ ?所属 ?性別 ?年齢 ?身長 ?体重 ?B ?W ?H ?誕生日 ?星座 ?血液型 ?利き手 ?出身地 (GROUP_CONCAT(distinct ?Favorite;separator=',') as ?好きなもの) (GROUP_CONCAT(distinct ?Hobby;separator=',') as ?趣味) ?説明 ?カラー ?CV
+        SELECT DISTINCT ?名前 ?名前ルビ ?ニックネーム ?ニックネームルビ ?所属 ?性別 ?年齢 ?身長 ?体重 ?BWH ?W ?H ?誕生日 ?星座 ?血液型 ?利き手 ?出身地 (GROUP_CONCAT(distinct ?Favorite;separator=',') as ?好きなもの) (GROUP_CONCAT(distinct ?Hobby;separator=',') as ?趣味) ?説明 ?カラー ?CV ?URL
         WHERE { ${searchCriteria}
         OPTIONAL {?data imas:Title ?所属.}
         OPTIONAL {?data schema:gender ?性別.}
         OPTIONAL {?data foaf:age ?年齢.}
         OPTIONAL {?data schema:height ?身長.}
         OPTIONAL {?data schema:weight ?体重.}
-        OPTIONAL {?data imas:Bust ?B.}
+        OPTIONAL {?data imas:Bust ?BWH.}
         OPTIONAL {?data imas:Waist ?W.}
         OPTIONAL {?data imas:Hip ?H.}
         OPTIONAL {?data schema:birthDate ?誕生日.}
@@ -108,7 +108,8 @@ function search(words) {
         OPTIONAL {?data schema:description ?説明.}
         OPTIONAL {?data imas:Color ?カラー.}
         OPTIONAL {?data imas:cv ?CV.FILTER(lang(?CV)='ja').}
-        }GROUP BY ?名前 ?名前ルビ ?ニックネーム ?ニックネームルビ ?所属 ?性別 ?年齢 ?身長 ?体重 ?B ?W ?H ?誕生日 ?星座 ?血液型 ?利き手 ?出身地 ?説明 ?カラー ?CV LIMIT 5`;
+        OPTIONAL {?data imas:IdolListURL ?URL}
+        }GROUP BY ?名前 ?名前ルビ ?ニックネーム ?ニックネームルビ ?所属 ?性別 ?年齢 ?身長 ?体重 ?BWH ?W ?H ?誕生日 ?星座 ?血液型 ?利き手 ?出身地 ?説明 ?カラー ?CV ?URL LIMIT 5`;
         
         // URL
         const url = `https://sparql.crssnky.xyz/spql/imas/query?output=json&query=${encodeURIComponent(query)}`;
@@ -132,7 +133,7 @@ function search(words) {
  * @param  {Object} data プロフィールデータ
  * @return {Object}      変換後のプロフィールデータ
  */
-function conversion(data){
+function conversion(data) {
     // 作品名を変換
     const series = {
         'CinderellaGirls': '346Pro (CinderellaGirls)',
@@ -173,13 +174,19 @@ function conversion(data){
 
     // 誕生日のフォーマットを日本語形式に変換
     if (data.誕生日) {
-        const month = Number(data.誕生日.value.substr(2, 2));
-        const day = Number(data.誕生日.value.substr(5, 2));
-        data.誕生日.value = `${month}月${day}日`;
+        data.誕生日.value = moment(data.誕生日.value, '-MM-DD').format('M月D日');
+    };
+
+    // BWHをまとめる
+    if (data.BWH) {
+        data.BWH.value = `${data.BWH.value}/${data.W.value}/${data.H.value}`;
+        // 不要になったプロパティを消す
+        delete data.W;
+        delete data.H;
     };
 
     // 単位を追加
-    const regex = /[a-zA-Z0-9]/;
+    const regex = /[a-zA-Z0-9?]/;
     const chkKey = ['年齢', '身長', '体重', '血液型'];
     const unit = ['歳', 'cm', 'kg', '型'];
     for (let i = 0; i < chkKey.length; i++) {
@@ -189,11 +196,54 @@ function conversion(data){
     };
 
     //カラーコードに#をつける
-    if (data.カラー){
+    if (data.カラー) {
         data.カラー.value = `#${data.カラー.value}`;
     };
 
     return data;
+};
+
+/**
+ * フッターを作成
+ * @param  {Object} data プロフィールデータ 
+ * @return {Array}       フッター
+ */
+function createFooter(data) {
+    let footer = [];
+
+    //  カラーコード
+    const colorCode = (data.カラー) ? data.カラー.value : '#ff73cc';
+
+    // アイドル名鑑
+    if (data.URL) {
+        footer.push({
+            "type": "button",
+            "height": "sm",
+            "style": "link",
+            "offsetTop": "-6px",
+            "action": {
+                "type": "uri",
+                "label": "アイドル名鑑を開く！",
+                "uri": data.URL.value
+            }
+        });
+    };
+
+    // Googleで検索！
+    footer.push({
+        "type": "button",
+        "height": "sm",
+        "style": "primary",
+        "color": colorCode,
+        "offsetTop": "-5px",
+        "action": {
+            "type": "uri",
+            "label": "Googleで検索！",
+            "uri": `http://www.google.co.jp/search?hl=ja&source=hp&q=${encodeURIComponent(`アイドルマスター ${data.名前.value}`)}`
+        }
+    });
+
+    return footer;
 };
 
 
@@ -202,7 +252,7 @@ function conversion(data){
  * @param  {Object} profileData 取得したプロフィールデータ
  * @return {Object}             flexMessage
  */
-function createMessage(profileData){
+function createMessage(profileData) {
     return new Promise((resolve, reject) => {
         let contents = [];
 
@@ -214,8 +264,6 @@ function createMessage(profileData){
         // flexMessageを作成
         for (let data of profileData){
             let profile = [];
-            const name = data.名前.value;
-            const colorCode = (data.カラー) ? `#${data.カラー.value}` : '#ff73cc';
 
             // 読みやすい表現に変換
             data = conversion(data);
@@ -223,33 +271,37 @@ function createMessage(profileData){
             // プロフィール内容
             for (let key in data){
                 // スキップ
-                if (key == '名前' || key == '名前ルビ'){
+                if (key == '名前' || key == '名前ルビ' || key == 'URL'){
                     continue;
                 };
                 const profileContents = {
                     "type": "box",
                     "layout": "baseline",
                     "contents": [
-                      {
-                        "type": "text",
-                        "text": key,
-                        "size": "sm",
-                        "color": "#949494",
-                        "flex": 2
-                      },
-                      {
-                        "type": "text",
-                        "text": data[key].value,
-                        "wrap": true,
-                        "size": "sm",
-                        "flex": 4,
-                        "color": "#666666"
-                      }
+                        {
+                            "type": "text",
+                            "text": key,
+                            "size": "sm",
+                            "color": "#949494",
+                            "flex": 2
+                        },
+                        {
+                            "type": "text",
+                            "text": data[key].value,
+                            "wrap": true,
+                            "size": "sm",
+                            "flex": 4,
+                            "color": "#666666"
+                        }
                     ],
                     "spacing": "sm"
                 };
                 profile.push(profileContents);
             };
+
+            // フッター
+            const footer = createFooter(data);
+            console.dir(footer);
 
             // flexMessage
             const flexMessage = {
@@ -261,7 +313,7 @@ function createMessage(profileData){
                     "contents": [
                         {
                             "type": "text",
-                            "text": name,
+                            "text": data.名前.value,
                             "size": "xl"
                         },
                         {
@@ -277,26 +329,16 @@ function createMessage(profileData){
                         {
                             "type": "box",
                             "layout": "vertical",
-                            "contents": profile,
-                            "margin": "lg"
+                            "margin": "lg",
+                            "contents": profile
                         }
                     ],
                 },
                 "footer": {
                     "type": "box",
                     "layout": "vertical",
-                    "contents": [
-                        {
-                            "type": "button",
-                            "action": {
-                                "type": "uri",
-                                "label": "Googleで検索！",
-                                "uri": `http://www.google.co.jp/search?hl=ja&source=hp&q=${encodeURIComponent(`アイドルマスター ${name}`)}`
-                            },
-                            "style": "primary",
-                            "color": colorCode
-                        }
-                    ]
+                    "spacing": "sm",
+                    "contents": footer
                 }
             };
             contents.push(flexMessage);
