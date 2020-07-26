@@ -301,7 +301,6 @@ function createMessage(profileData) {
 
             // フッター
             const footer = createFooter(data);
-            console.dir(footer);
 
             // flexMessage
             const flexMessage = {
