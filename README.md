@@ -2,7 +2,7 @@
 
 IDOLM@STERシリーズに登場するアイドルのプロフィールを検索できるLINEBotです。
 
-「下の名前のはわかるけどフルネームど忘れした…」「誕生日いつだっけ…」みたいなことが~~よく~~あるので作りました。
+~~漢字や誕生日をど忘れすることがあるので作りました。~~
 
 プロフィール情報は[im@sparql](https://sparql.crssnky.xyz/imas/)より取得しています。（ありがとうございます…！）
 
@@ -18,7 +18,7 @@ IDOLM@STERシリーズに登場するアイドルのプロフィールを検索�
 
 名前の一部やひらがなからでも検索できます。
 
-![line](https://user-images.githubusercontent.com/44780846/91387920-3e285300-e871-11ea-9afa-b081a4045d8a.png)
+![bot](https://user-images.githubusercontent.com/44780846/93973164-b4f03780-fdae-11ea-999f-1d3fa40b95a6.png)
 
 ## おまけ機能
 
