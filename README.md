@@ -18,9 +18,9 @@ IDOLM@STERシリーズに登場するアイドルのプロフィールを検索�
 
 名前の一部やひらがなからでも検索できます。
 
-![ダウンロード](https://user-images.githubusercontent.com/44780846/85632405-3baf4e80-b6b2-11ea-83fd-f6b864f344aa.png)
+![line](https://user-images.githubusercontent.com/44780846/91387920-3e285300-e871-11ea-9afa-b081a4045d8a.png)
 
-## おまけ
+## おまけ機能
 
 - 「昨日・今日・明日」と「誕生日」を含む文を送ると、その日が誕生日のアイドルのプロフィールを返信します。
 （画面下のメニューから検索できるようになりました）
