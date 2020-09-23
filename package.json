@@ -1,6 +1,6 @@
 {
         "name": "linebot-imas",
-        "version": "1.4.0",
+        "version": "1.5.0",
         "description": "アイドルのプロフィールを簡単に検索できるLINEBot",
         "main": "index.js",
         "license": "MIT",
@@ -8,6 +8,7 @@
                 "@line/bot-sdk": "^6.8.4",
                 "express": "^4.17.1",
                 "moment-timezone": "^0.5.31",
+                "ogp-parser": "^0.5.4",
                 "request": "^2.88.2"
         }
 }

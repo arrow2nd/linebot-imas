@@ -1,4 +1,5 @@
 'use strict';
+const ogp = require('ogp-parser');
 const request = require('request');
 const moment = require('moment-timezone');
 
@@ -27,6 +28,7 @@ async function getIdolProfile(text) {
         flexMessage = await createMessage(profile);
     } catch(err) {
         console.log('NotFound');
+        console.error(err);
         return err;
     };
 
@@ -34,7 +36,6 @@ async function getIdolProfile(text) {
     console.log('success!');
     return flexMessage;
 };
-
 
 /**
  * メッセージを解析して検索文字列を作成
@@ -48,7 +49,7 @@ function parseMessage(text) {
 
     // 誕生日検索かチェック
     if (text.match(/誕生日/)) {
-        const mode = text.match(/明日/) ? 3 : text.match(/昨日/) ? 1 : 2;
+        const mode = (text.match(/明日/)) ? 3 : (text.match(/昨日/)) ? 1 : 2;
         const addDays = mode - 2;
         return moment().add(addDays, 'days').tz('Asia/Tokyo').format('MM-DD');
     };
@@ -61,13 +62,11 @@ function parseMessage(text) {
         };
     };
 
-    // メッセージをそのまま返す
     return text;
 };
 
-
 /**
- * 検索する
+ * imasparqlからプロフィールを取得
  * 
  * @param  {String} words 検索文字列
  * @return {Object}       成功時: プロフィールデータ
@@ -113,22 +112,68 @@ function search(words) {
         OPTIONAL {?data imas:IdolListURL ?URL}
         }GROUP BY ?名前 ?名前ルビ ?ニックネーム ?ニックネームルビ ?所属 ?性別 ?年齢 ?身長 ?体重 ?BWH ?W ?H ?誕生日 ?星座 ?血液型 ?利き手 ?出身地 ?説明 ?カラー ?CV ?URL LIMIT 5`;
         
-        // URL
         const url = `https://sparql.crssnky.xyz/spql/imas/query?output=json&query=${encodeURIComponent(query)}`;
 
-        // imasparqlにアクセス
         request.get(url, (err, res, body) => {
             if (!err && res.statusCode === 200) {
                 const data = JSON.parse(body).results.bindings;
                 resolve(data);
             } else {
                 console.error('Error: im@sparqlにアクセスできませんでした');
-                reject(errorMsg('検索できませんでした', '現在im@sparqlにアクセスできない状況です'));
+                reject(errorMsg('検索できませんでした', 'im@sparqlにアクセスできません'));
             };
         });
     });
 };
 
+/**
+ * メッセージオブジェクトを作成
+ * 
+ * @param  {Object} profileData 取得したプロフィールデータ
+ * @return {Object}             メッセージオブジェクト
+ */
+async function createMessage(profileData) {
+    let contents = [];
+
+    // 検索結果が無い場合エラーを返す
+    if (!profileData.length) {
+        return errorMsg('みつかりませんでした…', 'ごめんなさい！');
+    };
+
+    await Promise.all(profileData.map(async (data) => {
+        let profile = [];
+
+        // 読みやすい表現に変換
+        data = conversion(data);
+
+        // プロフィール内容作成
+        for (let key in data){
+            if (key == '名前' || key == '名前ルビ' || key == '所属' || key == 'URL') {
+                continue;
+            };
+            profile.push(createProfileLine(key, data[key].value));
+        };
+
+        // OGP画像取得
+        const imgUrl = await getOgpImageUrl(data.URL);
+        
+        // バブル作成
+        contents.push(createBubble(data, profile, imgUrl));
+        return;
+    }));
+
+    // メッセージオブジェクト
+    const result = {
+        'type': 'flex',
+        'altText': `${profileData.length}件みつかりました！`,
+        'contents': {
+            'type': 'carousel',
+            'contents': contents
+        }
+    };
+
+    return result;
+};
 
 /**
  * 読みやすい表現に変換
@@ -183,7 +228,7 @@ function conversion(data) {
     // BWHをまとめる
     if (data.BWH) {
         data.BWH.value = `${data.BWH.value}/${data.W.value}/${data.H.value}`;
-        // 不要になったプロパティを消す
+        // 不要になったプロパティを削除
         delete data.W;
         delete data.H;
     };
@@ -207,10 +252,67 @@ function conversion(data) {
 };
 
 /**
+ * OGP画像URLを取得
+ * 
+ * @param  {Object} url URLオブジェクト
+ * @return {String}     画像URL
+ */
+async function getOgpImageUrl(url) {
+    let img;
+    const noImage = "https://arrow2nd.github.io/images/img/noimage.png";
+    const error = "https://arrow2nd.github.io/images/img/error.png";
+    
+    // URLが無い場合NOIMAGEを返す
+    if (!url) return noImage;
+
+    try {
+        const data = await ogp(url.value, { skipOembed: true });
+        img = data.ogp['og:image'][0];
+    } catch (err) {
+        img = error;
+    }
+
+    return img;
+};
+
+/**
+ * プロフィール（行）を作成
+ * 
+ * @param  {String} key   項目名
+ * @param  {String} value 内容
+ * @return {Object}       1行分のテキストコンポーネント
+ */
+function createProfileLine(key, value) {
+    const contents = {
+        "type": "box",
+        "layout": "baseline",
+        "contents": [
+            {
+                "type": "text",
+                "text": key,
+                "size": "sm",
+                "color": "#949494",
+                "flex": 2
+            },
+            {
+                "type": "text",
+                "text": value,
+                "wrap": true,
+                "size": "sm",
+                "flex": 4,
+                "color": "#666666"
+            }
+        ],
+        "spacing": "sm"
+    };
+    return contents;
+};
+
+/**
  * フッターを作成
  * 
  * @param  {Object} data プロフィールデータ
- * @return {Array}       フッター
+ * @return {Array}       フッターのコンポーネント
  */
 function createFooter(data) {
     let footer = [];
@@ -224,7 +326,7 @@ function createFooter(data) {
             "type": "button",
             "height": "sm",
             "style": "link",
-            "offsetTop": "-6px",
+            "offsetTop": "-10px",
             "action": {
                 "type": "uri",
                 "label": "アイドル名鑑を開く！",
@@ -250,119 +352,87 @@ function createFooter(data) {
     return footer;
 };
 
-
 /**
- * メッセージオブジェクトを作成
+ * バブルを作成
  * 
- * @param  {Object} profileData 取得したプロフィールデータ
- * @return {Object}             メッセージオブジェクト
+ * @param  {Object} data    取得したプロフィールデータ
+ * @param  {Array}  profile プロフィールのコンポーネント
+ * @param  {String} imgUrl  画像URL
+ * @return {Object}         バブル
  */
-function createMessage(profileData) {
-    return new Promise((resolve, reject) => {
-        let contents = [];
-
-        // 検索結果が無い場合
-        if (!profileData.length) {
-            reject(errorMsg('みつかりませんでした', 'すみません...'));
-        };
-
-        for (let data of profileData){
-            let profile = [];
-
-            // 読みやすい表現に変換
-            data = conversion(data);
-
-            // プロフィール内容
-            for (let key in data){
-                // スキップ
-                if (key == '名前' || key == '名前ルビ' || key == 'URL'){
-                    continue;
-                };
-                const profileContents = {
-                    "type": "box",
-                    "layout": "baseline",
-                    "contents": [
-                        {
-                            "type": "text",
-                            "text": key,
-                            "size": "sm",
-                            "color": "#949494",
-                            "flex": 2
-                        },
-                        {
-                            "type": "text",
-                            "text": data[key].value,
-                            "wrap": true,
-                            "size": "sm",
-                            "flex": 4,
-                            "color": "#666666"
-                        }
-                    ],
-                    "spacing": "sm"
-                };
-                profile.push(profileContents);
-            };
-
-            // フッター
-            const footer = createFooter(data);
-
-            // バブル
-            const bubble = {
-                "type": "bubble",
-                "size": "mega",
-                "body": {
-                    "type": "box",
-                    "layout": "vertical",
-                    "contents": [
-                        {
-                            "type": "text",
-                            "text": data.名前.value,
-                            "size": "xl"
-                        },
-                        {
-                            "type": "text",
-                            "text": data.名前ルビ.value,
-                            "size": "xs",
-                            "color": "#949494"
-                        },
-                        {
-                            "type": "separator",
-                            "margin": "md"
-                        },
-                        {
-                            "type": "box",
-                            "layout": "vertical",
-                            "margin": "lg",
-                            "contents": profile
-                        }
-                    ],
-                },
-                "footer": {
-                    "type": "box",
-                    "layout": "vertical",
-                    "spacing": "sm",
-                    "contents": footer
-                }
-            };
-            contents.push(bubble);
-        };
-
-        // メッセージオブジェクト
-        const result = {
-            'type': 'flex',
-            'altText': `${profileData.length}件みつかりました！`,
-            'contents': {
-                'type': 'carousel',
-                'contents': contents
+function createBubble(data, profile, imgUrl) {
+    const name = data.名前.value;
+    const subText = (data.所属) ? data.名前ルビ.value + `・${data.所属.value}` : data.名前ルビ.value;
+    const footer = createFooter(data);
+    const bubble = {
+        "type": "bubble",
+        "size": "mega",
+        "body": {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+            {
+                "type": "image",
+                "url": imgUrl,
+                "size": "full",
+                "aspectMode": "cover",
+                "aspectRatio": "16:9",
+                "gravity": "center"
+            },
+            {
+                "type": "image",
+                "url": "https://arrow2nd.github.io/images/img/gradation.png",
+                "size": "full",
+                "aspectMode": "cover",
+                "aspectRatio": "16:9",
+                "position": "absolute"
+            },
+            {
+                "type": "box",
+                "layout": "vertical",
+                "contents": [
+                    {
+                        "type": "text",
+                        "text": name,
+                        "size": "xl",
+                        "color": "#ffffff",
+                        "weight": "bold"
+                    },
+                    {
+                        "type": "text",
+                        "text": subText,
+                        "size": "xs",
+                        "color": "#ffffff"
+                    }
+                ],
+                "position": "absolute",
+                "offsetTop": "110px",
+                "paddingStart": "15px"
+            },            
+            {
+                "type": "box",
+                "layout": "vertical",
+                "contents": profile,
+                "paddingStart": "15px",
+                "paddingTop": "15px",
+                "paddingBottom": "10px",
+                "paddingEnd": "15px"
             }
-        };
-        resolve(result);
-    });
+            ],
+            "paddingAll": "0px"
+        },
+        "footer": {
+            "type": "box",
+            "layout": "vertical",
+            "contents": footer
+        }
+    };
+
+    return bubble;
 };
 
-
 /**
- * エラーメッセージを作成
+ * エラーメッセージ
  * 
  * @param  {String} title タイトル
  * @param  {String} msg   エラー内容
