@@ -46,6 +46,9 @@ function parseMessage(text) {
     const formatList = ['M月D日', 'M/D'];
     let date = '';
 
+    // 改行と空白を削除
+    text = text.trim().replace(/[\n ]/g, '');
+
     // 誕生日検索かチェック
     if (text.match(/誕生日/)) {
         const mode = (text.match(/明日/)) ? 3 : (text.match(/昨日/)) ? 1 : 2;
