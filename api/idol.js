@@ -2,11 +2,11 @@
 const request = require('request');
 const moment = require('moment-timezone');
 
-
 /**
- * メッセージからプロフィールを検索
+ * プロフィールを検索してメッセージオブジェクトを返す
+ * 
  * @param  {String} text メッセージ
- * @return {Object}      flexMessage
+ * @return {Object}      メッセージオブジェクト
  */
 async function getIdolProfile(text) {
     let profile;
@@ -30,7 +30,7 @@ async function getIdolProfile(text) {
         return err;
     };
 
-    // flexMessageを返す
+    // メッセージオブジェクトを返す
     console.log('success!');
     return flexMessage;
 };
@@ -38,6 +38,7 @@ async function getIdolProfile(text) {
 
 /**
  * メッセージを解析して検索文字列を作成
+ * 
  * @param  {String} text メッセージ
  * @return {String}      検索文字列
  */
@@ -67,9 +68,10 @@ function parseMessage(text) {
 
 /**
  * 検索する
+ * 
  * @param  {String} words 検索文字列
  * @return {Object}       成功時: プロフィールデータ
- *                        失敗時: flexMessage
+ *                        失敗時: メッセージオブジェクト
  */
 function search(words) {
     return new Promise((resolve, reject) => {
@@ -130,6 +132,7 @@ function search(words) {
 
 /**
  * 読みやすい表現に変換
+ * 
  * @param  {Object} data プロフィールデータ
  * @return {Object}      変換後のプロフィールデータ
  */
@@ -205,7 +208,8 @@ function conversion(data) {
 
 /**
  * フッターを作成
- * @param  {Object} data プロフィールデータ 
+ * 
+ * @param  {Object} data プロフィールデータ
  * @return {Array}       フッター
  */
 function createFooter(data) {
@@ -248,9 +252,10 @@ function createFooter(data) {
 
 
 /**
- * flexMessageを作成
+ * メッセージオブジェクトを作成
+ * 
  * @param  {Object} profileData 取得したプロフィールデータ
- * @return {Object}             flexMessage
+ * @return {Object}             メッセージオブジェクト
  */
 function createMessage(profileData) {
     return new Promise((resolve, reject) => {
@@ -261,7 +266,6 @@ function createMessage(profileData) {
             reject(errorMsg('みつかりませんでした', 'すみません...'));
         };
 
-        // flexMessageを作成
         for (let data of profileData){
             let profile = [];
 
@@ -302,8 +306,8 @@ function createMessage(profileData) {
             // フッター
             const footer = createFooter(data);
 
-            // flexMessage
-            const flexMessage = {
+            // バブル
+            const bubble = {
                 "type": "bubble",
                 "size": "mega",
                 "body": {
@@ -340,10 +344,10 @@ function createMessage(profileData) {
                     "contents": footer
                 }
             };
-            contents.push(flexMessage);
+            contents.push(bubble);
         };
 
-        // オブジェクトを返す
+        // メッセージオブジェクト
         const result = {
             'type': 'flex',
             'altText': `${profileData.length}件みつかりました！`,
@@ -359,6 +363,7 @@ function createMessage(profileData) {
 
 /**
  * エラーメッセージを作成
+ * 
  * @param  {String} title タイトル
  * @param  {String} msg   エラー内容
  * @return {Object}       メッセージオブジェクト
