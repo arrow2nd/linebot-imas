@@ -28,7 +28,6 @@ async function getIdolProfile(text) {
         flexMessage = await createMessage(profile);
     } catch(err) {
         console.log('NotFound');
-        console.error(err);
         return err;
     };
 
@@ -78,39 +77,58 @@ function search(words) {
 
         // MM-DD形式なら誕生日検索、それ以外なら通常検索
         if (words.match(/^\d{1,2}-\d{1,2}/)) {
-            searchCriteria = `?data rdfs:label ?名前;rdf:type ?type;schema:birthDate ?BD.FILTER(?type IN (imas:Idol,imas:Staff)).FILTER(regex(str(?BD),"${words}")).OPTIONAL{?data imas:nameKana ?名前ルビ.}OPTIONAL{?data imas:alternateNameKana ?名前ルビ.}OPTIONAL{?data imas:givenNameKana ?名前ルビ.}`;
+            searchCriteria = `
+            ?data rdfs:label ?名前;
+            rdf:type ?type;
+            schema:birthDate ?BD.
+            FILTER(?type IN (imas:Idol,imas:Staff)).
+            FILTER(regex(str(?BD),"${words}")).
+            OPTIONAL{?data imas:nameKana ?名前ルビ.}
+            OPTIONAL{?data imas:alternateNameKana ?名前ルビ.}
+            `;
         } else {
-            searchCriteria = `?data rdfs:label ?名前;rdf:type ?type.FILTER(?type IN (imas:Idol,imas:Staff)).OPTIONAL{?data imas:nameKana ?名前ルビ.}OPTIONAL{?data imas:alternateNameKana ?名前ルビ.}OPTIONAL{?data imas:givenNameKana ?名前ルビ.}FILTER(CONTAINS(?名前,"${words}")||CONTAINS(?名前ルビ,"${words}")).`;
+            searchCriteria = `
+            ?data rdfs:label ?名前;
+            rdf:type ?type.
+            FILTER(?type IN (imas:Idol,imas:Staff)).
+            OPTIONAL{?data schema:name ?本名.}
+            OPTIONAL{?data imas:nameKana ?名前ルビ.}
+            OPTIONAL{?data imas:alternateNameKana ?名前ルビ.}
+            FILTER(CONTAINS(?名前,"${words}")||CONTAINS(?本名,"${words}")||CONTAINS(?名前ルビ,"${words}")).
+            `;
         };
 
         // クエリ(ながい)
-        const query = `PREFIX schema: <http://schema.org/>
+        const query = `
+        PREFIX schema: <http://schema.org/>
         PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         PREFIX imas: <https://sparql.crssnky.xyz/imasrdf/URIs/imas-schema.ttl#>
         PREFIX foaf: <http://xmlns.com/foaf/0.1/>
         PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
-        SELECT DISTINCT ?名前 ?名前ルビ ?ニックネーム ?ニックネームルビ ?所属 ?性別 ?年齢 ?身長 ?体重 ?BWH ?W ?H ?誕生日 ?星座 ?血液型 ?利き手 ?出身地 (GROUP_CONCAT(distinct ?Favorite;separator=',') as ?好きなもの) (GROUP_CONCAT(distinct ?Hobby;separator=',') as ?趣味) ?説明 ?カラー ?CV ?URL
-        WHERE { ${searchCriteria}
-        OPTIONAL {?data imas:Title ?所属.}
-        OPTIONAL {?data schema:gender ?性別.}
-        OPTIONAL {?data foaf:age ?年齢.}
-        OPTIONAL {?data schema:height ?身長.}
-        OPTIONAL {?data schema:weight ?体重.}
-        OPTIONAL {?data imas:Bust ?BWH.}
-        OPTIONAL {?data imas:Waist ?W.}
-        OPTIONAL {?data imas:Hip ?H.}
-        OPTIONAL {?data schema:birthDate ?誕生日.}
-        OPTIONAL {?data imas:Constellation ?星座.}
-        OPTIONAL {?data imas:BloodType ?血液型.}
-        OPTIONAL {?data imas:Handedness ?利き手.}
-        OPTIONAL {?data schema:birthPlace ?出身地.}
-        OPTIONAL {?data imas:Hobby ?Hobby.}
-        OPTIONAL {?data imas:Favorite ?Favorite.}
-        OPTIONAL {?data schema:description ?説明.}
-        OPTIONAL {?data imas:Color ?カラー.}
-        OPTIONAL {?data imas:cv ?CV.FILTER(lang(?CV)='ja').}
-        OPTIONAL {?data imas:IdolListURL ?URL}
-        }GROUP BY ?名前 ?名前ルビ ?ニックネーム ?ニックネームルビ ?所属 ?性別 ?年齢 ?身長 ?体重 ?BWH ?W ?H ?誕生日 ?星座 ?血液型 ?利き手 ?出身地 ?説明 ?カラー ?CV ?URL LIMIT 5`;
+        SELECT DISTINCT ?名前 ?名前ルビ ?所属 ?性別 ?年齢 ?身長 ?体重 ?BWH ?W ?H ?誕生日 ?星座 ?血液型 ?利き手 ?出身地 (GROUP_CONCAT(distinct ?Favorite;separator=',') as ?好きなもの) (GROUP_CONCAT(distinct ?Hobby;separator=',') as ?趣味) ?説明 ?カラー ?CV ?URL
+        WHERE {
+            ${searchCriteria}
+            OPTIONAL {?data imas:Title ?所属.}
+            OPTIONAL {?data schema:gender ?性別.}
+            OPTIONAL {?data foaf:age ?年齢.}
+            OPTIONAL {?data schema:height ?身長.}
+            OPTIONAL {?data schema:weight ?体重.}
+            OPTIONAL {?data imas:Bust ?BWH.}
+            OPTIONAL {?data imas:Waist ?W.}
+            OPTIONAL {?data imas:Hip ?H.}
+            OPTIONAL {?data schema:birthDate ?誕生日.}
+            OPTIONAL {?data imas:Constellation ?星座.}
+            OPTIONAL {?data imas:BloodType ?血液型.}
+            OPTIONAL {?data imas:Handedness ?利き手.}
+            OPTIONAL {?data schema:birthPlace ?出身地.}
+            OPTIONAL {?data imas:Hobby ?Hobby.}
+            OPTIONAL {?data imas:Favorite ?Favorite.}
+            OPTIONAL {?data schema:description ?説明.}
+            OPTIONAL {?data imas:Color ?カラー.}
+            OPTIONAL {?data imas:cv ?CV.FILTER(lang(?CV)='ja').}
+            OPTIONAL {?data imas:IdolListURL ?URL}
+        } GROUP BY ?名前 ?名前ルビ ?所属 ?性別 ?年齢 ?身長 ?体重 ?BWH ?W ?H ?誕生日 ?星座 ?血液型 ?利き手 ?出身地 ?説明 ?カラー ?CV ?URL LIMIT 5
+        `;
         
         const url = `https://sparql.crssnky.xyz/spql/imas/query?output=json&query=${encodeURIComponent(query)}`;
 
