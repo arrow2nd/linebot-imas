@@ -2,12 +2,12 @@
 const express = require('express');
 const line = require('@line/bot-sdk');
 const idol = require('./idol.js');
-const PORT = process.env.PORT || 5000;
+require('dotenv').config();
 
-// 認証
+const PORT = process.env.PORT;
 const config = {
-    channelAccessToken: process.env.ACCESS_TOKEN || 'SHIRAGIKU',
-    channelSecret: process.env.SECRET_KEY || 'HOTARU'
+    channelAccessToken: process.env.ACCESS_TOKEN,
+    channelSecret: process.env.SECRET_KEY
 };
 const client = new line.Client(config);
 
@@ -32,6 +32,7 @@ async function bot(ev) {
 
     // テキスト以外ならエラーを返す
     if (ev.message.type !== 'text') {
+        console.log(`テキストではありません : ${ev.message.type}`);
         await client.replyMessage(ev.replyToken, {
             type: 'text',
             text: 'テキストでお願いします！'
