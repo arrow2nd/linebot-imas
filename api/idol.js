@@ -19,14 +19,14 @@ async function getIdolProfile(text) {
     // プロフィールを検索
     try {
         profile = await search(text);
-    } catch(err) {
+    } catch (err) {
         return err;
     };
-    
+
     // flexMessageを作成
     try {
         flexMessage = await createMessage(profile);
-    } catch(err) {
+    } catch (err) {
         console.log('NotFound');
         return err;
     };
@@ -132,7 +132,7 @@ function search(words) {
             OPTIONAL {?data imas:IdolListURL ?URL}
         } GROUP BY ?名前 ?名前ルビ ?所属 ?性別 ?年齢 ?身長 ?体重 ?BWH ?W ?H ?誕生日 ?星座 ?血液型 ?利き手 ?出身地 ?説明 ?カラー ?CV ?URL LIMIT 5
         `;
-        
+
         const url = `https://sparql.crssnky.xyz/spql/imas/query?output=json&query=${encodeURIComponent(query)}`;
 
         request.get(url, (err, res, body) => {
@@ -168,7 +168,7 @@ async function createMessage(profileData) {
         data = conversion(data);
 
         // プロフィール内容作成
-        for (let key in data){
+        for (let key in data) {
             if (key == '名前' || key == '名前ルビ' || key == '所属' || key == 'URL') {
                 continue;
             };
@@ -177,7 +177,7 @@ async function createMessage(profileData) {
 
         // OGP画像取得
         const imgUrl = await getOgpImageUrl(data.URL);
-        
+
         // バブル作成
         contents.push(createBubble(data, profile, imgUrl));
         return;
@@ -215,11 +215,11 @@ function conversion(data) {
         '961ProIdols': '961Pro (IDOLM@STER)',
         '1054Pro': '1054Pro (IDOLM@STER)'
     };
-    if (data.所属){
+    if (data.所属) {
         const title = series[data.所属.value];
         data.所属.value = (title) ? title : data.所属.value;
     };
-    
+
     // 性別を日本語に変換
     const gender = {
         male: '男性',
@@ -282,7 +282,7 @@ async function getOgpImageUrl(url) {
     let img;
     const noImage = "https://arrow2nd.github.io/images/img/noimage.png";
     const error = "https://arrow2nd.github.io/images/img/error.png";
-    
+
     // URLが無い場合NOIMAGEを返す
     if (!url) return noImage;
 
@@ -392,53 +392,53 @@ function createBubble(data, profile, imgUrl) {
             "type": "box",
             "layout": "vertical",
             "contents": [
-            {
-                "type": "image",
-                "url": imgUrl,
-                "size": "full",
-                "aspectMode": "cover",
-                "aspectRatio": "16:9",
-                "gravity": "center"
-            },
-            {
-                "type": "image",
-                "url": "https://arrow2nd.github.io/images/img/gradation.png",
-                "size": "full",
-                "aspectMode": "cover",
-                "aspectRatio": "16:9",
-                "position": "absolute"
-            },
-            {
-                "type": "box",
-                "layout": "vertical",
-                "contents": [
-                    {
-                        "type": "text",
-                        "text": name,
-                        "size": "xl",
-                        "color": "#ffffff",
-                        "weight": "bold"
-                    },
-                    {
-                        "type": "text",
-                        "text": subText,
-                        "size": "xs",
-                        "color": "#ffffff"
-                    }
-                ],
-                "position": "absolute",
-                "offsetTop": "110px",
-                "paddingStart": "15px"
-            },            
-            {
-                "type": "box",
-                "layout": "vertical",
-                "contents": profile,
-                "paddingStart": "15px",
-                "paddingTop": "15px",
-                "paddingBottom": "10px",
-                "paddingEnd": "15px"
-            }
+                {
+                    "type": "image",
+                    "url": imgUrl,
+                    "size": "full",
+                    "aspectMode": "cover",
+                    "aspectRatio": "16:9",
+                    "gravity": "center"
+                },
+                {
+                    "type": "image",
+                    "url": "https://arrow2nd.github.io/images/img/gradation.png",
+                    "size": "full",
+                    "aspectMode": "cover",
+                    "aspectRatio": "16:9",
+                    "position": "absolute"
+                },
+                {
+                    "type": "box",
+                    "layout": "vertical",
+                    "contents": [
+                        {
+                            "type": "text",
+                            "text": name,
+                            "size": "xl",
+                            "color": "#ffffff",
+                            "weight": "bold"
+                        },
+                        {
+                            "type": "text",
+                            "text": subText,
+                            "size": "xs",
+                            "color": "#ffffff"
+                        }
+                    ],
+                    "position": "absolute",
+                    "offsetTop": "110px",
+                    "paddingStart": "15px"
+                },
+                {
+                    "type": "box",
+                    "layout": "vertical",
+                    "contents": profile,
+                    "paddingStart": "15px",
+                    "paddingTop": "15px",
+                    "paddingBottom": "10px",
+                    "paddingEnd": "15px"
+                }
             ],
             "paddingAll": "0px"
         },
