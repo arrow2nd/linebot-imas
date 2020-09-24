@@ -1,6 +1,6 @@
 # linebot-imas
 
-![arrow2nd](https://circleci.com/gh/arrow2nd/linebot-imas.svg?style=svg)
+[![arrow2nd](https://circleci.com/gh/arrow2nd/linebot-imas.svg?style=shield)](https://circleci.com/gh/arrow2nd/linebot-imas/tree/master)
 
 IDOLM@STERシリーズに登場するアイドルのプロフィールを検索できるLINEBotです。
 
