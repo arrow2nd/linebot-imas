@@ -27,12 +27,9 @@ async function getIdolProfile(text) {
     try {
         message = await createMessage(profile);
     } catch (err) {
-        console.log('NotFound');
         return err;
     };
 
-    // メッセージオブジェクトを返す
-    console.log('Success!');
     return message;
 };
 
@@ -88,6 +85,7 @@ function search(words) {
             FILTER(regex(str(?BD),"${words}")).
             OPTIONAL{?data imas:nameKana ?名前ルビ.}
             OPTIONAL{?data imas:alternateNameKana ?名前ルビ.}
+            OPTIONAL{?data imas:givenNameKana ?名前ルビ.}
             `;
         } else {
             searchCriteria = `
@@ -97,6 +95,7 @@ function search(words) {
             OPTIONAL{?data schema:name ?本名.}
             OPTIONAL{?data imas:nameKana ?名前ルビ.}
             OPTIONAL{?data imas:alternateNameKana ?名前ルビ.}
+            OPTIONAL{?data imas:givenNameKana ?名前ルビ.}
             FILTER(CONTAINS(?名前,"${words}")||CONTAINS(?本名,"${words}")||CONTAINS(?名前ルビ,"${words}")).
             `;
         };
@@ -273,7 +272,7 @@ function conversion(data) {
 };
 
 /**
- * OGP画像URLを取得
+ * OGP画像のURLを取得
  * 
  * @param  {Object} url URLオブジェクト
  * @return {String}     画像URL
