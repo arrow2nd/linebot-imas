@@ -23,7 +23,7 @@ app.post('/hook/', line.middleware(config), async (req, res) => {
  * 
  * @param {Object} ev イベント
  */
-async function bot(ev){
+async function bot(ev) {
     // メッセージイベント以外・検証ならreturn
     if (ev.type !== 'message' || ev.replyToken === '00000000000000000000000000000000' || ev.replyToken === 'ffffffffffffffffffffffffffffffff') {
         console.log(`メッセージイベントではありません : ${ev.type}`);
@@ -47,4 +47,4 @@ async function bot(ev){
 };
 
 // vercel
-(process.env.NOW_REGION) ? module.exports = app : app.listen(PORT, () => {console.log(`Listening on ${PORT}`)});
+(process.env.NOW_REGION) ? module.exports = app : app.listen(PORT, () => { console.log(`Listening on ${PORT}`) });
