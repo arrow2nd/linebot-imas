@@ -1,5 +1,7 @@
 # linebot-imas
 
+![arrow2nd](https://circleci.com/gh/arrow2nd/linebot-imas.svg?style=svg)
+
 IDOLM@STERシリーズに登場するアイドルのプロフィールを検索できるLINEBotです。
 
 ~~漢字や誕生日をど忘れすることがあるので作りました。~~
