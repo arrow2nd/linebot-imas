@@ -11,7 +11,7 @@ const moment = require('moment-timezone');
  */
 async function getIdolProfile(text) {
     let profile;
-    let flexMessage;
+    let message;
 
     // メッセージを解析
     text = parseMessage(text);
@@ -25,15 +25,15 @@ async function getIdolProfile(text) {
 
     // flexMessageを作成
     try {
-        flexMessage = await createMessage(profile);
+        message = await createMessage(profile);
     } catch (err) {
         console.log('NotFound');
         return err;
     };
 
     // メッセージオブジェクトを返す
-    console.log('success!');
-    return flexMessage;
+    console.log('Success!');
+    return message;
 };
 
 /**
@@ -44,7 +44,7 @@ async function getIdolProfile(text) {
  */
 function parseMessage(text) {
     const formatList = ['M月D日', 'M/D'];
-    let date = '';
+    let date;
 
     // 改行と空白を削除
     text = text.trim().replace(/[\n ]/g, '');
@@ -76,7 +76,7 @@ function parseMessage(text) {
  */
 function search(words) {
     return new Promise((resolve, reject) => {
-        let searchCriteria = '';
+        let searchCriteria;
 
         // MM-DD形式なら誕生日検索、それ以外なら通常検索
         if (words.match(/^\d{1,2}-\d{1,2}/)) {
@@ -158,7 +158,7 @@ async function createMessage(profileData) {
 
     // 検索結果が無い場合エラーを返す
     if (!profileData.length) {
-        return errorMsg('みつかりませんでした…', 'ごめんなさい！');
+        throw errorMsg('みつかりませんでした…', 'ごめんなさい！');
     };
 
     await Promise.all(profileData.map(async (data) => {
@@ -279,9 +279,9 @@ function conversion(data) {
  * @return {String}     画像URL
  */
 async function getOgpImageUrl(url) {
-    let img;
     const noImage = "https://arrow2nd.github.io/images/img/noimage.png";
     const error = "https://arrow2nd.github.io/images/img/error.png";
+    let img;
 
     // URLが無い場合NOIMAGEを返す
     if (!url) return noImage;
