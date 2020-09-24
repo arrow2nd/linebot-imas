@@ -1,14 +1,20 @@
 {
-        "name": "linebot-imas",
-        "version": "1.5.2",
-        "description": "アイドルのプロフィールを簡単に検索できるLINEBot",
-        "main": "index.js",
-        "license": "MIT",
-        "dependencies": {
-                "@line/bot-sdk": "^6.8.4",
-                "express": "^4.17.1",
-                "moment-timezone": "^0.5.31",
-                "ogp-parser": "^0.5.4",
-                "request": "^2.88.2"
-        }
+    "name": "linebot-imas",
+    "version": "1.5.3",
+    "description": "アイドルのプロフィールを簡単に検索できるLINEBot",
+    "main": "index.js",
+    "license": "MIT",
+    "scripts": {
+        "test": "node_modules/mocha/bin/mocha"
+    },
+    "dependencies": {
+        "@line/bot-sdk": "^6.8.4",
+        "express": "^4.17.1",
+        "moment-timezone": "^0.5.31",
+        "ogp-parser": "^0.5.4",
+        "request": "^2.88.2"
+    },
+    "devDependencies": {
+        "mocha": "^8.1.3"
+    }
 }
