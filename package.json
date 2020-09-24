@@ -5,7 +5,7 @@
     "main": "index.js",
     "license": "MIT",
     "scripts": {
-        "test": "node_modules/mocha/bin/mocha"
+        "test": "node_modules/mocha/bin/mocha --timeout 5000"
     },
     "dependencies": {
         "@line/bot-sdk": "^6.8.4",
