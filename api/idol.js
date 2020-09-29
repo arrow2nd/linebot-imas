@@ -2,7 +2,6 @@
 const ogp = require('ogp-parser');
 const request = require('request');
 const moment = require('moment-timezone');
-const slack = require('../api/slack.js');
 
 /**
  * プロフィールを検索してメッセージオブジェクトを返す
@@ -30,7 +29,7 @@ async function getIdolProfile(text) {
     } catch (err) {
         return err;
     };
-
+　　
     return message;
 };
 
@@ -140,8 +139,8 @@ function search(words) {
                 const data = JSON.parse(body).results.bindings;
                 resolve(data);
             } else {
+                console.log('Error: im@sparqlにアクセスできません');
                 console.error(err);
-                slack.send('Error: im@sparqlにアクセスできません');
                 reject(errorMsg('検索できませんでした', 'im@sparqlにアクセスできません'));
             };
         });
@@ -159,6 +158,7 @@ async function createMessage(profileData) {
 
     // 検索結果が無い場合エラーを返す
     if (!profileData.length) {
+        console.log('NotFound');
         throw errorMsg('みつかりませんでした…', 'ごめんなさい！');
     };
 
@@ -193,7 +193,7 @@ async function createMessage(profileData) {
             'contents': contents
         }
     };
-
+    
     return result;
 };
 
@@ -291,13 +291,13 @@ async function getOgpImageUrl(url) {
         const data = await ogp(url.value, { skipOembed: true });
         img = data.ogp['og:image'][0];
     } catch (err) {
+        console.log(`Error: OGP情報の取得に失敗しました ${url.value}`);
         console.err(err);
-        slack.send(`Error: OGP情報の取得に失敗しました\n${url.value}`);
         img = error;
     };
 
     if (!img) {
-        slack.send(`Error: OGP画像の取得に失敗しました\n${url.value}`);
+        console.log(`Error: OGP画像の取得に失敗しました ${url.value}`);
         img = error;
     };
 
