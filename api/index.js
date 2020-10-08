@@ -10,9 +10,9 @@ const config = {
     channelSecret: process.env.SECRET_KEY
 };
 const client = new line.Client(config);
-
 const app = express();
-app.get('/', (req, res) => res.send("ζ*'ヮ')ζ＜GETですー！"));
+
+app.get('/', (req, res) => res.send('ζ*\'ヮ\')ζ＜GETですー！'));
 app.post('/hook/', line.middleware(config), async (req, res) => {
     await Promise.all(req.body.events.map(e => bot(e)));
     res.status(200).end();
@@ -20,12 +20,16 @@ app.post('/hook/', line.middleware(config), async (req, res) => {
 
 /**
  * botメイン
- * 
+ *
  * @param {Object} ev イベント
  */
 async function bot(ev) {
     // メッセージイベント以外・検証ならreturn
-    if (ev.type !== 'message' || ev.replyToken === '00000000000000000000000000000000' || ev.replyToken === 'ffffffffffffffffffffffffffffffff') {
+    const isVerification = [
+        '00000000000000000000000000000000',
+        'ffffffffffffffffffffffffffffffff'
+    ];
+    if (ev.type !== 'message' || isVerification.includes(ev.replyToken)) {
         console.log(`メッセージイベントではありません : ${ev.type}`);
         return;
     };
@@ -48,4 +52,6 @@ async function bot(ev) {
 };
 
 // vercel
-(process.env.NOW_REGION) ? module.exports = app : app.listen(PORT, () => { console.log(`Listening on ${PORT}`) });
+(process.env.NOW_REGION) ? module.exports = app : app.listen(PORT, () => {
+    console.log(`Listening on ${PORT}`);
+});
