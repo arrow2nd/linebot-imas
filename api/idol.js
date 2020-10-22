@@ -1,8 +1,8 @@
 /* eslint-disable max-len */
 'use strict';
-const ogp = require('ogp-parser');
 const request = require('request');
 const moment = require('moment-timezone');
+const imgUrlList = require('../data/img-list.json');
 
 /**
  * プロフィールを検索してメッセージオブジェクトを返す
@@ -12,7 +12,6 @@ const moment = require('moment-timezone');
  */
 async function getIdolProfile(text) {
     let profile;
-    let message;
 
     // メッセージを解析
     text = parseMessage(text);
@@ -25,11 +24,7 @@ async function getIdolProfile(text) {
     };
 
     // flexMessageを作成
-    try {
-        message = await createMessage(profile);
-    } catch (err) {
-        return err;
-    };
+    const message = createMessage(profile);
 
     return message;
 };
@@ -54,7 +49,7 @@ function parseMessage(text) {
         return moment().add(addDays, 'days').tz('Asia/Tokyo').format('MM-DD');
     };
 
-    // メッセージが日付かどうかチェック
+    // メッセージが日付かチェック
     for (let format of formatList) {
         date = moment(text, format, true);
         if (date.isValid()) {
@@ -152,7 +147,7 @@ function search(words) {
             } else {
                 console.log('Error: im@sparqlにアクセスできません');
                 console.error(err);
-                reject(errorMsg('検索できませんでした', 'im@sparqlにアクセスできません'));
+                reject(errorMessage('検索できませんでした', 'im@sparqlにアクセスできません'));
             };
         });
     });
@@ -161,19 +156,19 @@ function search(words) {
 /**
  * メッセージオブジェクトを作成
  *
- * @param  {Object} profileData 取得したプロフィールデータ
- * @return {Object}             メッセージオブジェクト
+ * @param  {Object} data 取得したプロフィールデータ
+ * @return {Object}      メッセージオブジェクト
  */
-async function createMessage(profileData) {
+function createMessage(profileData) {
     let contents = [];
 
-    // 検索結果が無い場合エラーを返す
+    // データが無い場合エラーを返す
     if (!profileData.length) {
         console.log('NotFound');
-        throw errorMsg('みつかりませんでした…', 'ごめんなさい！');
+        return errorMessage('みつかりませんでした…', 'ごめんなさい！');
     };
 
-    await Promise.all(profileData.map(async (data) => {
+    for (let data of profileData) {
         let profile = [];
 
         // 読みやすい表現に変換
@@ -188,12 +183,11 @@ async function createMessage(profileData) {
         };
 
         // OGP画像取得
-        const imgUrl = await getOgpImageUrl(data.URL);
+        const imgUrl = getImageURL(data.名前.value);
 
         // バブル作成
         contents.push(createBubble(data, profile, imgUrl));
-        return;
-    }));
+    };
 
     // メッセージオブジェクト
     const result = {
@@ -292,37 +286,21 @@ function conversion(data) {
 };
 
 /**
- * OGP画像のURLを取得
+ * 画像のURLを検索
  *
- * @param  {Object} url URLオブジェクト
- * @return {String}     画像URL
+ * @param  {String} name アイドル名
+ * @return {String}      URL
  */
-async function getOgpImageUrl(url) {
-    const NOIMAGE_URL = 'https://arrow2nd.github.io/images/img/noimage.png';
-    const ERROR_URL = 'https://arrow2nd.github.io/images/img/error.png';
-    let img;
+function getImageURL(name) {
+    const noImage = 'https://arrow2nd.github.io/images/img/noimage.png';
+    const imgURL = imgUrlList[name];
 
     // URLが無い場合NOIMAGEを返す
-    if (!url) {
-        return NOIMAGE_URL;
+    if (!imgURL) {
+        return noImage;
     };
 
-    try {
-        const data = await ogp(url.value, {skipOembed: true});
-        img = data.ogp['og:image'][0];
-    } catch (err) {
-        console.log(`Error: OGP情報の取得に失敗しました ${url.value}`);
-        console.err(err);
-        img = ERROR_URL;
-    };
-
-    // 画像URLが無い
-    if (!img) {
-        console.log(`Error: OGP画像の取得に失敗しました ${url.value}`);
-        img = ERROR_URL;
-    };
-
-    return img;
+    return imgURL;
 };
 
 /**
@@ -487,7 +465,7 @@ function createBubble(data, profile, imgUrl) {
  * @param  {String} msg   エラー内容
  * @return {Object}       メッセージオブジェクト
  */
-function errorMsg(title, msg) {
+function errorMessage(title, msg) {
     const errMsg = {
         'type': 'flex',
         'altText': title,
