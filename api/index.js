@@ -10,8 +10,9 @@ const config = {
     channelSecret: process.env.SECRET_KEY
 };
 const client = new line.Client(config);
-const app = express();
 
+// ルーティング
+const app = express();
 app.get('/', (req, res) => res.send('ζ*\'ヮ\')ζ＜GETですー！'));
 app.post('/hook/', line.middleware(config), async (req, res) => {
     await Promise.all(req.body.events.map(e => bot(e)));
@@ -39,7 +40,7 @@ async function bot(ev) {
         console.log(`テキストではありません : ${ev.message.type}`);
         await client.replyMessage(ev.replyToken, {
             type: 'text',
-            text: 'テキストでお願いします！'
+            text: '検索したいアイドルのお名前を入力してください…！'
         });
         return;
     };
