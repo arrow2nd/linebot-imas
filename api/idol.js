@@ -1,21 +1,20 @@
 'use strict';
 const request = require('request');
 const moment = require('moment-timezone');
-const imageURLCache = require('../cache/ogp_url.json');
+const imgFileName = require('../cache/imageFileName.json');
 
 /**
- * アイドルのプロフィールを検索する
+ * プロフィールを検索
  *
- * @param  {String} keyword キーワード
- * @return {Object}         メッセージオブジェクト
+ * @param  {String} text メッセージテキスト
+ * @return {Object}      メッセージオブジェクト
  */
-async function getIdolProfile(keyword) {
-    let profile;
-
-    // メッセージをパース
-    keyword = parseMessage(keyword);
-
+async function getIdolProfile(text) {
+    // 検索文字列を作成
+    const keyword = createSearchKeyword(text);
+    
     // プロフィールを検索
+    let profile;
     try {
         profile = await search(keyword);
     } catch (err) {
@@ -23,20 +22,20 @@ async function getIdolProfile(keyword) {
     };
 
     // flexMessageを作成
-    const message = createMessage(profile);
+    const flexMessage = createMessageObject(profile);
 
-    return message;
+    return flexMessage;
 };
 
 /**
- * メッセージを解析して検索文字列を作成
+ * 検索文字列を作成
  *
  * @param  {String} text メッセージテキスト
  * @return {String}      検索文字列
  */
-function parseMessage(text) {
+function createSearchKeyword(text) {
     // 改行と空白を削除
-    text = text.trim().replace(/[\n ]/g, '');
+    text = text.trim().replace(/[\n\s]/g, '');
 
     // 誕生日検索かチェック
     if (text.match(/誕生日/)) {
@@ -46,7 +45,7 @@ function parseMessage(text) {
     };
 
     // メッセージが日付かチェック
-    for (let format of ['M月D日', 'M/D']) {
+    for (let format of ['YYYY-MM-DD', 'M月D日']) {
         let date = moment(text, format, true);
         if (date.isValid()) {
             return date.format('MM-DD');
@@ -59,21 +58,21 @@ function parseMessage(text) {
 /**
  * imasparqlからプロフィールを取得
  *
- * @param  {String} words 検索文字列
- * @return {Object}       成功時: プロフィールデータ
- *                        失敗時: メッセージオブジェクト
+ * @param  {String} keyword 検索文字列
+ * @return {Object}         成功時: プロフィールオブジェクト
+ *                          失敗時: エラーメッセージオブジェクト
  */
-function search(words) {
+function search(keyword) {
     return new Promise((resolve, reject) => {
         let searchCriteria;
 
         // MM-DD形式なら誕生日検索、それ以外なら通常検索
-        if (words.match(/^\d{1,2}-\d{1,2}/)) {
+        if (keyword.match(/^\d{1,2}-\d{1,2}/)) {
             searchCriteria = `
             rdf:type ?type;
             schema:birthDate ?BD.
             FILTER(?type IN (imas:Idol,imas:Staff)).
-            FILTER(regex(str(?BD),"${words}")).
+            FILTER(regex(str(?BD),"${keyword}")).
             OPTIONAL{?data imas:nameKana ?名前ルビ.}
             OPTIONAL{?data imas:alternateNameKana ?名前ルビ.}
             OPTIONAL{?data imas:givenNameKana ?名前ルビ.}
@@ -86,7 +85,7 @@ function search(words) {
             OPTIONAL{?data imas:nameKana ?名前ルビ.}
             OPTIONAL{?data imas:alternateNameKana ?名前ルビ.}
             OPTIONAL{?data imas:givenNameKana ?名前ルビ.}
-            FILTER(CONTAINS(?名前,"${words}")||CONTAINS(?本名,"${words}")||CONTAINS(?名前ルビ,"${words}")).
+            FILTER(CONTAINS(?名前,"${keyword}")||CONTAINS(?本名,"${keyword}")||CONTAINS(?名前ルビ,"${keyword}")).
             `;
         };
 
@@ -142,7 +141,7 @@ function search(words) {
             } else {
                 console.log('Error: im@sparqlにアクセスできません');
                 console.error(err);
-                reject(errorMessage('検索できませんでした', 'im@sparqlにアクセスできません'));
+                reject(createErrorMessage('検索できませんでした', 'im@sparqlにアクセスできません'));
             };
         });
     });
@@ -151,42 +150,42 @@ function search(words) {
 /**
  * メッセージオブジェクトを作成
  *
- * @param  {Object} data 取得したプロフィールデータ
- * @return {Object}      メッセージオブジェクト
+ * @param  {Object} profile プロフィールオブジェクト
+ * @return {Object}         メッセージオブジェクト
  */
-function createMessage(profileData) {
+function createMessageObject(profile) {
     let carousel = [];
 
     // データが無い場合はエラー
-    if (!profileData.length) {
+    if (!profile.length) {
         console.log('NotFound');
-        return errorMessage('みつかりませんでした…', 'ごめんなさい！');
+        return createErrorMessage('みつかりませんでした…', 'ごめんなさい！');
     };
 
-    for (let data of profileData) {
-        let profile = [];
+    for (let data of profile) {
+        let component = [];
 
-        // 表現を調整
-        data = convertExpression(data);
+        // プロフィールを読みやすい形に調整
+        data = editProfile(data);
 
-        // プロフィール内容作成
+        // プロフィールのコンポーネントを作成
         for (let key in data) {
             if (['名前', '名前ルビ', '所属', 'URL'].includes(key)) {
                 continue;
             };
-            profile.push(createProfileLine(key, data[key].value));
+            component.push(createProfileLine(key, data[key].value));
         };
 
-        // アイドルの画像
+        // アイドルの画像URL取得
         const imageURL = getImageURL(data.名前.value);
 
-        // カルーセルに追加
-        carousel.push(createBubble(data, profile, imageURL));
+        // 作成したバブルをカルーセルに追加
+        carousel.push(createBubble(data, component, imageURL));
     };
 
     const result = {
         'type': 'flex',
-        'altText': `${profileData.length}人みつかりました！`,
+        'altText': `${profile.length}人みつかりました！`,
         'contents': {
             'type': 'carousel',
             'contents': carousel
@@ -197,19 +196,19 @@ function createMessage(profileData) {
 };
 
 /**
- * 表現を変換
+ * プロフィールを編集
  *
- * @param  {Object} data プロフィールデータ
- * @return {Object}      変換後のプロフィールデータ
+ * @param  {Object} data プロフィールオブジェクト
+ * @return {Object}      編集後のプロフィールオブジェクト
  */
-function convertExpression(data) {
+function editProfile(data) {
     const convert = {
         series: {
-            CinderellaGirls: '346Pro (CinderellaGirls)',
+            'CinderellaGirls': '346Pro (CinderellaGirls)',
             '1st Vision': '765Pro (旧プロフィール)',
-            DearlyStars: '876Pro (DearlyStars)',
+            'DearlyStars': '876Pro (DearlyStars)',
             '315ProIdols': '315Pro (SideM)',
-            MillionStars: '765Pro (MillionLive!)',
+            'MillionStars': '765Pro (MillionLive!)',
             '283Pro': '283Pro (ShinyColors)',
             '765AS': '765Pro (IDOLM@STER)',
             '961ProIdols': '961Pro (IDOLM@STER)',
@@ -280,25 +279,25 @@ function convertExpression(data) {
 };
 
 /**
- * 画像のURLをキャッシュから取得
+ * 画像URLをキャッシュから取得
  *
  * @param  {String} name アイドル名
  * @return {String}      URL
  */
 function getImageURL(name) {
     const noImage = 'https://arrow2nd.github.io/images/img/noimage.png';
-    const imageURL = imageURLCache[name];
+    const fileName = imgFileName[name];
 
-    // URLが無い場合NOIMAGEを返す
-    if (!imageURL) {
+    // キャッシュに無い場合NOIMAGEのURLを返す
+    if (!fileName) {
         return noImage;
     };
 
-    return imageURL;
+    return `https://idollist.idolmaster-official.jp/images/character_main/${fileName}`;
 };
 
 /**
- * プロフィール（行）を作成
+ * プロフィール（１行）を作成
  *
  * @param  {String} key   項目名
  * @param  {String} value 内容
@@ -334,15 +333,15 @@ function createProfileLine(key, value) {
 /**
  * フッターを作成
  *
- * @param  {Object} data プロフィールデータ
- * @return {Array}       フッターのコンポーネント
+ * @param  {Object} profile プロフィールオブジェクト
+ * @return {Array}          フッターのコンポーネント
  */
-function createFooter(data) {
-    const colorCode = (data.カラー) ? data.カラー.value : '#ff73cc';
+function createFooter(profile) {
+    const colorCode = (profile.カラー) ? profile.カラー.value : '#ff74b8';
     let footer = [];
 
     // アイドル名鑑
-    if (data.URL) {
+    if (profile.URL) {
         footer.push({
             'type': 'button',
             'height': 'sm',
@@ -351,7 +350,7 @@ function createFooter(data) {
             'action': {
                 'type': 'uri',
                 'label': 'アイドル名鑑を開く！',
-                'uri': data.URL.value
+                'uri': profile.URL.value
             }
         });
     };
@@ -366,7 +365,7 @@ function createFooter(data) {
         'action': {
             'type': 'uri',
             'label': 'Googleで検索！',
-            'uri': `http://www.google.co.jp/search?hl=ja&source=hp&q=${encodeURIComponent(`アイドルマスター ${data.名前.value}`)}`
+            'uri': `http://www.google.co.jp/search?hl=ja&source=hp&q=${encodeURIComponent(`アイドルマスター ${profile.名前.value}`)}`
         }
     });
 
@@ -376,15 +375,15 @@ function createFooter(data) {
 /**
  * バブルを作成
  *
- * @param  {Object} data    取得したプロフィールデータ
- * @param  {Array}  profile プロフィールのコンポーネント
- * @param  {String} imgUrl  画像URL
- * @return {Object}         バブル
+ * @param  {Object} profile   プロフィールオブジェクト
+ * @param  {Array}  component プロフィールのコンポーネント
+ * @param  {String} imgURL    画像URL
+ * @return {Object}           バブル
  */
-function createBubble(data, profile, imgUrl) {
-    const name = data.名前.value;
-    const subText = (data.所属) ? data.名前ルビ.value + `・${data.所属.value}` : data.名前ルビ.value;
-    const footer = createFooter(data);
+function createBubble(profile, component, imgURL) {
+    const name = profile.名前.value;
+    const subText = (profile.所属) ? profile.名前ルビ.value + `・${profile.所属.value}` : profile.名前ルビ.value;
+    const footer = createFooter(profile);
     const bubble = {
         'type': 'bubble',
         'size': 'mega',
@@ -394,7 +393,7 @@ function createBubble(data, profile, imgUrl) {
             'contents': [
                 {
                     'type': 'image',
-                    'url': imgUrl,
+                    'url': imgURL,
                     'size': 'full',
                     'aspectMode': 'cover',
                     'aspectRatio': '16:9',
@@ -433,7 +432,7 @@ function createBubble(data, profile, imgUrl) {
                 {
                     'type': 'box',
                     'layout': 'vertical',
-                    'contents': profile,
+                    'contents': component,
                     'paddingStart': '15px',
                     'paddingTop': '15px',
                     'paddingBottom': '10px',
@@ -456,10 +455,10 @@ function createBubble(data, profile, imgUrl) {
  * エラーメッセージ
  *
  * @param  {String} title タイトル
- * @param  {String} msg   エラー内容
+ * @param  {String} text  エラー内容
  * @return {Object}       メッセージオブジェクト
  */
-function errorMessage(title, msg) {
+function createErrorMessage(title, text) {
     const errMsg = {
         'type': 'flex',
         'altText': title,
@@ -477,7 +476,7 @@ function errorMessage(title, msg) {
                     },
                     {
                         'type': 'text',
-                        'text': msg,
+                        'text': text,
                         'size': 'xs',
                         'color': '#949494',
                         'margin': 'sm'
