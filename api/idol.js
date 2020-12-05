@@ -1,24 +1,23 @@
-/* eslint-disable max-len */
 'use strict';
 const request = require('request');
 const moment = require('moment-timezone');
-const imgUrlList = require('../data/img-list.json');
+const imageURLCache = require('../cache/ogp_url.json');
 
 /**
- * プロフィールを検索してメッセージオブジェクトを返す
+ * アイドルのプロフィールを検索する
  *
- * @param  {String} text メッセージ
- * @return {Object}      メッセージオブジェクト
+ * @param  {String} keyword キーワード
+ * @return {Object}         メッセージオブジェクト
  */
-async function getIdolProfile(text) {
+async function getIdolProfile(keyword) {
     let profile;
 
-    // メッセージを解析
-    text = parseMessage(text);
+    // メッセージをパース
+    keyword = parseMessage(keyword);
 
     // プロフィールを検索
     try {
-        profile = await search(text);
+        profile = await search(keyword);
     } catch (err) {
         return err;
     };
@@ -32,13 +31,10 @@ async function getIdolProfile(text) {
 /**
  * メッセージを解析して検索文字列を作成
  *
- * @param  {String} text メッセージ
+ * @param  {String} text メッセージテキスト
  * @return {String}      検索文字列
  */
 function parseMessage(text) {
-    const formatList = ['M月D日', 'M/D'];
-    let date;
-
     // 改行と空白を削除
     text = text.trim().replace(/[\n ]/g, '');
 
@@ -50,8 +46,8 @@ function parseMessage(text) {
     };
 
     // メッセージが日付かチェック
-    for (let format of formatList) {
-        date = moment(text, format, true);
+    for (let format of ['M月D日', 'M/D']) {
+        let date = moment(text, format, true);
         if (date.isValid()) {
             return date.format('MM-DD');
         };
@@ -74,7 +70,6 @@ function search(words) {
         // MM-DD形式なら誕生日検索、それ以外なら通常検索
         if (words.match(/^\d{1,2}-\d{1,2}/)) {
             searchCriteria = `
-            ?data rdfs:label ?名前;
             rdf:type ?type;
             schema:birthDate ?BD.
             FILTER(?type IN (imas:Idol,imas:Staff)).
@@ -85,7 +80,6 @@ function search(words) {
             `;
         } else {
             searchCriteria = `
-            ?data rdfs:label ?名前;
             rdf:type ?type.
             FILTER(?type IN (imas:Idol,imas:Staff)).
             OPTIONAL{?data schema:name ?本名.}
@@ -96,7 +90,7 @@ function search(words) {
             `;
         };
 
-        // クエリ(ながい)
+        // プロフィールを引っ張ってくるクエリ(ながい)
         const query = `
         PREFIX schema: <http://schema.org/>
         PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -105,6 +99,7 @@ function search(words) {
         PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
         SELECT DISTINCT ?名前 ?名前ルビ ?所属 ?性別 ?年齢 ?身長 ?体重 ?BWH ?誕生日 ?星座 ?血液型 ?利き手 ?出身地 (GROUP_CONCAT(DISTINCT ?hobby;separator=',') as ?趣味) (GROUP_CONCAT(DISTINCT ?favorite;separator=',') as ?好きなもの) ?説明 ?カラー ?CV ?URL
         WHERE {
+            ?data rdfs:label ?名前;
             ${searchCriteria}
             OPTIONAL {?data imas:Title ?所属.}
             OPTIONAL {?data schema:gender ?性別.}
@@ -160,9 +155,9 @@ function search(words) {
  * @return {Object}      メッセージオブジェクト
  */
 function createMessage(profileData) {
-    let contents = [];
+    let carousel = [];
 
-    // データが無い場合エラーを返す
+    // データが無い場合はエラー
     if (!profileData.length) {
         console.log('NotFound');
         return errorMessage('みつかりませんでした…', 'ごめんなさい！');
@@ -171,8 +166,8 @@ function createMessage(profileData) {
     for (let data of profileData) {
         let profile = [];
 
-        // 読みやすい表現に変換
-        data = conversion(data);
+        // 表現を調整
+        data = convertExpression(data);
 
         // プロフィール内容作成
         for (let key in data) {
@@ -182,20 +177,19 @@ function createMessage(profileData) {
             profile.push(createProfileLine(key, data[key].value));
         };
 
-        // OGP画像取得
-        const imgUrl = getImageURL(data.名前.value);
+        // アイドルの画像
+        const imageURL = getImageURL(data.名前.value);
 
-        // バブル作成
-        contents.push(createBubble(data, profile, imgUrl));
+        // カルーセルに追加
+        carousel.push(createBubble(data, profile, imageURL));
     };
 
-    // メッセージオブジェクト
     const result = {
         'type': 'flex',
-        'altText': `${profileData.length}件みつかりました！`,
+        'altText': `${profileData.length}人みつかりました！`,
         'contents': {
             'type': 'carousel',
-            'contents': contents
+            'contents': carousel
         }
     };
 
@@ -208,7 +202,7 @@ function createMessage(profileData) {
  * @param  {Object} data プロフィールデータ
  * @return {Object}      変換後のプロフィールデータ
  */
-function conversion(data) {
+function convertExpression(data) {
     const convert = {
         series: {
             CinderellaGirls: '346Pro (CinderellaGirls)',
@@ -250,25 +244,25 @@ function conversion(data) {
         ]
     };
 
-    // 作品名を変換
+    // シリーズ名
     if (data.所属) {
         const title = convert.series[data.所属.value];
         data.所属.value = (title) ? title : data.所属.value;
     };
 
-    // 性別を日本語に変換
+    // 性別
     if (data.性別) {
         const jp = convert.gender[data.性別.value];
         data.性別.value = (jp) ? jp : '不明';
     };
 
-    // 利き手を日本語に変換
+    // 利き手
     if (data.利き手) {
         const jp = convert.handedness[data.利き手.value];
         data.利き手.value = (jp) ? jp : '不明';
     };
 
-    // 誕生日のフォーマットを日本語形式に変換
+    // 誕生日のフォーマット
     if (data.誕生日) {
         data.誕生日.value = moment(data.誕生日.value, '-MM-DD').format('M月D日');
     };
@@ -286,21 +280,21 @@ function conversion(data) {
 };
 
 /**
- * 画像のURLを検索
+ * 画像のURLをキャッシュから取得
  *
  * @param  {String} name アイドル名
  * @return {String}      URL
  */
 function getImageURL(name) {
     const noImage = 'https://arrow2nd.github.io/images/img/noimage.png';
-    const imgURL = imgUrlList[name];
+    const imageURL = imageURLCache[name];
 
     // URLが無い場合NOIMAGEを返す
-    if (!imgURL) {
+    if (!imageURL) {
         return noImage;
     };
 
-    return imgURL;
+    return imageURL;
 };
 
 /**
@@ -495,7 +489,6 @@ function errorMessage(title, msg) {
 
     return errMsg;
 };
-
 
 module.exports = {
     getIdolProfile
