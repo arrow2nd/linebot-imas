@@ -3,7 +3,6 @@ const fs = require('fs');
 const ogp = require('ogp-parser');
 const request = require('request');
 
-// OGP画像URLをキャッシュ
 (async () => {
    const data = await getIdolData();
     let result = {};
@@ -11,13 +10,13 @@ const request = require('request');
     for (let e of data) {
         const name = e.name.value;
         const url = await getOgpImgUrl(e.URL.value);
-        result[name] = url;
-        console.log(`${name} OK!`);
+        result[name] = url.match('^https:\/\/idollist\.idolmaster-official\.jp\/images\/character_main\/(.+)')[1];
+        console.log(`${name} -> ${result[name]} ... OK!`);
         // ３秒待機する
         await new Promise(resolve => setTimeout(resolve, 3000));
     };
-
-    fs.writeFileSync('./cache/ogb_url.json', JSON.stringify(result, null, '   '));
+    
+    fs.writeFileSync('./cache/imageFileName.json', JSON.stringify(result, null, '   '));
     console.log('success!');
 })();
 
