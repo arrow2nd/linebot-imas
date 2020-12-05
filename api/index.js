@@ -13,7 +13,7 @@ const client = new line.Client(config);
 
 // ルーティング
 const app = express();
-app.get('/', (req, res) => res.send('ζ*\'ヮ\')ζ＜GETですー！'));
+app.get('/', (_req, res) => res.send('ζ*\'ヮ\')ζ＜GETですー！'));
 app.post('/hook/', line.middleware(config), async (req, res) => {
     await Promise.all(req.body.events.map(e => bot(e)));
     res.status(200).end();
@@ -25,31 +25,47 @@ app.post('/hook/', line.middleware(config), async (req, res) => {
  * @param {Object} ev イベント
  */
 async function bot(ev) {
-    // メッセージイベント以外・検証ならreturn
-    const isVerification = [
-        '00000000000000000000000000000000',
-        'ffffffffffffffffffffffffffffffff'
-    ];
-    if (ev.type !== 'message' || isVerification.includes(ev.replyToken)) {
-        console.log(`メッセージイベントではありません : ${ev.type}`);
+    // 検証なら処理しない
+    if (['00000000000000000000000000000000', 'ffffffffffffffffffffffffffffffff'].includes(ev.replyToken)) {
+        console.log('success!');
         return;
     };
-
-    // テキスト以外ならエラーを返す
-    if (ev.message.type !== 'text') {
-        console.log(`テキストではありません : ${ev.message.type}`);
-        await client.replyMessage(ev.replyToken, {
-            type: 'text',
-            text: '検索したいアイドルのお名前を入力してください…！'
-        });
-        return;
+    
+    let object = {};
+    switch (ev.type) {
+        case 'message':
+            // テキスト以外は処理しない
+            if (ev.message.type != "text") {
+                console.log(`テキストではありません : ${ev.message.type}`);
+                await replyText(ev.replyToken, '検索したいアイドルのお名前を教えてください…！')
+                return;
+            };
+            object = await idol.getIdolProfile(ev.message.text);
+            break;
+        case 'postback':
+            const date = ev.postback.params.date;
+            object = await idol.getIdolProfile(date);
+            break;
+        default:
+            console.log(`メッセージイベントではありません : ${ev.type}`);
+            return;
     };
-
-    // プロフィールを検索
-    const object = await idol.getIdolProfile(ev.message.text);
-
+    
     // 返信
     await client.replyMessage(ev.replyToken, object);
+};
+
+/**
+ * テキストメッセージを送信
+ * 
+ * @param {String} replyToken リプライトークン 
+ * @param {String} text       送信するテキスト
+ */
+async function replyText(replyToken, text) {
+    await client.replyMessage(replyToken, {
+        type: 'text',
+        text: text
+    });
 };
 
 // vercel
