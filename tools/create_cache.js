@@ -1,10 +1,8 @@
-/* eslint-disable max-len */
 'use strict';
 const fs = require('fs');
 const ogp = require('ogp-parser');
 const request = require('request');
 
-// OGP画像URLのリストを作成
 (async () => {
    const data = await getIdolData();
     let result = {};
@@ -12,13 +10,13 @@ const request = require('request');
     for (let e of data) {
         const name = e.name.value;
         const url = await getOgpImgUrl(e.URL.value);
-        result[name] = url;
-        console.log(`${name} OK!`);
-        // ３秒待機
+        result[name] = url.match('^https:\/\/idollist\.idolmaster-official\.jp\/images\/character_main\/(.+)')[1];
+        console.log(`${name} -> ${result[name]} ... OK!`);
+        // ３秒待機する
         await new Promise(resolve => setTimeout(resolve, 3000));
     };
-
-    fs.writeFileSync('./data/img-list.json', JSON.stringify(result, null, '   '));
+    
+    fs.writeFileSync('./cache/imageFileName.json', JSON.stringify(result, null, '   '));
     console.log('success!');
 })();
 
