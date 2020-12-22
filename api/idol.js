@@ -1,7 +1,7 @@
 'use strict';
 const request = require('request');
 const moment = require('moment-timezone');
-const imgFileName = require('../cache/imageFileName.json');
+const imgURLCache = require('../cache/imageFileName.json');
 
 /**
  * プロフィールを検索
@@ -19,13 +19,13 @@ async function getIdolProfile(text) {
         profile = await search(keyword);
     } catch (err) {
         return err;
-    };
+    }
 
     // flexMessageを作成
     const flexMessage = createMessageObject(profile);
 
     return flexMessage;
-};
+}
 
 /**
  * 検索文字列を作成
@@ -39,21 +39,20 @@ function createSearchKeyword(text) {
 
     // 誕生日検索かチェック
     if (text.match(/誕生日/)) {
-        const mode = (text.match(/明日/)) ? 3 : (text.match(/昨日/)) ? 1 : 2;
-        const addDays = mode - 2;
-        return moment().add(addDays, 'days').tz('Asia/Tokyo').format('MM-DD');
-    };
+        const addDay = (text.match(/明日/)) ? 1 : (text.match(/昨日/)) ? -1 : 0;
+        return moment().add(addDay, 'days').tz('Asia/Tokyo').format('MM-DD');
+    }
 
     // メッセージが日付かチェック
     for (let format of ['YYYY-MM-DD', 'M月D日']) {
         let date = moment(text, format, true);
         if (date.isValid()) {
             return date.format('MM-DD');
-        };
-    };
+        }
+    }
 
     return text;
-};
+}
 
 /**
  * imasparqlからプロフィールを取得
@@ -87,7 +86,7 @@ function search(keyword) {
             OPTIONAL{?data imas:givenNameKana ?名前ルビ.}
             FILTER(CONTAINS(?名前,"${keyword}")||CONTAINS(?本名,"${keyword}")||CONTAINS(?名前ルビ,"${keyword}")).
             `;
-        };
+        }
 
         // プロフィールを引っ張ってくるクエリ(ながい)
         const query = `
@@ -142,10 +141,10 @@ function search(keyword) {
                 console.log('Error: im@sparqlにアクセスできません');
                 console.error(err);
                 reject(createErrorMessage('検索できませんでした', 'im@sparqlにアクセスできません'));
-            };
+            }
         });
     });
-};
+}
 
 /**
  * メッセージオブジェクトを作成
@@ -160,7 +159,7 @@ function createMessageObject(profile) {
     if (!profile.length) {
         console.log('NotFound');
         return createErrorMessage('みつかりませんでした…', 'ごめんなさい！');
-    };
+    }
 
     for (let data of profile) {
         let component = [];
@@ -172,16 +171,16 @@ function createMessageObject(profile) {
         for (let key in data) {
             if (['名前', '名前ルビ', '所属', 'URL'].includes(key)) {
                 continue;
-            };
+            }
             component.push(createProfileLine(key, data[key].value));
-        };
+        }
 
         // アイドルの画像URL取得
         const imageURL = getImageURL(data.名前.value);
 
         // 作成したバブルをカルーセルに追加
         carousel.push(createBubble(data, component, imageURL));
-    };
+    }
 
     const result = {
         'type': 'flex',
@@ -193,7 +192,7 @@ function createMessageObject(profile) {
     };
 
     return result;
-};
+}
 
 /**
  * プロフィールを編集
@@ -247,24 +246,24 @@ function editProfile(data) {
     if (data.所属) {
         const title = convert.series[data.所属.value];
         data.所属.value = (title) ? title : data.所属.value;
-    };
+    }
 
     // 性別
     if (data.性別) {
         const jp = convert.gender[data.性別.value];
         data.性別.value = (jp) ? jp : '不明';
-    };
+    }
 
     // 利き手
     if (data.利き手) {
         const jp = convert.handedness[data.利き手.value];
         data.利き手.value = (jp) ? jp : '不明';
-    };
+    }
 
     // 誕生日のフォーマット
     if (data.誕生日) {
         data.誕生日.value = moment(data.誕生日.value, '-MM-DD').format('M月D日');
-    };
+    }
 
     // 単位を追加
     const regex = /[a-zA-Z0-9?]/;
@@ -272,11 +271,11 @@ function editProfile(data) {
         const chkKey = convert.addUnit[i].key;
         if (data[chkKey] && regex.test(data[chkKey].value)) {
             data[chkKey].value += convert.addUnit[i].unit;
-        };
-    };
+        }
+    }
 
     return data;
-};
+}
 
 /**
  * 画像URLをキャッシュから取得
@@ -286,15 +285,12 @@ function editProfile(data) {
  */
 function getImageURL(name) {
     const noImage = 'https://arrow2nd.github.io/images/img/noimage.png';
-    const fileName = imgFileName[name];
+    const fileName = imgURLCache[name];
 
-    // キャッシュに無い場合NOIMAGEのURLを返す
-    if (!fileName) {
-        return noImage;
-    };
-
-    return `https://idollist.idolmaster-official.jp/images/character_main/${fileName}`;
-};
+    return fileName
+        ? `https://idollist.idolmaster-official.jp/images/character_main/${fileName}`
+        : noImage;
+}
 
 /**
  * プロフィール（１行）を作成
@@ -328,7 +324,7 @@ function createProfileLine(key, value) {
     };
 
     return contents;
-};
+}
 
 /**
  * フッターを作成
@@ -353,7 +349,7 @@ function createFooter(profile) {
                 'uri': profile.URL.value
             }
         });
-    };
+    }
 
     // Googleで検索！
     footer.push({
@@ -370,7 +366,7 @@ function createFooter(profile) {
     });
 
     return footer;
-};
+}
 
 /**
  * バブルを作成
@@ -449,7 +445,7 @@ function createBubble(profile, component, imgURL) {
     };
 
     return bubble;
-};
+}
 
 /**
  * エラーメッセージ
@@ -487,7 +483,7 @@ function createErrorMessage(title, text) {
     };
 
     return errMsg;
-};
+}
 
 module.exports = {
     getIdolProfile

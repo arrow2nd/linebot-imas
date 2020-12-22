@@ -1,5 +1,6 @@
 'use strict';
 const fs = require('fs');
+// eslint-disable-next-line node/no-unpublished-require
 const ogp = require('ogp-parser');
 const request = require('request');
 
@@ -14,7 +15,7 @@ const request = require('request');
         console.log(`${name} -> ${result[name]} ... OK!`);
         // ３秒待機する
         await new Promise(resolve => setTimeout(resolve, 3000));
-    };
+    }
     
     fs.writeFileSync('./cache/imageFileName.json', JSON.stringify(result, null, '   '));
     console.log('success!');
@@ -27,13 +28,9 @@ const request = require('request');
  * @return {String}     OGP画像のURL
  */
 async function getOgpImgUrl(url) {
-    try {
-        const data = await ogp(url, {skipOembed: true});
-        return data.ogp['og:image'][0];
-    } catch (err) {
-        throw err;
-    };
-};
+    const data = await ogp(url, {skipOembed: true});
+    return data.ogp['og:image'][0];
+}
 
 /**
  * アイドル名鑑のURLを持つアイドルを取得
@@ -60,7 +57,7 @@ function getIdolData() {
             } else {
                 console.error(err);
                 reject();
-            };
+            }
         });
     });
-};
+}

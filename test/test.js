@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 'use strict';
 const assert = require('assert');
 const idol = require('../api/idol.js');
@@ -32,17 +33,27 @@ describe('#getIdolProfile()', () => {
             const url = data.contents.contents[0].body.contents[0].url;
             assert.match(url, /^https:/);
         });
-    };
+    }
 
-    describe('本名と活動名が異なるアイドル（伴田路子）', () => messageTest('伴田路子', 'ロコ', 'はんだろこ'));    
+    describe('本名と活動名が異なるアイドル（伴田路子）', () => {
+        messageTest('伴田路子', 'ロコ', 'はんだろこ')
+    });
     
-    describe('本名が一部分かっているアイドル（詩花）', () => messageTest('しいか', '詩花', 'しいか'));
+    describe('本名が一部分かっているアイドル（詩花）', () => {
+        messageTest('しいか', '詩花', 'しいか')
+    });
     
-    describe('本名が分かっていないアイドル（ジュリア）', () => messageTest('ジュリア', 'ジュリア', 'じゅりあ'));
+    describe('本名が分かっていないアイドル（ジュリア）', () => {
+        messageTest('ジュリア', 'ジュリア', 'じゅりあ')
+    });
     
-    describe('スタッフ（七草はづき）', () => messageTest('七草はづき', '七草はづき', 'ななくさはづき'));
+    describe('スタッフ（七草はづき）', () => {
+        messageTest('七草はづき', '七草はづき', 'ななくさはづき')
+    });
     
-    describe('日付指定での誕生日検索（4月19日）', () => messageTest('4月19日', '白菊ほたる', 'しらぎくほたる'));
+    describe('日付指定での誕生日検索（4月19日）', () => {
+        messageTest('4月19日', '白菊ほたる', 'しらぎくほたる')
+    });
     
     describe('見つからなかったときのエラーメッセージ', () => {
         it('正しいメッセージオブジェクトが返せているか', async () => {
