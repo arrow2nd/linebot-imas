@@ -1,30 +1,27 @@
 'use strict';
-const request = require('request');
+const axios = require('axios');
 const moment = require('moment-timezone');
-const imgURLCache = require('../cache/imageFileName.json');
+const imageURLCache = require('../cache/image_filename.json');
 
 /**
  * プロフィールを検索
  *
  * @param  {String} text メッセージテキスト
- * @return {Object}      メッセージオブジェクト
+ * @return {Object}      flexMessage
  */
-async function getIdolProfile(text) {
+async function Search(text) {
     // 検索文字列を作成
     const keyword = createSearchKeyword(text);
     
-    // プロフィールを検索
-    let profile;
+    // 検索
     try {
-        profile = await search(keyword);
+        const data = await getIdolProfile(keyword);
+        console.log('Success');
+        return createFlexMessage(data);
     } catch (err) {
-        return err;
+        console.log(err);
+        return createErrorMessage('検索できませんでした', 'im@sparqlにアクセスできません');
     }
-
-    // flexMessageを作成
-    const flexMessage = createMessageObject(profile);
-
-    return flexMessage;
 }
 
 /**
@@ -38,17 +35,17 @@ function createSearchKeyword(text) {
     text = text.trim().replace(/[\n\s]/g, '');
 
     // 誕生日検索かチェック
-    if (text.match(/誕生日/)) {
-        const addDay = (text.match(/明日/)) ? 1 : (text.match(/昨日/)) ? -1 : 0;
-        return moment().add(addDay, 'days').tz('Asia/Tokyo').format('MM-DD');
+    if (/誕生日/.test(text)) {
+        const addNum = (/明日/.test(text)) ? 1
+            : (/昨日/.test(text)) ? -1
+            : 0;
+        return moment().add(addNum, 'days').tz('Asia/Tokyo').format('MM-DD');
     }
 
     // メッセージが日付かチェック
     for (let format of ['YYYY-MM-DD', 'M月D日']) {
         let date = moment(text, format, true);
-        if (date.isValid()) {
-            return date.format('MM-DD');
-        }
+        if (date.isValid()) return date.format('MM-DD');
     }
 
     return text;
@@ -58,149 +55,107 @@ function createSearchKeyword(text) {
  * imasparqlからプロフィールを取得
  *
  * @param  {String} keyword 検索文字列
- * @return {Object}         成功時: プロフィールオブジェクト
- *                          失敗時: エラーメッセージオブジェクト
+ * @return {Object}         検索結果
  */
-function search(keyword) {
-    return new Promise((resolve, reject) => {
-        let searchCriteria;
+async function getIdolProfile(keyword) {
+    // MM-DD形式なら誕生日検索、それ以外なら通常検索
+    const filterQuery = [
+        `rdf:type ?type;schema:birthDate ?BD.FILTER(?type IN (imas:Idol,imas:Staff)).FILTER(regex(str(?BD),"${keyword}")).OPTIONAL{?data imas:nameKana ?名前ルビ.}OPTIONAL{?data imas:alternateNameKana ?名前ルビ.}OPTIONAL{?data imas:givenNameKana ?名前ルビ.}`,
+        `rdf:type ?type.FILTER(?type IN (imas:Idol,imas:Staff)).OPTIONAL{?data schema:name ?本名.}OPTIONAL{?data imas:nameKana ?名前ルビ.}OPTIONAL{?data imas:alternateNameKana ?名前ルビ.}OPTIONAL{?data imas:givenNameKana ?名前ルビ.}FILTER(CONTAINS(?名前,"${keyword}")||CONTAINS(?本名,"${keyword}")||CONTAINS(?名前ルビ,"${keyword}")).`
+    ];
+    const searchCriteria = (/^\d{1,2}-\d{1,2}/.test(keyword)) ? filterQuery[0] : filterQuery[1];
 
-        // MM-DD形式なら誕生日検索、それ以外なら通常検索
-        if (keyword.match(/^\d{1,2}-\d{1,2}/)) {
-            searchCriteria = `
-            rdf:type ?type;
-            schema:birthDate ?BD.
-            FILTER(?type IN (imas:Idol,imas:Staff)).
-            FILTER(regex(str(?BD),"${keyword}")).
-            OPTIONAL{?data imas:nameKana ?名前ルビ.}
-            OPTIONAL{?data imas:alternateNameKana ?名前ルビ.}
-            OPTIONAL{?data imas:givenNameKana ?名前ルビ.}
-            `;
-        } else {
-            searchCriteria = `
-            rdf:type ?type.
-            FILTER(?type IN (imas:Idol,imas:Staff)).
-            OPTIONAL{?data schema:name ?本名.}
-            OPTIONAL{?data imas:nameKana ?名前ルビ.}
-            OPTIONAL{?data imas:alternateNameKana ?名前ルビ.}
-            OPTIONAL{?data imas:givenNameKana ?名前ルビ.}
-            FILTER(CONTAINS(?名前,"${keyword}")||CONTAINS(?本名,"${keyword}")||CONTAINS(?名前ルビ,"${keyword}")).
-            `;
-        }
+    // クエリ
+    const query = `PREFIX schema: <http://schema.org/>
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    PREFIX imas: <https://sparql.crssnky.xyz/imasrdf/URIs/imas-schema.ttl#>
+    PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    SELECT DISTINCT ?名前 ?名前ルビ ?所属 ?性別 ?年齢 ?身長 ?体重 ?BWH ?誕生日 ?星座 ?血液型 ?利き手 ?出身地 (GROUP_CONCAT(DISTINCT ?hobby;separator=',') as ?趣味) (GROUP_CONCAT(DISTINCT ?favorite;separator=',') as ?好きなもの) ?説明 ?カラー ?CV ?URL
+    WHERE {?data rdfs:label ?名前;
+    ${searchCriteria}
+    OPTIONAL {?data imas:Title ?所属.}
+    OPTIONAL {?data schema:gender ?性別.}
+    OPTIONAL {?data foaf:age ?年齢.}
+    OPTIONAL {?data schema:height ?身長.}
+    OPTIONAL {?data schema:weight ?体重.}
+    OPTIONAL {?data imas:Bust ?B; imas:Waist ?W; imas:Hip ?H. BIND(CONCAT(str(?B),"/",str(?W),"/",str(?H)) as ?BWH)}
+    OPTIONAL {?data schema:birthDate ?誕生日.}
+    OPTIONAL {?data imas:Constellation ?星座.}
+    OPTIONAL {?data imas:BloodType ?血液型.}
+    OPTIONAL {?data imas:Handedness ?利き手.}
+    OPTIONAL {?data schema:birthPlace ?出身地.}
+    OPTIONAL {?data imas:Hobby ?hobby.}
+    OPTIONAL {?data imas:Favorite ?favorite.}
+    OPTIONAL {?data schema:description ?説明.}
+    OPTIONAL {?data imas:Color ?color. BIND(CONCAT("#",str(?color)) as ?カラー)}
+    OPTIONAL {?data imas:cv ?CV. FILTER(lang(?CV)='ja').}
+    OPTIONAL {?data imas:IdolListURL ?URL}
+    } GROUP BY ?名前 ?名前ルビ ?所属 ?性別 ?年齢 ?身長 ?体重 ?BWH ?誕生日 ?星座 ?血液型 ?利き手 ?出身地 ?説明 ?カラー ?CV ?URL
+    LIMIT 5`;
 
-        // プロフィールを引っ張ってくるクエリ(ながい)
-        const query = `
-        PREFIX schema: <http://schema.org/>
-        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-        PREFIX imas: <https://sparql.crssnky.xyz/imasrdf/URIs/imas-schema.ttl#>
-        PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-        PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
-        SELECT DISTINCT ?名前 ?名前ルビ ?所属 ?性別 ?年齢 ?身長 ?体重 ?BWH ?誕生日 ?星座 ?血液型 ?利き手 ?出身地 (GROUP_CONCAT(DISTINCT ?hobby;separator=',') as ?趣味) (GROUP_CONCAT(DISTINCT ?favorite;separator=',') as ?好きなもの) ?説明 ?カラー ?CV ?URL
-        WHERE {
-            ?data rdfs:label ?名前;
-            ${searchCriteria}
-            OPTIONAL {?data imas:Title ?所属.}
-            OPTIONAL {?data schema:gender ?性別.}
-            OPTIONAL {?data foaf:age ?年齢.}
-            OPTIONAL {?data schema:height ?身長.}
-            OPTIONAL {?data schema:weight ?体重.}
-            OPTIONAL {
-                ?data imas:Bust ?B;
-                imas:Waist ?W;
-                imas:Hip ?H.
-                BIND(CONCAT(str(?B), "/", str(?W), "/", str(?H)) as ?BWH)
-            }
-            OPTIONAL {?data schema:birthDate ?誕生日.}
-            OPTIONAL {?data imas:Constellation ?星座.}
-            OPTIONAL {?data imas:BloodType ?血液型.}
-            OPTIONAL {?data imas:Handedness ?利き手.}
-            OPTIONAL {?data schema:birthPlace ?出身地.}
-            OPTIONAL {?data imas:Hobby ?hobby.}
-            OPTIONAL {?data imas:Favorite ?favorite.}
-            OPTIONAL {?data schema:description ?説明.}
-            OPTIONAL {
-                ?data imas:Color ?color.
-                BIND(CONCAT("#", str(?color)) as ?カラー)
-            }
-            OPTIONAL {
-                ?data imas:cv ?CV.
-                FILTER(lang(?CV)='ja').
-            }
-            OPTIONAL {?data imas:IdolListURL ?URL}
-        } GROUP BY ?名前 ?名前ルビ ?所属 ?性別 ?年齢 ?身長 ?体重 ?BWH ?誕生日 ?星座 ?血液型 ?利き手 ?出身地 ?説明 ?カラー ?CV ?URL
-        LIMIT 5
-        `;
+    const url = `https://sparql.crssnky.xyz/spql/imas/query?output=json&query=${encodeURIComponent(query)}`;
 
-        const url = `https://sparql.crssnky.xyz/spql/imas/query?output=json&query=${encodeURIComponent(query)}`;
-
-        request.get(url, (err, res, body) => {
-            if (!err && res.statusCode === 200) {
-                const data = JSON.parse(body).results.bindings;
-                resolve(data);
-            } else {
-                console.log('Error: im@sparqlにアクセスできません');
-                console.error(err);
-                reject(createErrorMessage('検索できませんでした', 'im@sparqlにアクセスできません'));
-            }
-        });
-    });
+    try {
+        const res = await axios.get(url);
+        const data = res.data.results.bindings;
+        return data;
+    } catch (err) {
+        throw new Error(`[Error] im@sparqlにアクセスできません (${err.response.statusText} : ${err.response.status})`);
+    }
 }
 
 /**
- * メッセージオブジェクトを作成
+ * flexMessageを作成
  *
- * @param  {Object} profile プロフィールオブジェクト
- * @return {Object}         メッセージオブジェクト
+ * @param  {Object} data 検索結果
+ * @return {Object}      flexMessage
  */
-function createMessageObject(profile) {
-    let carousel = [];
-
+function createFlexMessage(data) {
     // データが無い場合はエラー
-    if (!profile.length) {
+    if (!data.length) {
         console.log('NotFound');
         return createErrorMessage('みつかりませんでした…', 'ごめんなさい！');
     }
-
-    for (let data of profile) {
+    
+    // カルーセル作成
+    let carousel = [];
+    for (let profile of data) {
         let component = [];
 
-        // プロフィールを読みやすい形に調整
-        data = editProfile(data);
+        // プロフィールデータを調整
+        profile = editProfileData(profile);
 
         // プロフィールのコンポーネントを作成
-        for (let key in data) {
-            if (['名前', '名前ルビ', '所属', 'URL'].includes(key)) {
-                continue;
-            }
-            component.push(createProfileLine(key, data[key].value));
+        for (let key in profile) {
+            if (['名前', '名前ルビ', '所属', 'URL'].includes(key)) continue;
+            component.push(createTextComponent(key, profile[key].value));
         }
 
-        // アイドルの画像URL取得
-        const imageURL = getImageURL(data.名前.value);
-
-        // 作成したバブルをカルーセルに追加
-        carousel.push(createBubble(data, component, imageURL));
+        // バブルを作成してカルーセルに追加
+        carousel.push(createBubble(profile, component));
     }
 
-    const result = {
+    const flexMsg = {
         'type': 'flex',
-        'altText': `${profile.length}人みつかりました！`,
+        'altText': `${data.length}人みつかりました！`,
         'contents': {
             'type': 'carousel',
             'contents': carousel
         }
     };
 
-    return result;
+    return flexMsg;
 }
 
 /**
- * プロフィールを編集
+ * プロフィールデータを調整
  *
- * @param  {Object} data プロフィールオブジェクト
- * @return {Object}      編集後のプロフィールオブジェクト
+ * @param  {Object} profile プロフィールデータ
+ * @return {Object}         編集後のプロフィールデータ
  */
-function editProfile(data) {
+function editProfileData(profile) {
+    // 各種データ
     const convert = {
         series: {
             'CinderellaGirls': '346Pro (CinderellaGirls)',
@@ -243,142 +198,50 @@ function editProfile(data) {
     };
 
     // シリーズ名
-    if (data.所属) {
-        const title = convert.series[data.所属.value];
-        data.所属.value = (title) ? title : data.所属.value;
+    if (profile.所属) {
+        const title = convert.series[profile.所属.value];
+        profile.所属.value = (title) ? title : profile.所属.value;
     }
 
     // 性別
-    if (data.性別) {
-        const jp = convert.gender[data.性別.value];
-        data.性別.value = (jp) ? jp : '不明';
+    if (profile.性別) {
+        const jp = convert.gender[profile.性別.value];
+        profile.性別.value = (jp) ? jp : '不明';
     }
 
     // 利き手
-    if (data.利き手) {
-        const jp = convert.handedness[data.利き手.value];
-        data.利き手.value = (jp) ? jp : '不明';
+    if (profile.利き手) {
+        const jp = convert.handedness[profile.利き手.value];
+        profile.利き手.value = (jp) ? jp : '不明';
     }
 
     // 誕生日のフォーマット
-    if (data.誕生日) {
-        data.誕生日.value = moment(data.誕生日.value, '-MM-DD').format('M月D日');
+    if (profile.誕生日) {
+        profile.誕生日.value = moment(profile.誕生日.value, '-MM-DD').format('M月D日');
     }
 
     // 単位を追加
-    const regex = /[a-zA-Z0-9?]/;
     for (let i = 0; i < convert.addUnit.length; i++) {
         const chkKey = convert.addUnit[i].key;
-        if (data[chkKey] && regex.test(data[chkKey].value)) {
-            data[chkKey].value += convert.addUnit[i].unit;
+        if (profile[chkKey] && /[a-zA-Z0-9?]/.test(profile[chkKey].value)) {
+            profile[chkKey].value += convert.addUnit[i].unit;
         }
     }
 
-    return data;
-}
-
-/**
- * 画像URLをキャッシュから取得
- *
- * @param  {String} name アイドル名
- * @return {String}      URL
- */
-function getImageURL(name) {
-    const noImage = 'https://arrow2nd.github.io/images/img/noimage.png';
-    const fileName = imgURLCache[name];
-
-    return fileName
-        ? `https://idollist.idolmaster-official.jp/images/character_main/${fileName}`
-        : noImage;
-}
-
-/**
- * プロフィール（１行）を作成
- *
- * @param  {String} key   項目名
- * @param  {String} value 内容
- * @return {Object}       1行分のテキストコンポーネント
- */
-function createProfileLine(key, value) {
-    const contents = {
-        'type': 'box',
-        'layout': 'baseline',
-        'contents': [
-            {
-                'type': 'text',
-                'text': key,
-                'size': 'sm',
-                'color': '#949494',
-                'flex': 2
-            },
-            {
-                'type': 'text',
-                'text': value,
-                'wrap': true,
-                'size': 'sm',
-                'flex': 4,
-                'color': '#666666'
-            }
-        ],
-        'spacing': 'sm'
-    };
-
-    return contents;
-}
-
-/**
- * フッターを作成
- *
- * @param  {Object} profile プロフィールオブジェクト
- * @return {Array}          フッターのコンポーネント
- */
-function createFooter(profile) {
-    const colorCode = (profile.カラー) ? profile.カラー.value : '#ff74b8';
-    let footer = [];
-
-    // アイドル名鑑
-    if (profile.URL) {
-        footer.push({
-            'type': 'button',
-            'height': 'sm',
-            'style': 'link',
-            'offsetTop': '-10px',
-            'action': {
-                'type': 'uri',
-                'label': 'アイドル名鑑を開く！',
-                'uri': profile.URL.value
-            }
-        });
-    }
-
-    // Googleで検索！
-    footer.push({
-        'type': 'button',
-        'height': 'sm',
-        'style': 'primary',
-        'color': colorCode,
-        'offsetTop': '-5px',
-        'action': {
-            'type': 'uri',
-            'label': 'Googleで検索！',
-            'uri': `http://www.google.co.jp/search?hl=ja&source=hp&q=${encodeURIComponent(`アイドルマスター ${profile.名前.value}`)}`
-        }
-    });
-
-    return footer;
+    return profile;
 }
 
 /**
  * バブルを作成
  *
- * @param  {Object} profile   プロフィールオブジェクト
+ * @param  {Object} profile   プロフィールデータ
  * @param  {Array}  component プロフィールのコンポーネント
- * @param  {String} imgURL    画像URL
  * @return {Object}           バブル
  */
-function createBubble(profile, component, imgURL) {
+function createBubble(profile, component) {
     const name = profile.名前.value;
-    const subText = (profile.所属) ? profile.名前ルビ.value + `・${profile.所属.value}` : profile.名前ルビ.value;
+    const subText = (profile.所属) ? `${profile.名前ルビ.value}・${profile.所属.value}` : profile.名前ルビ.value;
+    const imageURL = getImageURLFromCache(profile.名前.value);
     const footer = createFooter(profile);
     const bubble = {
         'type': 'bubble',
@@ -389,7 +252,7 @@ function createBubble(profile, component, imgURL) {
             'contents': [
                 {
                     'type': 'image',
-                    'url': imgURL,
+                    'url': imageURL,
                     'size': 'full',
                     'aspectMode': 'cover',
                     'aspectRatio': '16:9',
@@ -448,11 +311,102 @@ function createBubble(profile, component, imgURL) {
 }
 
 /**
- * エラーメッセージ
+ * 画像URLをキャッシュから取得
+ * 
+ * @param  {String} name アイドル名
+ * @return {String}      URL文字列
+ */
+function getImageURLFromCache(name) {
+    const noImage = 'https://arrow2nd.github.io/images/img/noimage.png';
+    const fileName = imageURLCache[name];
+
+    return fileName
+        ? `https://idollist.idolmaster-official.jp/images/character_main/${fileName}`
+        : noImage;
+}
+
+/**
+ * テキストコンポーネントを作成
+ *
+ * @param  {String} key   項目名
+ * @param  {String} value 内容
+ * @return {Object}       テキストコンポーネント
+ */
+function createTextComponent(key, value) {
+    const contents = {
+        'type': 'box',
+        'layout': 'baseline',
+        'contents': [
+            {
+                'type': 'text',
+                'text': key,
+                'size': 'sm',
+                'color': '#949494',
+                'flex': 2
+            },
+            {
+                'type': 'text',
+                'text': value,
+                'wrap': true,
+                'size': 'sm',
+                'flex': 4,
+                'color': '#666666'
+            }
+        ],
+        'spacing': 'sm'
+    };
+
+    return contents;
+}
+
+/**
+ * フッターを作成
+ *
+ * @param  {Object} profile プロフィールデータ
+ * @return {Array}          フッターのコンポーネント
+ */
+function createFooter(profile) {
+    const colorCode = (profile.カラー) ? profile.カラー.value : '#ff74b8';
+    let footer = [];
+
+    // アイドル名鑑
+    if (profile.URL) {
+        footer.push({
+            'type': 'button',
+            'height': 'sm',
+            'style': 'link',
+            'offsetTop': '-10px',
+            'action': {
+                'type': 'uri',
+                'label': 'アイドル名鑑を開く！',
+                'uri': profile.URL.value
+            }
+        });
+    }
+
+    // Googleで検索
+    footer.push({
+        'type': 'button',
+        'height': 'sm',
+        'style': 'primary',
+        'color': colorCode,
+        'offsetTop': '-5px',
+        'action': {
+            'type': 'uri',
+            'label': 'Googleで検索！',
+            'uri': `http://www.google.co.jp/search?hl=ja&source=hp&q=${encodeURIComponent(`アイドルマスター ${profile.名前.value}`)}`
+        }
+    });
+
+    return footer;
+}
+
+/**
+ * エラーメッセージを作成
  *
  * @param  {String} title タイトル
  * @param  {String} text  エラー内容
- * @return {Object}       メッセージオブジェクト
+ * @return {Object}       flexMessage
  */
 function createErrorMessage(title, text) {
     const errMsg = {
@@ -485,6 +439,4 @@ function createErrorMessage(title, text) {
     return errMsg;
 }
 
-module.exports = {
-    getIdolProfile
-};
+module.exports = { Search };
