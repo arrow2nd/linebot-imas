@@ -1,63 +1,61 @@
 'use strict';
 const fs = require('fs');
+const axios = require('axios').default;
 // eslint-disable-next-line node/no-unpublished-require
-const ogp = require('ogp-parser');
-const request = require('request');
+const jsdom = require('jsdom');
 
-(async () => {
-   const data = await getIdolData();
+(async() => {
     let result = {};
+    const idolList = await getIdolData();
 
-    for (let e of data) {
+    for (let e of idolList) {
         const name = e.name.value;
-        const url = await getOgpImgUrl(e.URL.value);
-        result[name] = url.match('^https:\/\/idollist\.idolmaster-official\.jp\/images\/character_main\/(.+)')[1];
-        console.log(`${name} -> ${result[name]} ... OK!`);
-        // ３秒待機する
-        await new Promise(resolve => setTimeout(resolve, 3000));
+        const url = await getOGPImgURL(e.URL.value);
+        // URLからファイル名のみを取得
+        result[name] = url.match(/^https:\/\/idollist\.idolmaster-official\.jp\/images\/character_main\/(.+)/)[1];
+        console.log(`[OK] ${name} -> ${result[name]}`);
+        // 2秒待機
+        await new Promise(resolve => setTimeout(resolve, 2000));
     }
     
-    fs.writeFileSync('./cache/imageFileName.json', JSON.stringify(result, null, '   '));
+    fs.writeFileSync('./cache/image_filename.json', JSON.stringify(result, null, '\t'));
     console.log('success!');
 })();
-
-/**
- * URLからOGP画像のURLを取得
- *
- * @param  {String} url 取得するURL
- * @return {String}     OGP画像のURL
- */
-async function getOgpImgUrl(url) {
-    const data = await ogp(url, {skipOembed: true});
-    return data.ogp['og:image'][0];
-}
 
 /**
  * アイドル名鑑のURLを持つアイドルを取得
  *
  * @return {Array} データ
  */
-function getIdolData() {
-    return new Promise((resolve, reject) => {
-        const query = `
-        PREFIX imas: <https://sparql.crssnky.xyz/imasrdf/URIs/imas-schema.ttl#>
-        PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
-        SELECT distinct ?name ?URL
-        WHERE {
-        ?data rdfs:label ?name.
-        ?data imas:IdolListURL ?URL.
-        }
-        `;
-        const url = `https://sparql.crssnky.xyz/spql/imas/query?output=json&query=${encodeURIComponent(query)}`;
+async function getIdolData() {
+    const query = `PREFIX imas: <https://sparql.crssnky.xyz/imasrdf/URIs/imas-schema.ttl#> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT distinct ?name ?URL WHERE { ?data rdfs:label ?name. ?data imas:IdolListURL ?URL. }`;
+    const url = `https://sparql.crssnky.xyz/spql/imas/query?output=json&query=${encodeURIComponent(query)}`;
+    try {
+        const res = await axios.get(url);
+        const data = res.data.results.bindings;
+        return data;
+    } catch (err) {
+        throw new Error(`${err.response.statusText} : ${err.response.status}`);
+    }
+}
 
-        request.get(url, (err, res, body) => {
-            if (!err && res.statusCode === 200) {
-                const data = JSON.parse(body).results.bindings;
-                resolve(data);
-            } else {
-                console.error(err);
-                reject();
-            }
-        });
-    });
+/**
+ * URLからOGP画像のURLを取得
+ * 
+ * @param  {String} url URL
+ * @return {String}     OGP画像のURL
+ */
+async function getOGPImgURL(url) {
+    try {
+        const res = await axios.get(url);
+        const dom = new jsdom.JSDOM(res.data);
+        const meta = dom.window.document.querySelectorAll('head > meta');
+        const img = Array.from(meta)
+            .filter(e => e.hasAttribute('property'))
+            .find(v => v.getAttribute('property').trim().includes('og:image'))
+            .getAttribute('content');
+        return img;
+    } catch (err) {
+        throw new Error(`${err.response.statusText} : ${err.response.status}`);
+    }
 }
