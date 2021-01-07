@@ -25,25 +25,14 @@ app.post('/hook/', line.middleware(config), async (req, res) => {
  * @param {Object} ev イベント
  */
 async function bot(ev) {
-    const tokenForVerification = [
-        '00000000000000000000000000000000',
-        'ffffffffffffffffffffffffffffffff'
-    ]
-
-    // 検証なら処理しない
-    if (tokenForVerification.includes(ev.replyToken)) {
-        console.log('success!');
-        return;
-    }
-
-    // 検索文字列
     let keyword = '';
 
+    // イベントタイプで分岐
     switch (ev.type) {
         case 'message':
             // テキスト以外なら処理しない
             if (ev.message.type != "text") {
-                console.log(`テキストではありません : ${ev.message.type}`);
+                console.log(`[Non-text messages] : ${ev.message.type}`);
                 await client.replyMessage(ev.replyToken, {
                     type: 'text',
                     text: '検索したいアイドルのお名前を教えてください…！'
@@ -52,22 +41,18 @@ async function bot(ev) {
             }
             keyword = ev.message.text;
             break;
-
         case 'postback':
             keyword = ev.postback.params.date;
             break;
-
         default:
-            console.log(`メッセージイベントではありません : ${ev.type}`);
+            console.log(`[Non-message events] : ${ev.type}`);
             return;
     }
 
     // 返信
-    const object = await idol.getIdolProfile(keyword);
-    await client.replyMessage(ev.replyToken, object);
+    const flexMsg = await idol.Search(keyword);
+    await client.replyMessage(ev.replyToken, flexMsg);
 }
 
 // vercel
-(process.env.NOW_REGION) ? module.exports = app : app.listen(PORT, () => {
-    console.log(`Listening on ${PORT}`);
-});
+(process.env.NOW_REGION) ? module.exports = app : app.listen(PORT, () => console.log(`Listening on ${PORT}`));
