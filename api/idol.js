@@ -16,7 +16,6 @@ async function Search(text) {
     // 検索
     try {
         const data = await getIdolProfile(keyword);
-        console.log('Success');
         return createFlexMessage(data);
     } catch (err) {
         console.log(err);
@@ -114,7 +113,6 @@ async function getIdolProfile(keyword) {
 function createFlexMessage(data) {
     // データが無い場合はエラー
     if (!data.length) {
-        console.log('NotFound');
         return createErrorMessage('みつかりませんでした…', 'ごめんなさい！');
     }
     
