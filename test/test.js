@@ -16,7 +16,7 @@ describe('#getIdolProfile()', () => {
         let data = {};
         
         before(async () => {
-            data = await idol.getIdolProfile(keyword);
+            data = await idol.Search(keyword);
         });
 
         it('正しく名前を取得できているか', () => {
@@ -57,7 +57,7 @@ describe('#getIdolProfile()', () => {
     
     describe('見つからなかったときのエラーメッセージ', () => {
         it('正しいメッセージオブジェクトが返せているか', async () => {
-            const data = await idol.getIdolProfile('test');
+            const data = await idol.Search('test');
             assert.strictEqual(data.altText, 'みつかりませんでした…');
         });
     });
