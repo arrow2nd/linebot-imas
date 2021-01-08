@@ -447,7 +447,6 @@ function createErrorMessage(title, text) {
 function isWhitishColor(hexColor) {
     const hex = hexColor.match(/[0-9A-Fa-f]{2}/g).map(v => parseInt(v, 16));
     const gs = Math.floor((hex[0] * 0.299 + hex[1] * 0.587 + hex[2] * 0.114) / 2.55);
-    console.log(`${hexColor} -> [${gs} > 60]`);
     return gs > 65;
 }
 
