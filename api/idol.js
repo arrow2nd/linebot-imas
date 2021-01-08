@@ -364,7 +364,8 @@ function createTextComponent(key, value) {
  * @return {Array}          フッターのコンポーネント
  */
 function createFooter(profile) {
-    const colorCode = (profile.カラー) ? profile.カラー.value : '#ff74b8';
+    const color = (profile.カラー) ? profile.カラー.value : '#FF74B8';
+    const style = isWhitishColor(color) ? 'secondary' : 'primary';
     let footer = [];
 
     // アイドル名鑑
@@ -386,8 +387,8 @@ function createFooter(profile) {
     footer.push({
         'type': 'button',
         'height': 'sm',
-        'style': 'primary',
-        'color': colorCode,
+        'style': style,
+        'color': color,
         'offsetTop': '-5px',
         'action': {
             'type': 'uri',
@@ -435,6 +436,19 @@ function createErrorMessage(title, text) {
     };
 
     return errMsg;
+}
+
+/**
+ * 白っぽい色かどうか
+ * 
+ * @param  {String} hexColor 16進数カラーコード
+ * @return {Boolean}         白っぽい色かどうか
+ */
+function isWhitishColor(hexColor) {
+    const hex = hexColor.match(/[0-9A-Fa-f]{2}/g).map(v => parseInt(v, 16));
+    const gs = Math.floor((hex[0] * 0.299 + hex[1] * 0.587 + hex[2] * 0.114) / 2.55);
+    console.log(`${hexColor} -> [${gs} > 60]`);
+    return gs > 65;
 }
 
 module.exports = { Search };
