@@ -11,7 +11,7 @@ describe('#getIdolProfile()', () => {
    * @param {String} cName   期待されるアイドル名
    * @param {String} cKana   期待されるアイドル読みがな
    */
-  function messageTest (keyword, cName, cKana) {
+  function messageTest(keyword, cName, cKana) {
     let data = {}
 
     before(async () => {
@@ -24,7 +24,8 @@ describe('#getIdolProfile()', () => {
     })
 
     it('サブテキストが正しく生成されているか', () => {
-      const subText = data.contents.contents[0].body.contents[2].contents[1].text
+      const subText =
+        data.contents.contents[0].body.contents[2].contents[1].text
       assert.match(subText, RegExp(`^${cKana}`))
     })
 

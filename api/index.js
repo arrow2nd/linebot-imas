@@ -13,9 +13,9 @@ const client = new line.Client(config)
 
 // ルーティング
 const app = express()
-app.get('/', (_req, res) => res.send('ζ*\'ヮ\')ζ＜GETですー！'))
+app.get('/', (_req, res) => res.send("ζ*'ヮ')ζ＜GETですー！"))
 app.post('/hook/', line.middleware(config), async (req, res) => {
-  await Promise.all(req.body.events.map(e => bot(e)))
+  await Promise.all(req.body.events.map((e) => bot(e)))
   res.status(200).end()
 })
 
@@ -24,7 +24,7 @@ app.post('/hook/', line.middleware(config), async (req, res) => {
  *
  * @param {Object} ev イベント
  */
-async function bot (ev) {
+async function bot(ev) {
   let keyword = ''
 
   // イベントタイプで分岐
@@ -55,4 +55,6 @@ async function bot (ev) {
 }
 
 // vercel
-(process.env.NOW_REGION) ? module.exports = app : app.listen(PORT, () => console.log(`Listening on ${PORT}`))
+process.env.NOW_REGION
+  ? (module.exports = app)
+  : app.listen(PORT, () => console.log(`Listening on ${PORT}`))

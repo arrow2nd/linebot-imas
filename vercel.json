@@ -1,13 +1,13 @@
 {
-    "version": 2,
-    "routes": [
-        {
-            "src": "/",
-            "dest": "api/index.js"
-        },
-        {
-            "src": "/hook/",
-            "dest": "api/index.js"
-        }
-    ]
+  "version": 2,
+  "routes": [
+    {
+      "src": "/",
+      "dest": "api/index.js"
+    },
+    {
+      "src": "/hook/",
+      "dest": "api/index.js"
+    }
+  ]
 }

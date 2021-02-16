@@ -9,7 +9,7 @@ const imageURLCache = require('../cache/image_filename.json')
  * @param  {String} text メッセージテキスト
  * @return {Object}      flexMessage
  */
-async function Search (text) {
+async function Search(text) {
   // 検索文字列を作成
   const keyword = createSearchKeyword(text)
 
@@ -19,7 +19,10 @@ async function Search (text) {
     return createFlexMessage(data)
   } catch (err) {
     console.log(err)
-    return createErrorMessage('検索できませんでした', 'im@sparqlにアクセスできません')
+    return createErrorMessage(
+      '検索できませんでした',
+      'im@sparqlにアクセスできません'
+    )
   }
 }
 
@@ -29,13 +32,13 @@ async function Search (text) {
  * @param  {String} text メッセージテキスト
  * @return {String}      検索文字列
  */
-function createSearchKeyword (text) {
+function createSearchKeyword(text) {
   // 改行と空白を削除
   text = text.trim().replace(/[\n\s]/g, '')
 
   // 誕生日検索かチェック
   if (/誕生日/.test(text)) {
-    const addNum = (/明日/.test(text)) ? 1 : (/昨日/.test(text)) ? -1 : 0
+    const addNum = /明日/.test(text) ? 1 : /昨日/.test(text) ? -1 : 0
     return moment().add(addNum, 'days').tz('Asia/Tokyo').format('MM-DD')
   }
 
@@ -54,13 +57,15 @@ function createSearchKeyword (text) {
  * @param  {String} keyword 検索文字列
  * @return {Object}         検索結果
  */
-async function getIdolProfile (keyword) {
+async function getIdolProfile(keyword) {
   // MM-DD形式なら誕生日検索、それ以外なら通常検索
   const filterQuery = [
-        `rdf:type ?type;schema:birthDate ?BD.FILTER(?type IN (imas:Idol,imas:Staff)).FILTER(regex(str(?BD),"${keyword}")).OPTIONAL{?data imas:nameKana ?名前ルビ.}OPTIONAL{?data imas:alternateNameKana ?名前ルビ.}OPTIONAL{?data imas:givenNameKana ?名前ルビ.}`,
-        `rdf:type ?type.FILTER(?type IN (imas:Idol,imas:Staff)).OPTIONAL{?data schema:name ?本名.}OPTIONAL{?data imas:nameKana ?名前ルビ.}OPTIONAL{?data imas:alternateNameKana ?名前ルビ.}OPTIONAL{?data imas:givenNameKana ?名前ルビ.}FILTER(CONTAINS(?名前,"${keyword}")||CONTAINS(?本名,"${keyword}")||CONTAINS(?名前ルビ,"${keyword}")).`
+    `rdf:type ?type;schema:birthDate ?BD.FILTER(?type IN (imas:Idol,imas:Staff)).FILTER(regex(str(?BD),"${keyword}")).OPTIONAL{?data imas:nameKana ?名前ルビ.}OPTIONAL{?data imas:alternateNameKana ?名前ルビ.}OPTIONAL{?data imas:givenNameKana ?名前ルビ.}`,
+    `rdf:type ?type.FILTER(?type IN (imas:Idol,imas:Staff)).OPTIONAL{?data schema:name ?本名.}OPTIONAL{?data imas:nameKana ?名前ルビ.}OPTIONAL{?data imas:alternateNameKana ?名前ルビ.}OPTIONAL{?data imas:givenNameKana ?名前ルビ.}FILTER(CONTAINS(?名前,"${keyword}")||CONTAINS(?本名,"${keyword}")||CONTAINS(?名前ルビ,"${keyword}")).`
   ]
-  const searchCriteria = (/^\d{1,2}-\d{1,2}/.test(keyword)) ? filterQuery[0] : filterQuery[1]
+  const searchCriteria = /^\d{1,2}-\d{1,2}/.test(keyword)
+    ? filterQuery[0]
+    : filterQuery[1]
 
   // クエリ
   const query = `PREFIX schema: <http://schema.org/>
@@ -91,14 +96,18 @@ async function getIdolProfile (keyword) {
     } GROUP BY ?名前 ?名前ルビ ?所属 ?性別 ?年齢 ?身長 ?体重 ?BWH ?誕生日 ?星座 ?血液型 ?利き手 ?出身地 ?説明 ?カラー ?CV ?URL
     LIMIT 5`
 
-  const url = `https://sparql.crssnky.xyz/spql/imas/query?output=json&query=${encodeURIComponent(query)}`
+  const url = `https://sparql.crssnky.xyz/spql/imas/query?output=json&query=${encodeURIComponent(
+    query
+  )}`
 
   try {
     const res = await axios.get(url)
     const data = res.data.results.bindings
     return data
   } catch (err) {
-    throw new Error(`[Error] im@sparqlにアクセスできません (${err.response.statusText} : ${err.response.status})`)
+    throw new Error(
+      `[Error] im@sparqlにアクセスできません (${err.response.statusText} : ${err.response.status})`
+    )
   }
 }
 
@@ -108,7 +117,7 @@ async function getIdolProfile (keyword) {
  * @param  {Object} data 検索結果
  * @return {Object}      flexMessage
  */
-function createFlexMessage (data) {
+function createFlexMessage(data) {
   // データが無い場合はエラー
   if (!data.length) {
     return createErrorMessage('みつかりませんでした…', 'ごめんなさい！')
@@ -150,7 +159,7 @@ function createFlexMessage (data) {
  * @param  {Object} profile プロフィールデータ
  * @return {Object}         編集後のプロフィールデータ
  */
-function editProfileData (profile) {
+function editProfileData(profile) {
   // 各種データ
   const convert = {
     series: {
@@ -196,24 +205,26 @@ function editProfileData (profile) {
   // シリーズ名
   if (profile.所属) {
     const title = convert.series[profile.所属.value]
-    profile.所属.value = (title) || profile.所属.value
+    profile.所属.value = title || profile.所属.value
   }
 
   // 性別
   if (profile.性別) {
     const jp = convert.gender[profile.性別.value]
-    profile.性別.value = (jp) || '不明'
+    profile.性別.value = jp || '不明'
   }
 
   // 利き手
   if (profile.利き手) {
     const jp = convert.handedness[profile.利き手.value]
-    profile.利き手.value = (jp) || '不明'
+    profile.利き手.value = jp || '不明'
   }
 
   // 誕生日のフォーマット
   if (profile.誕生日) {
-    profile.誕生日.value = moment(profile.誕生日.value, '-MM-DD').format('M月D日')
+    profile.誕生日.value = moment(profile.誕生日.value, '-MM-DD').format(
+      'M月D日'
+    )
   }
 
   // 単位を追加
@@ -234,9 +245,11 @@ function editProfileData (profile) {
  * @param  {Array}  component プロフィールのコンポーネント
  * @return {Object}           バブル
  */
-function createBubble (profile, component) {
+function createBubble(profile, component) {
   const name = profile.名前.value
-  const subText = (profile.所属) ? `${profile.名前ルビ.value}・${profile.所属.value}` : profile.名前ルビ.value
+  const subText = profile.所属
+    ? `${profile.名前ルビ.value}・${profile.所属.value}`
+    : profile.名前ルビ.value
   const imageURL = getImageURLFromCache(profile.名前.value)
   const footer = createFooter(profile)
   const bubble = {
@@ -312,7 +325,7 @@ function createBubble (profile, component) {
  * @param  {String} name アイドル名
  * @return {String}      URL文字列
  */
-function getImageURLFromCache (name) {
+function getImageURLFromCache(name) {
   const noImage = 'https://arrow2nd.github.io/images/img/noimage.png'
   const fileName = imageURLCache[name]
 
@@ -328,7 +341,7 @@ function getImageURLFromCache (name) {
  * @param  {String} value 内容
  * @return {Object}       テキストコンポーネント
  */
-function createTextComponent (key, value) {
+function createTextComponent(key, value) {
   const contents = {
     type: 'box',
     layout: 'baseline',
@@ -361,8 +374,8 @@ function createTextComponent (key, value) {
  * @param  {Object} profile プロフィールデータ
  * @return {Array}          フッターのコンポーネント
  */
-function createFooter (profile) {
-  const color = (profile.カラー) ? profile.カラー.value : '#FF74B8'
+function createFooter(profile) {
+  const color = profile.カラー ? profile.カラー.value : '#FF74B8'
   const style = isWhitishColor(color) ? 'secondary' : 'primary'
   const footer = []
 
@@ -391,7 +404,9 @@ function createFooter (profile) {
     action: {
       type: 'uri',
       label: 'Googleで検索！',
-      uri: `http://www.google.co.jp/search?hl=ja&source=hp&q=${encodeURIComponent(`アイドルマスター ${profile.名前.value}`)}`
+      uri: `http://www.google.co.jp/search?hl=ja&source=hp&q=${encodeURIComponent(
+        `アイドルマスター ${profile.名前.value}`
+      )}`
     }
   })
 
@@ -405,7 +420,7 @@ function createFooter (profile) {
  * @param  {String} text  エラー内容
  * @return {Object}       flexMessage
  */
-function createErrorMessage (title, text) {
+function createErrorMessage(title, text) {
   const errMsg = {
     type: 'flex',
     altText: title,
@@ -442,9 +457,11 @@ function createErrorMessage (title, text) {
  * @param  {String} hexColor 16進数カラーコード
  * @return {Boolean}         白っぽい色かどうか
  */
-function isWhitishColor (hexColor) {
-  const hex = hexColor.match(/[0-9A-Fa-f]{2}/g).map(v => parseInt(v, 16))
-  const gs = Math.floor((hex[0] * 0.299 + hex[1] * 0.587 + hex[2] * 0.114) / 2.55)
+function isWhitishColor(hexColor) {
+  const hex = hexColor.match(/[0-9A-Fa-f]{2}/g).map((v) => parseInt(v, 16))
+  const gs = Math.floor(
+    (hex[0] * 0.299 + hex[1] * 0.587 + hex[2] * 0.114) / 2.55
+  )
   return gs > 65
 }
 
