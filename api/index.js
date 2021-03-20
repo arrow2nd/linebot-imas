@@ -1,7 +1,7 @@
 'use strict'
 const express = require('express')
 const line = require('@line/bot-sdk')
-const idol = require('./idol.js')
+const search = require('../src/script/search.js')
 require('dotenv').config()
 
 const PORT = process.env.PORT
@@ -13,18 +13,14 @@ const client = new line.Client(config)
 
 // ルーティング
 const app = express()
-app.get('/', (_req, res) => res.send("ζ*'ヮ')ζ＜GETですー！"))
+app.get('/', (_req, res) => res.send("ζ*'ヮ')ζ＜GETですー"))
 app.post('/hook/', line.middleware(config), async (req, res) => {
-  await Promise.all(req.body.events.map((e) => bot(e)))
+  await Promise.all(req.body.events.map((e) => main(e)))
   res.status(200).end()
 })
 
-/**
- * botメイン
- *
- * @param {Object} ev イベント
- */
-async function bot(ev) {
+// メイン
+async function main(ev) {
   let keyword = ''
 
   // イベントタイプで分岐
@@ -50,8 +46,8 @@ async function bot(ev) {
   }
 
   // 返信
-  const flexMsg = await idol.Search(keyword)
-  await client.replyMessage(ev.replyToken, flexMsg)
+  const flexMessage = await search(keyword)
+  await client.replyMessage(ev.replyToken, flexMessage)
 }
 
 // vercel
