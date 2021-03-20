@@ -4,6 +4,9 @@
   "description": "アイドルのプロフィールを検索するLINEBot",
   "main": "api/index.js",
   "license": "MIT",
+  "engines": {
+    "node": "14.x"
+  },
   "scripts": {
     "test": "node_modules/mocha/bin/mocha --timeout 5000",
     "cache": "node ./src/tools/create-cache.js"
