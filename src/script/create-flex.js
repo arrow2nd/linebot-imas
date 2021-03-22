@@ -144,11 +144,11 @@ function createTextComponent(key, value) {
         text: value,
         wrap: true,
         size: 'sm',
-        flex: 4,
+        flex: 5,
         color: '#666666'
       }
     ],
-    spacing: 'sm'
+    spacing: 'none'
   }
 
   return contents
