@@ -2,23 +2,19 @@
 const axios = require('axios')
 
 const birthQuery = (keyword) => `
-rdf:type ?type;
 schema:birthDate ?BD.
-FILTER(?type IN (imas:Idol,imas:Staff)).
-FILTER(regex(str(?BD),"${keyword}")).
-OPTIONAL{?data imas:nameKana ?名前ルビ.}
-OPTIONAL{?data imas:alternateNameKana ?名前ルビ.}
-OPTIONAL{?data imas:givenNameKana ?名前ルビ.}
+FILTER(regex(str(?BD), "${keyword}"))
+OPTIONAL{ ?d imas:nameKana ?名前ルビ }
+OPTIONAL{ ?d imas:givenNameKana ?名前ルビ }
+OPTIONAL{ ?d imas:alternateNameKana ?名前ルビ }
 `
 
 const nameQuery = (keyword) => `
-rdf:type ?type.
-FILTER(?type IN (imas:Idol,imas:Staff)).
-OPTIONAL{?data schema:name ?本名.}
-OPTIONAL{?data imas:nameKana ?名前ルビ.}
-OPTIONAL{?data imas:alternateNameKana ?名前ルビ.}
-OPTIONAL{?data imas:givenNameKana ?名前ルビ.}
-FILTER(CONTAINS(?名前,"${keyword}")||CONTAINS(?本名,"${keyword}")||CONTAINS(?名前ルビ,"${keyword}")).
+OPTIONAL{ ?d schema:name ?本名 }
+OPTIONAL{ ?d imas:nameKana ?名前ルビ }
+OPTIONAL{ ?d imas:givenNameKana ?名前ルビ }
+OPTIONAL{ ?d imas:alternateNameKana ?名前ルビ }
+FILTER(CONTAINS(?名前, "${keyword}") || CONTAINS(?本名, "${keyword}") || CONTAINS(?名前ルビ, "${keyword}"))
 `
 
 const query = (searchCriteria) => `
@@ -27,27 +23,47 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX imas: <https://sparql.crssnky.xyz/imasrdf/URIs/imas-schema.ttl#>
 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-SELECT DISTINCT ?名前 ?名前ルビ ?所属 ?性別 ?年齢 ?身長 ?体重 ?BWH ?誕生日 ?星座 ?血液型 ?利き手 ?出身地 (GROUP_CONCAT(DISTINCT ?hobby;separator=',') as ?趣味) (GROUP_CONCAT(DISTINCT ?favorite;separator=',') as ?好きなもの) ?説明 ?カラー ?CV ?URL
-WHERE {?data rdfs:label ?名前;
-${searchCriteria}
-OPTIONAL {?data imas:Title ?所属.}
-OPTIONAL {?data schema:gender ?性別.}
-OPTIONAL {?data foaf:age ?年齢.}
-OPTIONAL {?data schema:height ?身長.}
-OPTIONAL {?data schema:weight ?体重.}
-OPTIONAL {?data imas:Bust ?B; imas:Waist ?W; imas:Hip ?H. BIND(CONCAT(str(?B),"/",str(?W),"/",str(?H)) as ?BWH)}
-OPTIONAL {?data schema:birthDate ?誕生日.}
-OPTIONAL {?data imas:Constellation ?星座.}
-OPTIONAL {?data imas:BloodType ?血液型.}
-OPTIONAL {?data imas:Handedness ?利き手.}
-OPTIONAL {?data schema:birthPlace ?出身地.}
-OPTIONAL {?data imas:Hobby ?hobby.}
-OPTIONAL {?data imas:Favorite ?favorite.}
-OPTIONAL {?data schema:description ?説明.}
-OPTIONAL {?data imas:Color ?color. BIND(CONCAT("#",str(?color)) as ?カラー)}
-OPTIONAL {?data imas:cv ?CV. FILTER(lang(?CV)='ja').}
-OPTIONAL {?data imas:IdolListURL ?URL}
-} GROUP BY ?名前 ?名前ルビ ?所属 ?性別 ?年齢 ?身長 ?体重 ?BWH ?誕生日 ?星座 ?血液型 ?利き手 ?出身地 ?説明 ?カラー ?CV ?URL
+SELECT DISTINCT ?名前 ?名前ルビ ?所属 ?性別 ?年齢 ?身長 ?体重 ?BWH ?誕生日 ?星座 ?血液型 ?利き手 ?出身地 ?趣味 ?好きな物 ?特技 ?説明 ?カラー ?CV ?URL
+WHERE {
+  ?d rdf:type ?type.
+  FILTER(?type IN (imas:Idol, imas:Staff))
+  ?d rdfs:label ?名前;
+  ${searchCriteria}
+  OPTIONAL { ?d imas:Title ?所属 }
+  OPTIONAL { ?d schema:gender ?性別 }
+  OPTIONAL { ?d foaf:age ?年齢 }
+  OPTIONAL { ?d schema:height ?身長 }
+  OPTIONAL { ?d schema:weight ?体重 }
+  OPTIONAL {
+    ?d imas:Bust ?B; imas:Waist ?W; imas:Hip ?H.
+    BIND(CONCAT(str(?B), " / ", str(?W), " / ", str(?H)) as ?BWH)
+  }
+  OPTIONAL { ?d schema:birthDate ?誕生日 }
+  OPTIONAL { ?d imas:Constellation ?星座 }
+  OPTIONAL { ?d imas:BloodType ?血液型 }
+  OPTIONAL { ?d imas:Handedness ?利き手 }
+  OPTIONAL { ?d schema:birthPlace ?出身地 }
+  OPTIONAL {
+    SELECT ?d (GROUP_CONCAT(DISTINCT ?hobby; separator=" / ") AS ?趣味)
+    WHERE { ?d imas:Hobby ?hobby }
+    GROUP BY ?d
+  }
+  OPTIONAL {
+    SELECT ?d (GROUP_CONCAT(DISTINCT ?fav; separator=" / ") AS ?好きな物)
+    WHERE { ?d imas:Favorite ?fav }
+    GROUP BY ?d
+  }
+  OPTIONAL {
+    SELECT ?d (GROUP_CONCAT(DISTINCT ?talent; separator=" / ") AS ?特技)
+    WHERE { ?d imas:Talent ?talent }
+    GROUP BY ?d
+  }
+  OPTIONAL { ?d schema:description ?説明 }
+  OPTIONAL { ?d imas:Color ?color. BIND(CONCAT("#", str(?color)) as ?カラー) }
+  OPTIONAL { ?d imas:cv ?CV. FILTER(lang(?CV)="ja") }
+  OPTIONAL { ?d imas:IdolListURL ?URL }
+}
+ORDER BY ?名前
 LIMIT 5
 `
 
