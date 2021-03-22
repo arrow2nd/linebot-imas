@@ -10,11 +10,15 @@ main()
  */
 async function main() {
   const result = {}
-  const idolList = await getIdolData()
+  const idolList = await getIdolData().catch((err) => {
+    throw new Error(err)
+  })
 
   for (const e of idolList) {
     const name = e.name.value
-    const url = await getOGPImgURL(e.URL.value)
+    const url = await getOGPImgURL(e.URL.value).catch((err) => {
+      throw new Error(err)
+    })
     // URLからファイル名のみを取得
     result[name] = url.match(
       /^https:\/\/idollist\.idolmaster-official\.jp\/images\/character_main\/(.+)/
@@ -37,16 +41,26 @@ async function main() {
  * @return {Array} データ
  */
 async function getIdolData() {
-  const query =
-    'PREFIX imas: <https://sparql.crssnky.xyz/imasrdf/URIs/imas-schema.ttl#> PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT distinct ?name ?URL WHERE { ?data rdfs:label ?name. ?data imas:IdolListURL ?URL. }'
+  const query = `
+  PREFIX imas: <https://sparql.crssnky.xyz/imasrdf/URIs/imas-schema.ttl#>
+  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+  SELECT DISTINCT ?name ?URL
+  WHERE {
+    ?data rdfs:label ?name;
+    imas:IdolListURL ?URL.
+  }
+  `
   const url = `https://sparql.crssnky.xyz/spql/imas/query?output=json&query=${encodeURIComponent(
     query
   )}`
+
   try {
     const res = await axios.get(url)
     return res.data.results.bindings
   } catch (err) {
-    throw new Error(`${err.response.statusText} : ${err.response.status}`)
+    throw new Error(
+      `[Error] ${err.response.statusText} : ${err.response.status}`
+    )
   }
 }
 
@@ -67,6 +81,8 @@ async function getOGPImgURL(url) {
       .getAttribute('content')
     return img
   } catch (err) {
-    throw new Error(`${err.response.statusText} : ${err.response.status}`)
+    throw new Error(
+      `[Error] ${err.response.statusText} : ${err.response.status}`
+    )
   }
 }
