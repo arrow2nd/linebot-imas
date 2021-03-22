@@ -1,6 +1,7 @@
 # linebot-imas
 
 [![arrow2nd](https://circleci.com/gh/arrow2nd/linebot-imas.svg?style=shield)](https://circleci.com/gh/arrow2nd/linebot-imas/tree/master)
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat)](https://github.com/prettier/prettier)
 ![GitHub](https://img.shields.io/github/license/arrow2nd/linebot-imas)
 
 IDOLM@STERシリーズに登場するアイドルのプロフィールを検索できるLINEBotです。
@@ -17,7 +18,7 @@ IDOLM@STERシリーズに登場するアイドルのプロフィールを検索�
 
 **名前の一部**や**ひらがな**でも検索できます。
 
-![使い方](https://user-images.githubusercontent.com/44780846/93973164-b4f03780-fdae-11ea-999f-1d3fa40b95a6.png)
+![スクリーンショット](https://user-images.githubusercontent.com/44780846/111946755-78b05080-8b1f-11eb-9d0f-ecc9f7e33942.png)
 
 ## 誕生日検索
 **リッチメニューから行えるようになりました！**
