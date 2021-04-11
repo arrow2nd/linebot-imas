@@ -2,16 +2,15 @@
 const moment = require('moment-timezone')
 
 const convertData = {
-  series: {
-    CinderellaGirls: '346Pro (CinderellaGirls)',
-    '1st Vision': '765Pro (旧プロフィール)',
-    DearlyStars: '876Pro (DearlyStars)',
-    '315ProIdols': '315Pro (SideM)',
-    MillionStars: '765Pro (MillionLive!)',
-    '283Pro': '283Pro (ShinyColors)',
+  brand: {
+    '1stVision': '765Pro (IDOLM@STER)',
     '765AS': '765Pro (IDOLM@STER)',
-    '961ProIdols': '961Pro (IDOLM@STER)',
-    '1054Pro': '1054Pro (IDOLM@STER)'
+    DearlyStars: '876Pro (DearlyStars)',
+    MillionLive: '765Pro (MillionLive!)',
+    SideM: '315Pro (SideM)',
+    CinderellaGirls: '346Pro (CinderellaGirls)',
+    ShinyColors: '283Pro (ShinyColors)',
+    Other: 'Other'
   },
   gender: {
     male: '男性',
@@ -49,32 +48,29 @@ const convertData = {
  * @return {Object}         編集後のプロフィール
  */
 function convertProfile(profile) {
-  // シリーズ名
-  if (profile.所属) {
-    const title = convertData.series[profile.所属.value]
-    profile.所属.value = title || profile.所属.value
+  // 判読しやすい形に変換
+  if (profile.ブランド) {
+    const brand = convertData.brand[profile.ブランド.value]
+    profile.ブランド.value = brand || profile.ブランド.value
   }
 
-  // 性別
   if (profile.性別) {
-    const jp = convertData.gender[profile.性別.value]
-    profile.性別.value = jp || '不明'
+    const gender = convertData.gender[profile.性別.value]
+    profile.性別.value = gender || '不明'
   }
 
-  // 利き手
   if (profile.利き手) {
-    const jp = convertData.handedness[profile.利き手.value]
-    profile.利き手.value = jp || '不明'
+    const handedness = convertData.handedness[profile.利き手.value]
+    profile.利き手.value = handedness || '不明'
   }
 
-  // 誕生日のフォーマット
   if (profile.誕生日) {
     profile.誕生日.value = moment(profile.誕生日.value, '-MM-DD').format(
       'M月D日'
     )
   }
 
-  // 単位を追加
+  // 単位が必要なら追加
   for (let data of convertData.addUnit) {
     if (profile[data.key] && /[a-zA-Z0-9?]/.test(profile[data.key].value)) {
       profile[data.key].value += data.unit

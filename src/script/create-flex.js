@@ -20,7 +20,7 @@ function createMessage(data) {
     // プロフィールのコンポーネントを作成
     const component = []
     for (const key in convertedProfile) {
-      if (['名前', '名前ルビ', '所属', 'URL'].includes(key)) continue
+      if (['名前', '名前ルビ', 'ブランド', 'URL'].includes(key)) continue
       component.push(createTextComponent(key, profile[key].value))
     }
 
@@ -47,8 +47,8 @@ function createMessage(data) {
  * @return {Object}           バブル
  */
 function createBubble(profile, component) {
-  const subText = profile.所属
-    ? `${profile.名前ルビ.value}・${profile.所属.value}`
+  const subText = profile.ブランド
+    ? `${profile.名前ルビ.value}・${profile.ブランド.value}`
     : profile.名前ルビ.value
   const imageUrl = util.getImageUrl(profile.名前.value)
   const footer = createFooter(profile)
