@@ -56,7 +56,7 @@ describe('#getIdolProfile()', () => {
   describe('見つからなかったときのエラーメッセージ', () => {
     it('正しいメッセージオブジェクトが返せているか', async () => {
       const data = await search('test')
-      assert.strictEqual(data.altText, 'みつかりませんでした…')
+      assert.strictEqual(data.altText, 'みつかりませんでした')
     })
   })
 })
