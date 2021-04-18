@@ -190,7 +190,7 @@ function createFooter(profile) {
     offsetTop: '-5px',
     action: {
       type: 'uri',
-      label: 'Googleで検索！',
+      label: 'Googleで検索する',
       uri: `http://www.google.co.jp/search?hl=ja&source=hp&q=${encodeURIComponent(
         `アイドルマスター ${profile.名前.value}`
       )}`
