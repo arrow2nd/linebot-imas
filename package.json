@@ -1,6 +1,6 @@
 {
   "name": "linebot-imas",
-  "version": "1.7.3",
+  "version": "1.7.4",
   "description": "アイドルのプロフィールを検索するLINEBot",
   "main": "api/index.js",
   "license": "MIT",
@@ -9,7 +9,7 @@
   },
   "scripts": {
     "test": "node_modules/mocha/bin/mocha --timeout 5000",
-    "cache": "node ./src/tools/create-cache.js"
+    "cache": "node ./src/tool/create-cache.js"
   },
   "dependencies": {
     "@line/bot-sdk": "^7.2.0",
@@ -19,9 +19,9 @@
     "moment-timezone": "^0.5.33"
   },
   "devDependencies": {
-    "eslint": "^7.22.0",
-    "eslint-config-prettier": "^8.1.0",
-    "jsdom": "^16.5.1",
+    "eslint": "^7.24.0",
+    "eslint-config-prettier": "^8.2.0",
+    "jsdom": "^16.5.3",
     "mocha": "^8.3.2",
     "mocha-junit-reporter": "^2.0.0",
     "prettier": "^2.2.1"

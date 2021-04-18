@@ -23,13 +23,13 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX imas: <https://sparql.crssnky.xyz/imasrdf/URIs/imas-schema.ttl#>
 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-SELECT DISTINCT ?名前 ?名前ルビ ?所属 ?性別 ?年齢 ?身長 ?体重 ?BWH ?誕生日 ?星座 ?血液型 ?利き手 ?出身地 ?趣味 ?好きな物 ?特技 ?説明 ?カラー ?CV ?URL
+SELECT DISTINCT ?名前 ?名前ルビ ?ブランド ?性別 ?年齢 ?身長 ?体重 ?BWH ?誕生日 ?星座 ?血液型 ?利き手 ?出身地 ?趣味 ?好きな物 ?特技 ?紹介文 ?CV ?カラー ?URL
 WHERE {
   ?d rdf:type ?type.
   FILTER(?type IN (imas:Idol, imas:Staff))
   ?d rdfs:label ?名前;
   ${searchCriteria}
-  OPTIONAL { ?d imas:Title ?所属 }
+  OPTIONAL { ?d imas:Brand ?ブランド }
   OPTIONAL { ?d schema:gender ?性別 }
   OPTIONAL { ?d foaf:age ?年齢 }
   OPTIONAL { ?d schema:height ?身長 }
@@ -58,9 +58,9 @@ WHERE {
     WHERE { ?d imas:Talent ?talent }
     GROUP BY ?d
   }
-  OPTIONAL { ?d schema:description ?説明 }
-  OPTIONAL { ?d imas:Color ?color. BIND(CONCAT("#", str(?color)) as ?カラー) }
+  OPTIONAL { ?d schema:description ?紹介文 }
   OPTIONAL { ?d imas:cv ?CV. FILTER(lang(?CV)="ja") }
+  OPTIONAL { ?d imas:Color ?color. BIND(CONCAT("#", str(?color)) as ?カラー) }
   OPTIONAL { ?d imas:IdolListURL ?URL }
 }
 ORDER BY ?名前

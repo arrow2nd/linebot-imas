@@ -5,9 +5,6 @@ const jsdom = require('jsdom')
 
 main()
 
-/**
- * メイン
- */
 async function main() {
   const result = {}
   const idolList = await getIdolData().catch((err) => {
@@ -19,11 +16,13 @@ async function main() {
     const url = await getOGPImgURL(e.URL.value).catch((err) => {
       throw new Error(err)
     })
+
     // URLからファイル名のみを取得
     result[name] = url.match(
       /^https:\/\/idollist\.idolmaster-official\.jp\/images\/character_main\/(.+)/
     )[1]
     console.log(`[OK] ${name} -> ${result[name]}`)
+
     // 2秒待機
     await new Promise((resolve) => setTimeout(resolve, 2000))
   }
@@ -32,6 +31,7 @@ async function main() {
     './src/data/image-filename.json',
     JSON.stringify(result, null, '\t')
   )
+
   console.log('[success!]')
 }
 
@@ -79,6 +79,7 @@ async function getOGPImgURL(url) {
       .filter((e) => e.hasAttribute('property'))
       .find((v) => v.getAttribute('property').trim().includes('og:image'))
       .getAttribute('content')
+
     return img
   } catch (err) {
     throw new Error(

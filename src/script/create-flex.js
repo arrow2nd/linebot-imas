@@ -1,6 +1,6 @@
 'use strict'
-const convertProfile = require('./convert-profile')
-const util = require('./util.js')
+const { convertProfile, getBrandName, getImageColor } = require('./convert')
+const { getImageUrl, isWhitishColor } = require('./util')
 
 /**
  * flexMessageを作成
@@ -11,16 +11,17 @@ const util = require('./util.js')
 function createMessage(data) {
   // データが無い場合はエラー
   if (!data.length) {
-    return createErrorMessage('みつかりませんでした…', 'ごめんなさい！')
+    return createErrorMessage('みつかりませんでした', 'ごめんなさい…！')
   }
 
   // カルーセル作成
   const carousel = data.map((profile) => {
     const convertedProfile = convertProfile(profile)
+
     // プロフィールのコンポーネントを作成
     const component = []
     for (const key in convertedProfile) {
-      if (['名前', '名前ルビ', '所属', 'URL'].includes(key)) continue
+      if (['名前', '名前ルビ', 'ブランド', 'URL'].includes(key)) continue
       component.push(createTextComponent(key, profile[key].value))
     }
 
@@ -29,7 +30,7 @@ function createMessage(data) {
 
   const flexMessage = {
     type: 'flex',
-    altText: `${data.length}人みつかりました！`,
+    altText: `${data.length}人 みつかりました！`,
     contents: {
       type: 'carousel',
       contents: carousel
@@ -47,10 +48,11 @@ function createMessage(data) {
  * @return {Object}           バブル
  */
 function createBubble(profile, component) {
-  const subText = profile.所属
-    ? `${profile.名前ルビ.value}・${profile.所属.value}`
-    : profile.名前ルビ.value
-  const imageUrl = util.getImageUrl(profile.名前.value)
+  const brandName = profile.ブランド
+    ? getBrandName(profile.ブランド.value)
+    : '不明'
+  const subText = `${profile.名前ルビ.value}・${brandName}`
+  const imageUrl = getImageUrl(profile.名前.value)
   const footer = createFooter(profile)
 
   const bubble = {
@@ -161,8 +163,8 @@ function createTextComponent(key, value) {
  * @return {Array}          フッターのコンポーネント
  */
 function createFooter(profile) {
-  const color = profile.カラー ? profile.カラー.value : '#FF74B8'
-  const style = util.isWhitishColor(color) ? 'secondary' : 'primary'
+  const color = getImageColor(profile)
+  const style = isWhitishColor(color) ? 'secondary' : 'primary'
   const footer = []
 
   // アイドル名鑑
@@ -174,7 +176,7 @@ function createFooter(profile) {
       offsetTop: '-10px',
       action: {
         type: 'uri',
-        label: 'アイドル名鑑を開く！',
+        label: 'アイドル名鑑でみる',
         uri: profile.URL.value
       }
     })
@@ -189,7 +191,7 @@ function createFooter(profile) {
     offsetTop: '-5px',
     action: {
       type: 'uri',
-      label: 'Googleで検索！',
+      label: 'Googleで検索する',
       uri: `http://www.google.co.jp/search?hl=ja&source=hp&q=${encodeURIComponent(
         `アイドルマスター ${profile.名前.value}`
       )}`
