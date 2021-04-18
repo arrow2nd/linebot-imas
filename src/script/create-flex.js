@@ -1,6 +1,6 @@
 'use strict'
-const convertProfile = require('./convert-profile')
-const util = require('./util.js')
+const { convertProfile, getBrandName, getImageColor } = require('./convert')
+const { getImageUrl, isWhitishColor } = require('./util')
 
 /**
  * flexMessageを作成
@@ -48,10 +48,11 @@ function createMessage(data) {
  * @return {Object}           バブル
  */
 function createBubble(profile, component) {
-  const subText = profile.ブランド
-    ? `${profile.名前ルビ.value}・${profile.ブランド.value}`
-    : profile.名前ルビ.value
-  const imageUrl = util.getImageUrl(profile.名前.value)
+  const brandName = profile.ブランド
+    ? getBrandName(profile.ブランド.value)
+    : '不明'
+  const subText = `${profile.名前ルビ.value}・${brandName}`
+  const imageUrl = getImageUrl(profile.名前.value)
   const footer = createFooter(profile)
 
   const bubble = {
@@ -162,8 +163,8 @@ function createTextComponent(key, value) {
  * @return {Array}          フッターのコンポーネント
  */
 function createFooter(profile) {
-  const color = profile.カラー ? profile.カラー.value : '#FF74B8'
-  const style = util.isWhitishColor(color) ? 'secondary' : 'primary'
+  const color = getImageColor(profile)
+  const style = isWhitishColor(color) ? 'secondary' : 'primary'
   const footer = []
 
   // アイドル名鑑
