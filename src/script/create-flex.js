@@ -11,12 +11,13 @@ const util = require('./util.js')
 function createMessage(data) {
   // データが無い場合はエラー
   if (!data.length) {
-    return createErrorMessage('みつかりませんでした…', 'ごめんなさい！')
+    return createErrorMessage('みつかりませんでした', 'ごめんなさい…！')
   }
 
   // カルーセル作成
   const carousel = data.map((profile) => {
     const convertedProfile = convertProfile(profile)
+
     // プロフィールのコンポーネントを作成
     const component = []
     for (const key in convertedProfile) {
@@ -29,7 +30,7 @@ function createMessage(data) {
 
   const flexMessage = {
     type: 'flex',
-    altText: `${data.length}人みつかりました！`,
+    altText: `${data.length}人 みつかりました！`,
     contents: {
       type: 'carousel',
       contents: carousel
@@ -174,7 +175,7 @@ function createFooter(profile) {
       offsetTop: '-10px',
       action: {
         type: 'uri',
-        label: 'アイドル名鑑を開く！',
+        label: 'アイドル名鑑でみる',
         uri: profile.URL.value
       }
     })

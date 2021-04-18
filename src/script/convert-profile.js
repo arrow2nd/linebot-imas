@@ -3,13 +3,13 @@ const moment = require('moment-timezone')
 
 const convertData = {
   brand: {
-    '1stVision': '765Pro (IDOLM@STER)',
-    '765AS': '765Pro (IDOLM@STER)',
-    DearlyStars: '876Pro (DearlyStars)',
-    MillionLive: '765Pro (MillionLive!)',
-    SideM: '315Pro (SideM)',
-    CinderellaGirls: '346Pro (CinderellaGirls)',
-    ShinyColors: '283Pro (ShinyColors)',
+    '1stVision': 'THE IDOLM@STER (旧)',
+    '765AS': 'THE IDOLM@STER',
+    DearlyStars: 'Dearly Stars',
+    MillionLive: 'MILLION LIVE!',
+    SideM: 'SideM',
+    CinderellaGirls: 'CINDERELLA GIRLS',
+    ShinyColors: 'SHINY COLORS',
     Other: 'Other'
   },
   gender: {
@@ -48,10 +48,10 @@ const convertData = {
  * @return {Object}         編集後のプロフィール
  */
 function convertProfile(profile) {
-  // 判読しやすい形に変換
+  // わかりやすい単語に変換
   if (profile.ブランド) {
     const brand = convertData.brand[profile.ブランド.value]
-    profile.ブランド.value = brand || profile.ブランド.value
+    profile.ブランド.value = brand || '不明なブランド'
   }
 
   if (profile.性別) {
