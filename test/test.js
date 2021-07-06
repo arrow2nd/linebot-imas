@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 'use strict'
 const assert = require('assert')
-const search = require('../src/script/search.js')
+const { search } = require('../src/script/search')
 
 /**
  * メッセージオブジェクトのテスト
