@@ -71,9 +71,9 @@ LIMIT 5
  * imasparqlからプロフィールを取得
  *
  * @param  {String} keyword 検索文字列
- * @return {Object}         検索結果
+ * @return 検索結果
  */
-async function getIdolProfile(keyword) {
+async function fetchIdolProfile(keyword) {
   // MM-DD形式なら誕生日検索、それ以外なら通常検索
   const searchCriteria = /^\d{1,2}-\d{1,2}/.test(keyword)
     ? birthQuery(keyword)
@@ -88,6 +88,7 @@ async function getIdolProfile(keyword) {
     if (!res.data.results) {
       throw new Error('[Error] データがありません')
     }
+
     return res.data.results.bindings
   } catch (err) {
     throw new Error(
@@ -96,4 +97,4 @@ async function getIdolProfile(keyword) {
   }
 }
 
-module.exports = getIdolProfile
+module.exports = { fetchIdolProfile }

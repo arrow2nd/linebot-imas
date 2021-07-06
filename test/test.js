@@ -7,8 +7,8 @@ const search = require('../src/script/search.js')
  * メッセージオブジェクトのテスト
  *
  * @param {String} keyword 検索キーワード
- * @param {String} cName   期待されるアイドル名
- * @param {String} cKana   期待されるアイドル読みがな
+ * @param {String} cName 期待されるアイドル名
+ * @param {String} cKana 期待されるアイドル読みがな
  */
 function messageTest(keyword, cName, cKana) {
   let data = {}
@@ -49,8 +49,12 @@ describe('#getIdolProfile()', () => {
     messageTest('七草はづき', '七草はづき', 'ななくさはづき')
   })
 
-  describe('日付指定での誕生日検索（4月19日）', () => {
-    messageTest('4月19日', '白菊ほたる', 'しらぎくほたる')
+  describe('日付指定での誕生日検索（4/19）', () => {
+    messageTest('4/19', '白菊ほたる', 'しらぎくほたる')
+  })
+
+  describe('日付指定での誕生日検索（2021-01-04）', () => {
+    messageTest('2021-01-04', '芹沢あさひ', 'せりざわあさひ')
   })
 
   describe('見つからなかったときのエラーメッセージ', () => {
