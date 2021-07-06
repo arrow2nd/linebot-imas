@@ -53,10 +53,6 @@ describe('#getIdolProfile()', () => {
     messageTest('4/19', '白菊ほたる', 'しらぎくほたる')
   })
 
-  describe('日付指定での誕生日検索（2021-01-04）', () => {
-    messageTest('2021-01-04', '芹沢あさひ', 'せりざわあさひ')
-  })
-
   describe('見つからなかったときのエラーメッセージ', () => {
     it('正しいメッセージオブジェクトが返せているか', async () => {
       const data = await search('test')
