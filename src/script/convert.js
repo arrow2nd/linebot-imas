@@ -1,12 +1,15 @@
 'use strict'
-const moment = require('moment-timezone')
+const dayjs = require('dayjs')
+dayjs.extend(require('dayjs/plugin/timezone'))
+dayjs.tz.setDefault('Asia/Tokyo')
+
 const convertData = require('../data/convert-data.json')
 
 /**
  * プロフィールデータを編集
  *
- * @param  {Object} profile プロフィール
- * @return {Object}         編集後のプロフィール
+ * @param {Object} profile プロフィールデータ
+ * @return 編集したプロフィールデータ
  */
 function convertProfile(profile) {
   // 日本語に変換
@@ -21,7 +24,7 @@ function convertProfile(profile) {
   }
 
   if (profile.誕生日) {
-    profile.誕生日.value = moment(profile.誕生日.value, '-MM-DD').format(
+    profile.誕生日.value = dayjs(profile.誕生日.value, '-MM-DD').format(
       'M月D日'
     )
   }
@@ -37,24 +40,24 @@ function convertProfile(profile) {
 }
 
 /**
- * ブランド名を取得
+ * ブランド名を変換
  *
- * @param {String} brandName 生のブランド名
- * @returns 読みやすい形式のブランド名
+ * @param {String} brandName ブランド名（データそのまま）
+ * @returns 読みやすい形式に変換したブランド名
  */
-function getBrandName(brandName) {
+function convertBrandName(brandName) {
   if (!brandName) return '不明'
 
   return convertData.brand[brandName].name
 }
 
 /**
- * キャラのイメージカラーを取得
+ * アイドルのイメージカラーを取得
  *
  * @param {Object} profile プロフィールデータ
- * @returns 対応したイメージカラー
+ * @return アイドルのイメージカラー
  */
-function getImageColor(profile) {
+function getIdolColor(profile) {
   if (profile.カラー) return profile.カラー.value
 
   // 固有のイメージカラーが無いなら、ブランドカラーを返す
@@ -63,6 +66,6 @@ function getImageColor(profile) {
 
 module.exports = {
   convertProfile,
-  getBrandName,
-  getImageColor
+  convertBrandName,
+  getIdolColor
 }
