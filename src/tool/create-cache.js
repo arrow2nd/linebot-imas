@@ -7,13 +7,13 @@ main()
 
 async function main() {
   const result = {}
-  const idolList = await getIdolData().catch((err) => {
+  const idolList = await fetchIdolData().catch((err) => {
     throw new Error(err)
   })
 
   for (const e of idolList) {
     const name = e.name.value
-    const url = await getOGPImgURL(e.URL.value).catch((err) => {
+    const url = await fetchOgpImageUrl(e.URL.value).catch((err) => {
       throw new Error(err)
     })
 
@@ -38,9 +38,9 @@ async function main() {
 /**
  * アイドル名鑑のURLを持つアイドルを取得
  *
- * @return {Array} データ
+ * @return 検索結果
  */
-async function getIdolData() {
+async function fetchIdolData() {
   const query = `
   PREFIX imas: <https://sparql.crssnky.xyz/imasrdf/URIs/imas-schema.ttl#>
   PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -70,10 +70,11 @@ async function getIdolData() {
  * @param  {String} url URL
  * @return {String}     OGP画像のURL
  */
-async function getOGPImgURL(url) {
+async function fetchOgpImageUrl(url) {
   try {
     const res = await axios.get(url)
     const dom = new jsdom.JSDOM(res.data)
+
     const meta = dom.window.document.querySelectorAll('head > meta')
     const img = Array.from(meta)
       .filter((e) => e.hasAttribute('property'))

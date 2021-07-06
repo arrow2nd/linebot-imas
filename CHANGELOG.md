@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+## [1.8.0] - 2021-07-06
+
+### Changed
+
+- moment.js を day.js に置換
+
+### Removed
+
+- 「M 月 D 日」形式での誕生日検索を廃止
+
 ## [1.7.4] - 2021-04-18
 
 ### Added

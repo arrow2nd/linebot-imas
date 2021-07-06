@@ -1,19 +1,22 @@
 'use strict'
-const moment = require('moment-timezone')
-const getIdolProfile = require('./get-idol-profile')
+const dayjs = require('dayjs')
+dayjs.extend(require('dayjs/plugin/timezone'))
+dayjs.tz.setDefault('Asia/Tokyo')
+
+const { fetchIdolProfile } = require('./fetch-idol-profile')
 const { createMessage, createErrorMessage } = require('./create-flex')
 
 /**
  * プロフィールを検索
  *
- * @param  {String} text メッセージ
- * @return {Object}      flexMessage
+ * @param {String} text メッセージテキスト
+ * @return FlexMessageオブジェクト
  */
 async function search(text) {
   const keyword = createSearchKeyword(text)
 
   try {
-    const data = await getIdolProfile(keyword)
+    const data = await fetchIdolProfile(keyword)
     return createMessage(data)
   } catch (err) {
     console.error(err)
@@ -25,10 +28,10 @@ async function search(text) {
 }
 
 /**
- * 検索文字列を作成
+ * 検索キーワードを作成
  *
- * @param  {String} text メッセージ
- * @return {String}      検索文字列
+ * @param {String} text メッセージテキスト
+ * @return 検索キーワード
  */
 function createSearchKeyword(text) {
   const editedText = text.trim().replace(/[\n\s]/g, '')
@@ -36,29 +39,28 @@ function createSearchKeyword(text) {
   // 誕生日検索かチェック
   if (/誕生日/.test(editedText)) {
     let addNum = 0
+
     if (/明日/.test(editedText)) {
       addNum = 1
     } else if (/昨日/.test(editedText)) {
       addNum = -1
     }
 
-    const birthDate = moment()
-      .add(addNum, 'days')
-      .tz('Asia/Tokyo')
-      .format('MM-DD')
-
-    return birthDate
+    // 日付を返す
+    return dayjs().add(addNum, 'd').format('MM-DD')
   }
 
   // メッセージが日付かチェック
-  for (const format of ['YYYY-MM-DD', 'M月D日']) {
-    const date = moment(editedText, format, true)
-    if (date.isValid()) {
-      return date.format('MM-DD')
+  for (const format of ['YYYY-MM-DD', 'M-D']) {
+    const day = dayjs(editedText, format)
+
+    if (day.isValid()) {
+      return day.format('MM-DD')
     }
   }
 
+  // テキストを返す
   return editedText
 }
 
-module.exports = search
+module.exports = { search }

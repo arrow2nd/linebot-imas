@@ -1,21 +1,21 @@
 'use strict'
-const { convertProfile, getBrandName, getImageColor } = require('./convert')
+const { convertProfile, convertBrandName, getIdolColor } = require('./convert')
 const { getImageUrl, isWhitishColor } = require('./util')
 
 /**
  * flexMessageを作成
  *
- * @param  {Object} data 検索結果
- * @return {Object}      flexMessage
+ * @param {Array} results 検索結果
+ * @return FlexMessageオブジェクト
  */
-function createMessage(data) {
+function createMessage(results) {
   // データが無い場合はエラー
-  if (!data.length) {
+  if (!results.length) {
     return createErrorMessage('みつかりませんでした', 'ごめんなさい…！')
   }
 
   // カルーセル作成
-  const carousel = data.map((profile) => {
+  const carousel = results.map((profile) => {
     const convertedProfile = convertProfile(profile)
 
     // プロフィールのコンポーネントを作成
@@ -30,7 +30,7 @@ function createMessage(data) {
 
   const flexMessage = {
     type: 'flex',
-    altText: `${data.length}人 みつかりました！`,
+    altText: `${results.length}人 みつかりました！`,
     contents: {
       type: 'carousel',
       contents: carousel
@@ -43,13 +43,13 @@ function createMessage(data) {
 /**
  * バブルを作成
  *
- * @param  {Object} profile   プロフィールデータ
- * @param  {Array}  component プロフィールのコンポーネント
- * @return {Object}           バブル
+ * @param {Object} profile プロフィールデータ
+ * @param {Array}  component プロフィールのコンポーネント
+ * @return バブルコンポーネント
  */
 function createBubble(profile, component) {
   const brandName = profile.ブランド
-    ? getBrandName(profile.ブランド.value)
+    ? convertBrandName(profile.ブランド.value)
     : '不明'
   const subText = `${profile.名前ルビ.value}・${brandName}`
   const imageUrl = getImageUrl(profile.名前.value)
@@ -125,9 +125,9 @@ function createBubble(profile, component) {
 /**
  * テキストコンポーネントを作成
  *
- * @param  {String} key   項目名
- * @param  {String} value 内容
- * @return {Object}       テキストコンポーネント
+ * @param {String} key 項目名
+ * @param {String} value 内容
+ * @return テキストコンポーネント
  */
 function createTextComponent(key, value) {
   const contents = {
@@ -159,11 +159,11 @@ function createTextComponent(key, value) {
 /**
  * フッターを作成
  *
- * @param  {Object} profile プロフィールデータ
- * @return {Array}          フッターのコンポーネント
+ * @param {Object} profile プロフィールデータ
+ * @return フッターコンポーネント
  */
 function createFooter(profile) {
-  const color = getImageColor(profile)
+  const color = getIdolColor(profile)
   const style = isWhitishColor(color) ? 'secondary' : 'primary'
   const footer = []
 
@@ -204,9 +204,9 @@ function createFooter(profile) {
 /**
  * エラーメッセージを作成
  *
- * @param  {String} title タイトル
- * @param  {String} text  エラー内容
- * @return {Object}       flexMessage
+ * @param {String} title タイトル
+ * @param {String} text エラー内容
+ * @return FlexMessageオブジェクト
  */
 function createErrorMessage(title, text) {
   const errorMessage = {
