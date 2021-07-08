@@ -1,5 +1,6 @@
 'use strict'
 const dayjs = require('dayjs')
+dayjs.extend(require('dayjs/plugin/utc'))
 dayjs.extend(require('dayjs/plugin/timezone'))
 dayjs.tz.setDefault('Asia/Tokyo')
 
@@ -47,12 +48,12 @@ function createSearchKeyword(text) {
     }
 
     // 日付を返す
-    return dayjs().add(addNum, 'd').format('MM-DD')
+    return dayjs.tz().add(addNum, 'd').format('MM-DD')
   }
 
   // メッセージが日付かチェック
   for (const format of ['YYYY-MM-DD', 'M-D']) {
-    const day = dayjs(editedText, format)
+    const day = dayjs(editedText, format).tz()
 
     if (day.isValid()) {
       return day.format('MM-DD')

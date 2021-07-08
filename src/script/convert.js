@@ -1,8 +1,5 @@
 'use strict'
 const dayjs = require('dayjs')
-dayjs.extend(require('dayjs/plugin/timezone'))
-dayjs.tz.setDefault('Asia/Tokyo')
-
 const convertData = require('../data/convert-data.json')
 
 /**
@@ -43,7 +40,7 @@ function convertProfile(profile) {
  * ブランド名を変換
  *
  * @param {String} brandName ブランド名（データそのまま）
- * @returns 読みやすい形式に変換したブランド名
+ * @return 読みやすい形式に変換したブランド名
  */
 function convertBrandName(brandName) {
   if (!brandName) return '不明'
