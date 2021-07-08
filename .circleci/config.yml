@@ -16,7 +16,7 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
       - run: mkdir junit
       - run:
-          command: node_modules/.bin/mocha test --timeout 5000 --reporter mocha-junit-reporter
+          command: node_modules/.bin/mocha test --timeout 5000 --reporter mocha-junit-reporter ./src/test/test.js
           environment:
             MOCHA_FILE: ./junit/test-results.xml
           when: always
