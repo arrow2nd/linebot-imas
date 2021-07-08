@@ -44,10 +44,10 @@ function createMessage(results) {
  * バブルを作成
  *
  * @param {Object} profile プロフィールデータ
- * @param {Array}  component プロフィールのコンポーネント
+ * @param {Array} components プロフィールのコンポーネント
  * @return バブルコンポーネント
  */
-function createBubble(profile, component) {
+function createBubble(profile, components) {
   const brandName = profile.ブランド
     ? convertBrandName(profile.ブランド.value)
     : '不明'
@@ -103,7 +103,7 @@ function createBubble(profile, component) {
         {
           type: 'box',
           layout: 'vertical',
-          contents: component,
+          contents: components,
           paddingStart: '15px',
           paddingTop: '15px',
           paddingBottom: '10px',
