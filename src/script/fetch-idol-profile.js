@@ -23,7 +23,7 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX imas: <https://sparql.crssnky.xyz/imasrdf/URIs/imas-schema.ttl#>
 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-SELECT DISTINCT ?名前 ?名前ルビ ?ブランド ?性別 ?年齢 ?身長 ?体重 ?BWH ?誕生日 ?星座 ?血液型 ?利き手 ?出身地 ?趣味 ?好きな物 ?特技 ?紹介文 ?CV ?カラー ?URL
+SELECT DISTINCT ?名前 ?名前ルビ ?ブランド ?性別 ?年齢 ?学年 ?身長 ?体重 ?BWH ?誕生日 ?星座 ?血液型 ?利き手 ?出身地 ?趣味 ?好きな物 ?特技 ?紹介文 ?CV ?カラー ?URL
 WHERE {
   ?d rdf:type ?type.
   FILTER(?type IN (imas:Idol, imas:Staff))
@@ -32,6 +32,7 @@ WHERE {
   OPTIONAL { ?d imas:Brand ?ブランド }
   OPTIONAL { ?d schema:gender ?性別 }
   OPTIONAL { ?d foaf:age ?年齢 }
+  OPTIONAL { ?d imas:SchoolGrade ?学年 }
   OPTIONAL { ?d schema:height ?身長 }
   OPTIONAL { ?d schema:weight ?体重 }
   OPTIONAL {
