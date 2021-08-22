@@ -11,7 +11,7 @@ const { createMessage, createErrorMessage } = require('./create-flex')
  * プロフィールを検索
  *
  * @param {String} text メッセージテキスト
- * @return FlexMessageオブジェクト
+ * @returns FlexMessageオブジェクト
  */
 async function search(text) {
   const keyword = createSearchKeyword(text)
@@ -32,18 +32,18 @@ async function search(text) {
  * 検索キーワードを作成
  *
  * @param {String} text メッセージテキスト
- * @return 検索キーワード
+ * @returns 検索キーワード
  */
 function createSearchKeyword(text) {
-  const editedText = text.trim().replace(/[\n\s]/g, '')
+  const trimedText = text.trim()
 
   // 誕生日検索かチェック
-  if (/誕生日/.test(editedText)) {
+  if (/誕生日/.test(trimedText)) {
     let addNum = 0
 
-    if (/明日/.test(editedText)) {
+    if (/明日/.test(trimedText)) {
       addNum = 1
-    } else if (/昨日/.test(editedText)) {
+    } else if (/昨日/.test(trimedText)) {
       addNum = -1
     }
 
@@ -53,15 +53,13 @@ function createSearchKeyword(text) {
 
   // メッセージが日付かチェック
   for (const format of ['YYYY-MM-DD', 'M-D']) {
-    const day = dayjs(editedText, format).tz()
-
+    const day = dayjs(trimedText, format).tz()
     if (day.isValid()) {
       return day.format('MM-DD')
     }
   }
 
-  // テキストを返す
-  return editedText
+  return trimedText
 }
 
 module.exports = { search }

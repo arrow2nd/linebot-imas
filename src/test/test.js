@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 'use strict'
 const assert = require('assert')
-const { search } = require('../script/search')
+const { search } = require('../scripts/search')
 
 /**
  * メッセージオブジェクトのテスト
@@ -51,6 +51,13 @@ describe('#getIdolProfile()', () => {
 
   describe('日付指定での誕生日検索（4/19）', () => {
     messageTest('4/19', '白菊ほたる', 'しらぎくほたる')
+  })
+
+  describe('複数アイドルの同時検索', () => {
+    it('正しい件数が返ってきているか', async () => {
+      const data = await search('芹沢あさひ　黛冬優子')
+      assert.strictEqual(data.contents.contents.length, 2)
+    })
   })
 
   describe('見つからなかったときのエラーメッセージ', () => {

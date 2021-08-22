@@ -1,12 +1,12 @@
 'use strict'
 const dayjs = require('dayjs')
-const convertData = require('../data/convert-data.json')
+const convertData = require('../data/convert.json')
 
 /**
  * プロフィールデータを編集
  *
  * @param {Object} profile プロフィールデータ
- * @return 編集したプロフィールデータ
+ * @returns 編集したプロフィールデータ
  */
 function convertProfile(profile) {
   // 日本語に変換
@@ -40,7 +40,7 @@ function convertProfile(profile) {
  * ブランド名を変換
  *
  * @param {String} brandName ブランド名（データそのまま）
- * @return 読みやすい形式に変換したブランド名
+ * @returns 読みやすい形式に変換したブランド名
  */
 function convertBrandName(brandName) {
   if (!brandName) return '不明'
@@ -52,7 +52,7 @@ function convertBrandName(brandName) {
  * アイドルのイメージカラーを取得
  *
  * @param {Object} profile プロフィールデータ
- * @return アイドルのイメージカラー
+ * @returns アイドルのイメージカラー
  */
 function getIdolColor(profile) {
   if (profile.カラー) return profile.カラー.value

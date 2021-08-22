@@ -1,9 +1,10 @@
 'use strict'
 const axios = require('axios')
+const { escapeRegExp } = require('./util')
 
 const birthQuery = (keyword) => `
 schema:birthDate ?BD.
-FILTER(regex(str(?BD), "${keyword}"))
+FILTER REGEX(STR(?BD), "${keyword}")
 OPTIONAL{ ?d imas:nameKana ?名前ルビ }
 OPTIONAL{ ?d imas:givenNameKana ?名前ルビ }
 OPTIONAL{ ?d imas:alternateNameKana ?名前ルビ }
@@ -14,8 +15,13 @@ OPTIONAL{ ?d schema:name ?本名 }
 OPTIONAL{ ?d imas:nameKana ?名前ルビ }
 OPTIONAL{ ?d imas:givenNameKana ?名前ルビ }
 OPTIONAL{ ?d imas:alternateNameKana ?名前ルビ }
-FILTER(CONTAINS(?名前, "${keyword}") || CONTAINS(?本名, "${keyword}") || CONTAINS(?名前ルビ, "${keyword}"))
+FILTER(REGEX(?名前, "${keyword}") || REGEX(?本名, "${keyword}") || REGEX(?名前ルビ, "${keyword}"))
 `
+
+const compareQuery = (keywords) => {
+  const regex = keywords.join('|')
+  return nameQuery(regex)
+}
 
 const query = (searchCriteria) => `
 PREFIX schema: <http://schema.org/>
@@ -72,13 +78,22 @@ LIMIT 5
  * imasparqlからプロフィールを取得
  *
  * @param  {String} keyword 検索文字列
- * @return 検索結果
+ * @returns 検索結果
  */
 async function fetchIdolProfile(keyword) {
-  // MM-DD形式なら誕生日検索、それ以外なら通常検索
-  const searchCriteria = /^\d{1,2}-\d{1,2}/.test(keyword)
-    ? birthQuery(keyword)
-    : nameQuery(keyword)
+  const splited = keyword.split(/[\n\s]/).map((e) => escapeRegExp(e))
+
+  let searchCriteria = ''
+
+  if (splited.length > 1) {
+    // 複数アイドルの検索
+    searchCriteria = compareQuery(splited)
+  } else {
+    // MM-DD形式なら誕生日検索、それ以外なら通常検索
+    searchCriteria = /^\d{1,2}-\d{1,2}/.test(keyword)
+      ? birthQuery(splited[0])
+      : nameQuery(splited[0])
+  }
 
   const url = `https://sparql.crssnky.xyz/spql/imas/query?output=json&query=${encodeURIComponent(
     query(searchCriteria)
@@ -93,7 +108,7 @@ async function fetchIdolProfile(keyword) {
     return res.data.results.bindings
   } catch (err) {
     throw new Error(
-      `[Error] im@sparqlにアクセスできません (${err.response.statusText} : ${err.response.status})`
+      `[Error] im@sparqlにアクセスできません\n[Msg] ${err.response.statusText}\n[Status] ${err.response.status})`
     )
   }
 }
