@@ -6,7 +6,7 @@ const { getImageUrl, isWhitishColor } = require('./util')
  * flexMessageを作成
  *
  * @param {Array} results 検索結果
- * @return FlexMessageオブジェクト
+ * @returns FlexMessageオブジェクト
  */
 function createMessage(results) {
   // データが無い場合はエラー
@@ -45,7 +45,7 @@ function createMessage(results) {
  *
  * @param {Object} profile プロフィールデータ
  * @param {Array} components プロフィールのコンポーネント
- * @return バブルコンポーネント
+ * @returns バブルコンポーネント
  */
 function createBubble(profile, components) {
   const brandName = profile.ブランド
@@ -127,7 +127,7 @@ function createBubble(profile, components) {
  *
  * @param {String} key 項目名
  * @param {String} value 内容
- * @return テキストコンポーネント
+ * @returns テキストコンポーネント
  */
 function createTextComponent(key, value) {
   const contents = {
@@ -160,7 +160,7 @@ function createTextComponent(key, value) {
  * フッターを作成
  *
  * @param {Object} profile プロフィールデータ
- * @return フッターコンポーネント
+ * @returns フッターコンポーネント
  */
 function createFooter(profile) {
   const color = getIdolColor(profile)
@@ -206,7 +206,7 @@ function createFooter(profile) {
  *
  * @param {String} title タイトル
  * @param {String} text エラー内容
- * @return FlexMessageオブジェクト
+ * @returns FlexMessageオブジェクト
  */
 function createErrorMessage(title, text) {
   const errorMessage = {

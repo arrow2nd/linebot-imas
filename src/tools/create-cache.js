@@ -28,7 +28,7 @@ async function main() {
   }
 
   fs.writeFileSync(
-    './src/data/image-filename.json',
+    './src/data/image-names.json',
     JSON.stringify(result, null, '\t')
   )
 
@@ -38,7 +38,7 @@ async function main() {
 /**
  * アイドル名鑑のURLを持つアイドルを取得
  *
- * @return 検索結果
+ * @returns 検索結果
  */
 async function fetchIdolData() {
   const query = `
@@ -68,7 +68,7 @@ async function fetchIdolData() {
  * URLからOGP画像のURLを取得
  *
  * @param  {String} url URL
- * @return {String}     OGP画像のURL
+ * @returns {String}     OGP画像のURL
  */
 async function fetchOgpImageUrl(url) {
   try {

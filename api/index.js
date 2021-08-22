@@ -1,7 +1,7 @@
 'use strict'
 const express = require('express')
 const line = require('@line/bot-sdk')
-const { search } = require('../src/script/search')
+const { search } = require('../src/scripts/search')
 require('dotenv').config()
 
 const PORT = process.env.PORT
@@ -37,11 +37,9 @@ async function main(ev) {
 
       keyword = ev.message.text
       break
-
     case 'postback':
       keyword = ev.postback.params.date
       break
-
     default:
       console.log(`[Non-message events] : ${ev.type}`)
       return
