@@ -1,6 +1,7 @@
 # linebot-imas
 
 [![arrow2nd](https://circleci.com/gh/arrow2nd/linebot-imas.svg?style=shield)](https://circleci.com/gh/arrow2nd/linebot-imas/tree/master)
+[![UpdateCache](https://github.com/arrow2nd/linebot-imas/actions/workflows/update-cache.yaml/badge.svg)](https://github.com/arrow2nd/linebot-imas/actions/workflows/update-cache.yaml)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat)](https://github.com/prettier/prettier)
 ![GitHub](https://img.shields.io/github/license/arrow2nd/linebot-imas)
 
