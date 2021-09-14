@@ -1,6 +1,6 @@
 'use strict'
 const axios = require('axios')
-const { escapeRegExp } = require('./util')
+const { sanitizeRegexp } = require('./util')
 
 const birthQuery = (keyword) => `
 schema:birthDate ?BD.
@@ -81,7 +81,7 @@ LIMIT 5
  * @returns 検索結果
  */
 async function fetchIdolProfile(keyword) {
-  const splited = keyword.split(/[\n\s]/).map((e) => escapeRegExp(e))
+  const splited = keyword.split(/[\n\s]/).map((e) => sanitizeRegexp(e))
 
   let searchCriteria = ''
 

@@ -45,7 +45,10 @@ function convertProfile(profile) {
 function convertBrandName(brandName) {
   if (!brandName) return '不明'
 
-  return convertData.brand[brandName].name
+  const converted = convertData.brand[brandName]
+  if (!converted) return '不明'
+
+  return converted.name
 }
 
 /**
@@ -58,7 +61,7 @@ function getIdolColor(profile) {
   if (profile.カラー) return profile.カラー.value
 
   // 固有のイメージカラーが無いなら、ブランドカラーを返す
-  return convertData.brand[profile.ブランド.value].color || '#FF74B8'
+  return convertData.brand[profile.ブランド.value]?.color || '#FF74B8'
 }
 
 module.exports = {

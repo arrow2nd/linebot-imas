@@ -44,5 +44,5 @@ function sanitizeRegexp(string) {
 module.exports = {
   getImageUrl,
   isWhitishColor,
-  escapeRegExp: sanitizeRegexp
+  sanitizeRegexp
 }
