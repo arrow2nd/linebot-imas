@@ -3,6 +3,7 @@ jobs:
   build:
     docker:
       - image: circleci/node:lts
+
     steps:
       - checkout
       - restore_cache:
@@ -16,7 +17,7 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
       - run: mkdir junit
       - run:
-          command: node_modules/.bin/mocha test --timeout 5000 --reporter mocha-junit-reporter ./src/test/test.js
+          command: yarn test --reporter mocha-junit-reporter
           environment:
             MOCHA_FILE: ./junit/test-results.xml
           when: always
@@ -32,4 +33,4 @@ workflows:
       - build:
           filters:
             branches:
-              only: 'master'
+              only: '.*'
