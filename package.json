@@ -9,8 +9,8 @@
   },
   "scripts": {
     "start": "node ./api/index.js",
-    "test": "node_modules/mocha/bin/mocha --timeout 5000 ./src/test/test.js",
-    "cache": "node ./src/tools/create-cache.js"
+    "test": "yarn mocha --timeout 5000 ./src/test/",
+    "update:cache": "node ./src/tools/create-cache.js"
   },
   "dependencies": {
     "@line/bot-sdk": "^7.3.0",
