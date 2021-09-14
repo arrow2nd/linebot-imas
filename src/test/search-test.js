@@ -35,7 +35,7 @@ const messageObjectTest = (title, keyword, cName, cKana) =>
     })
   })
 
-describe('search', () => {
+describe('search.js', () => {
   messageObjectTest(
     '本名と活動名が異なるアイドル（伴田路子）',
     '伴田路子',
