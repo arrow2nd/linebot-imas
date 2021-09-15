@@ -2,7 +2,8 @@ name: UpdateCache
 
 on:
   schedule:
-    - cron: '0 15 * * *'
+    # 午前4時（深夜帯に更新されがちなので）
+    - cron: '0 19 * * *'
 
 jobs:
   build:
