@@ -19,7 +19,7 @@ describe('util.js', () => {
     it('NoImageのURLを返す', () => {
       assert.strictEqual(
         getImageUrl('七草はづき'),
-        'https://arrow2nd.github.io/images/linebot-imas/noimage.png'
+        'https://linebot-imas.vercel.app/noimage.png'
       )
     })
   })
