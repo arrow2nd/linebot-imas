@@ -8,7 +8,7 @@ const imageNames = require('../data/image-names.json')
  * @returns URL
  */
 function getImageUrl(idolName) {
-  const noImage = 'https://arrow2nd.github.io/images/linebot-imas/noimage.png'
+  const noImage = 'https://linebot-imas.vercel.app/noimage.png'
   const filename = imageNames[idolName]
   return filename
     ? `https://idollist.idolmaster-official.jp/images/character_main/${filename}`

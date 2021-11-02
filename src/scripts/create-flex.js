@@ -72,7 +72,7 @@ function createBubble(profile, components) {
         },
         {
           type: 'image',
-          url: 'https://arrow2nd.github.io/images/linebot-imas/gradation.png',
+          url: 'https://linebot-imas.vercel.app/gradation.png',
           size: 'full',
           aspectMode: 'cover',
           aspectRatio: '16:9',
