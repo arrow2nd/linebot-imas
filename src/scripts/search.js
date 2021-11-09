@@ -22,7 +22,7 @@ async function search(text) {
   } catch (err) {
     console.error(err)
     return createErrorMessage(
-      '検索できませんでした',
+      '検索に失敗しました',
       'im@sparqlにアクセスできません'
     )
   }

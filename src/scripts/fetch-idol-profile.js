@@ -100,7 +100,7 @@ async function fetchIdolProfile(keyword) {
   )}`
 
   try {
-    const res = await axios.get(url)
+    const res = await axios.get(url, { timeout: 5000 })
     if (!res.data.results) {
       throw new Error('[Error] データがありません')
     }
@@ -108,7 +108,7 @@ async function fetchIdolProfile(keyword) {
     return res.data.results.bindings
   } catch (err) {
     throw new Error(
-      `[Error] im@sparqlにアクセスできません\n[Msg] ${err.response.statusText}\n[Status] ${err.response.status})`
+      `[Error] im@sparqlにアクセスできません (${err.response?.status} : ${err.response?.statusText})`
     )
   }
 }
