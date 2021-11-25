@@ -1,13 +1,13 @@
 # linebot-imas
 
+THE IDOLM@STER シリーズに登場するアイドルのプロフィールを検索できる LINEBot
+
 [![arrow2nd](https://circleci.com/gh/arrow2nd/linebot-imas.svg?style=shield)](https://circleci.com/gh/arrow2nd/linebot-imas/tree/master)
 [![UpdateCache](https://github.com/arrow2nd/linebot-imas/actions/workflows/update-cache.yaml/badge.svg)](https://github.com/arrow2nd/linebot-imas/actions/workflows/update-cache.yaml)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat)](https://github.com/prettier/prettier)
 ![GitHub](https://img.shields.io/github/license/arrow2nd/linebot-imas)
 
-IDOLM@STER シリーズに登場するアイドルのプロフィールを検索できる LINEBot です。
-
-プロフィール情報は[im@sparql](https://sparql.crssnky.xyz/imas/)より取得しています。（ありがとうございます…！）
+![トーク画面](https://user-images.githubusercontent.com/44780846/130342672-dcc586d2-868d-49c2-8a68-dcd7dce3f3bd.png)
 
 ## 友だち登録
 
@@ -19,9 +19,7 @@ IDOLM@STER シリーズに登場するアイドルのプロフィールを検索
 
 プロフィールを検索したいアイドルの名前を送信してください。
 
-**名前の一部**や**ひらがな**でも検索できます。
-
-![スクリーンショット](https://user-images.githubusercontent.com/44780846/130342672-dcc586d2-868d-49c2-8a68-dcd7dce3f3bd.png)
+**名前の一部やひらがなでも検索できます。**
 
 ### 誕生日検索
 
@@ -44,10 +42,15 @@ IDOLM@STER シリーズに登場するアイドルのプロフィールを検索
 
 複数のアイドル名をスペース・改行で区切ると、同時に検索することができます。
 
-![スクリーンショット](https://user-images.githubusercontent.com/44780846/130342691-d22ad2d4-f09e-48bc-bf5c-555d88d8a789.png)
+![同時検索結果](https://user-images.githubusercontent.com/44780846/130342691-d22ad2d4-f09e-48bc-bf5c-555d88d8a789.png)
 
-「え...芹沢あさひって白菊ほたるより年上なの...？」ってなった時などにご活用ください。
+「芹沢あさひと白菊ほたるってどっちが年上だっけ...？」ってなった時などにご活用ください。
 
 ## 仕様
 
-- 複数のプロフィールが見つかった場合、上位 5 件までを返信します
+- 複数のプロフィールが見つかった場合、**上位 5 件まで**を返信します
+- 検索結果の順序は都度、異なる場合があります
+
+## Thanks!
+
+プロフィール情報は [im@sparql](https://sparql.crssnky.xyz/imas/) より取得しています。
