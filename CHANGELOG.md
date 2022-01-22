@@ -218,6 +218,38 @@
 
 - 検索クエリを修正
 
-## [0.0.1] - 2020-03-21
+## 0.0.1 - 2020-03-21
 
 - リリース
+
+[unreleased]: https://github.com/arrow2nd/linebot-imas/compare/v1.12.0...HEAD
+[1.12.1]: https://github.com/arrow2nd/linebot-imas/compare/v1.12.0...v1.12.1
+[1.12.0]: https://github.com/arrow2nd/linebot-imas/compare/v1.10.0...v1.12.0
+[1.10.0]: https://github.com/arrow2nd/linebot-imas/compare/v1.9.0...v1.10.0
+[1.9.0]: https://github.com/arrow2nd/linebot-imas/compare/v1.8.1...v1.9.0
+[1.8.1]: https://github.com/arrow2nd/linebot-imas/compare/v1.8.0...v1.8.1
+[1.8.0]: https://github.com/arrow2nd/linebot-imas/compare/v1.7.4...v1.8.0
+[1.7.4]: https://github.com/arrow2nd/linebot-imas/compare/v1.7.3...v1.7.4
+[1.7.3]: https://github.com/arrow2nd/linebot-imas/compare/v1.7.2...v1.7.3
+[1.7.2]: https://github.com/arrow2nd/linebot-imas/compare/v1.7.1...v1.7.2
+[1.7.1]: https://github.com/arrow2nd/linebot-imas/compare/v1.7.0...v1.7.1
+[1.7.0]: https://github.com/arrow2nd/linebot-imas/compare/v1.6.1...v1.7.0
+[1.6.1]: https://github.com/arrow2nd/linebot-imas/compare/v1.6.0...v1.6.1
+[1.6.0]: https://github.com/arrow2nd/linebot-imas/compare/v1.5.5...v1.6.0
+[1.5.5]: https://github.com/arrow2nd/linebot-imas/compare/v1.5.4...v1.5.5
+[1.5.4]: https://github.com/arrow2nd/linebot-imas/compare/v1.5.3...v1.5.4
+[1.5.3]: https://github.com/arrow2nd/linebot-imas/compare/v1.5.2...v1.5.3
+[1.5.2]: https://github.com/arrow2nd/linebot-imas/compare/v1.5.0...v1.5.2
+[1.5.0]: https://github.com/arrow2nd/linebot-imas/compare/v1.4.0...v1.5.0
+[1.4.0]: https://github.com/arrow2nd/linebot-imas/compare/v1.3.0...v1.4.0
+[1.3.0]: https://github.com/arrow2nd/linebot-imas/compare/v1.2.2...v1.3.0
+[1.2.2]: https://github.com/arrow2nd/linebot-imas/compare/v1.2.0...v1.2.2
+[1.2.0]: https://github.com/arrow2nd/linebot-imas/compare/v1.1.0...v1.2.0
+[1.1.0]: https://github.com/arrow2nd/linebot-imas/compare/v1.0.8...v1.1.0
+[1.0.8]: https://github.com/arrow2nd/linebot-imas/compare/v1.0.7...v1.0.8
+[1.0.7]: https://github.com/arrow2nd/linebot-imas/compare/v1.0.6...v1.0.7
+[1.0.6]: https://github.com/arrow2nd/linebot-imas/compare/v1.0.5...v1.0.6
+[1.0.5]: https://github.com/arrow2nd/linebot-imas/compare/v1.0.4...v1.0.5
+[1.0.4]: https://github.com/arrow2nd/linebot-imas/compare/v1.0.3...v1.0.4
+[1.0.3]: https://github.com/arrow2nd/linebot-imas/compare/v1.0.2...v1.0.3
+[1.0.2]: https://github.com/arrow2nd/linebot-imas/compare/v0.0.1...v1.0.2
