@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [1.12.2] - 2022-01-22
+
+### Security
+
+- 依存パッケージを更新
+
 ## [1.12.1] - 2021-11-09
 
 ### Changed
@@ -222,7 +228,8 @@
 
 - リリース
 
-[unreleased]: https://github.com/arrow2nd/linebot-imas/compare/v1.12.0...HEAD
+[unreleased]: https://github.com/arrow2nd/linebot-imas/compare/v1.12.2...HEAD
+[1.12.2]: https://github.com/arrow2nd/linebot-imas/compare/v1.12.1...v1.12.2
 [1.12.1]: https://github.com/arrow2nd/linebot-imas/compare/v1.12.0...v1.12.1
 [1.12.0]: https://github.com/arrow2nd/linebot-imas/compare/v1.10.0...v1.12.0
 [1.10.0]: https://github.com/arrow2nd/linebot-imas/compare/v1.9.0...v1.10.0
