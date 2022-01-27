@@ -47,6 +47,6 @@ jobs:
         uses: repo-sync/pull-request@v2
         with:
           source_branch: ${{ env.NEW_BRANCH_NAME }}
-          destination_branch: 'main'
+          destination_branch: 'master'
           pr_title: 'update: キャッシュ'
           github_token: ${{ secrets.GITHUB_TOKEN }}
