@@ -2,7 +2,7 @@ name: UpdateCache
 
 on:
   schedule:
-    # 午前4時（深夜帯に更新されがちなので）
+    # 日本時間午前4時（深夜帯に更新されがちなので）
     - cron: '0 19 * * *'
 
 jobs:
@@ -19,8 +19,8 @@ jobs:
           cache: yarn
 
       - name: Install dependencies
-        run: yarn install
-        
+        run: yarn install --immutable
+
       - name: Update cache
         run: yarn update:cache
 
