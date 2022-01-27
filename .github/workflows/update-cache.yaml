@@ -1,6 +1,7 @@
 name: UpdateCache
 
 on:
+  workflow_dispatch:
   schedule:
     # 日本時間午前4時（深夜帯に更新されがちなので）
     - cron: '0 19 * * *'
@@ -9,6 +10,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Set branch name as environment variable
+        run: echo "NEW_BRANCH_NAME=update-cache-$(date '+%s')" >> $GITHUB_ENV
+
       - name: Checkout
         uses: actions/checkout@v2
 
@@ -17,6 +21,12 @@ jobs:
         with:
           node-version: '16'
           cache: yarn
+
+      - name: Create new branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git switch -c ${{ env.NEW_BRANCH_NAME }}
 
       - name: Install dependencies
         run: yarn install --immutable
@@ -30,4 +40,13 @@ jobs:
       - name: Commit the changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
+          branch: ${{ env.NEW_BRANCH_NAME }}
           commit_message: 'update: cache'
+
+      - name: Create pull request
+        uses: repo-sync/pull-request@v2
+        with:
+          source_branch: ${{ env.NEW_BRANCH_NAME }}
+          destination_branch: 'main'
+          pr_title: 'update: キャッシュ'
+          github_token: ${{ secrets.GITHUB_TOKEN }}
