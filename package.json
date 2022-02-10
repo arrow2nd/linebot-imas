@@ -10,6 +10,7 @@
   "scripts": {
     "start": "node ./api/index.js",
     "test": "yarn mocha --timeout 5000 ./src/test/",
+    "create:richmenu": "node ./src/tools/richmenu/create.js",
     "update:cache": "node ./src/tools/create-cache.js"
   },
   "dependencies": {
