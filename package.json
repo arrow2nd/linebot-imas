@@ -9,9 +9,10 @@
   },
   "scripts": {
     "start": "node ./api/index.js",
-    "test": "yarn mocha --timeout 5000 ./src/test/",
+    "test": "yarn mocha --timeout 5000 ./src/tests/",
+    "fmt:data": "yarn prettier --write ./src/data/*.json",
     "create:richmenu": "node ./src/tools/richmenu/create.js",
-    "update:cache": "node ./src/tools/create-cache.js"
+    "update:cache": "node ./src/tools/cache/create.js"
   },
   "dependencies": {
     "@line/bot-sdk": "^7.4.0",
