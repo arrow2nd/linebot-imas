@@ -1,9 +1,9 @@
 'use strict'
 const fs = require('fs')
-const imageNames = require('../data/image-names.json')
+const imageNames = require('../../data/image-names.json')
 const { fetchIdolData, fetchOgpImageUrl } = require('./fetch')
 
-async function main() {
+;(async () => {
   const result = imageNames
   const idolList = await fetchIdolData().catch((err) => {
     throw new Error(err)
@@ -32,7 +32,5 @@ async function main() {
     JSON.stringify(result, null, '\t')
   )
 
-  console.log('[success!]')
-}
-
-main()
+  console.log('[SUCCESS!]')
+})()
