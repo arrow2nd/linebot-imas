@@ -2,3 +2,4 @@
 node_modules
 package.json
 vercel.json
+.yarnrc.yml
