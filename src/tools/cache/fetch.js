@@ -1,13 +1,11 @@
-'use strict'
-const axios = require('axios').default
-const jsdom = require('jsdom')
+import axios from 'axios'
+import { JSDOM } from 'jsdom'
 
 /**
  * アイドル名鑑のURLを持つアイドルを取得
- *
- * @returns 検索結果
+ * @return 検索結果
  */
-async function fetchIdolData() {
+export async function fetchIdolData() {
   const query = `
   PREFIX imas: <https://sparql.crssnky.xyz/imasrdf/URIs/imas-schema.ttl#>
   PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -33,14 +31,13 @@ async function fetchIdolData() {
 
 /**
  * URLからOGP画像のURLを取得
- *
- * @param  {String} url URL
- * @returns {String}     OGP画像のURL
+ * @param {String} url URL
+ * @return OGP画像のURL
  */
-async function fetchOgpImageUrl(url) {
+export async function fetchOgpImageUrl(url) {
   try {
     const res = await axios.get(url)
-    const dom = new jsdom.JSDOM(res.data)
+    const dom = new JSDOM(res.data)
 
     const meta = dom.window.document.querySelectorAll('head > meta')
     const img = Array.from(meta)
@@ -55,5 +52,3 @@ async function fetchOgpImageUrl(url) {
     )
   }
 }
-
-module.exports = { fetchIdolData, fetchOgpImageUrl }

@@ -1,9 +1,8 @@
-'use strict'
-const fs = require('fs')
-const line = require('@line/bot-sdk')
-require('dotenv').config()
+import { Client } from '@line/bot-sdk'
+import 'dotenv/config'
+import { createReadStream } from 'fs'
 
-const client = new line.Client({
+const client = new Client({
   channelAccessToken: process.env.PRODUCTION_ACCESS_TOKEN
 })
 
@@ -48,7 +47,7 @@ const richmenu = {
   // 画像を紐付ける
   await client.setRichMenuImage(
     richMenuId,
-    fs.createReadStream('./src/tools/richmenu/image.png')
+    createReadStream('./src/tools/richmenu/image.png')
   )
 
   // デフォルトに設定

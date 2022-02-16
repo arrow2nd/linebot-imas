@@ -1,24 +1,25 @@
-'use strict'
-const dayjs = require('dayjs')
-dayjs.extend(require('dayjs/plugin/utc'))
-dayjs.extend(require('dayjs/plugin/timezone'))
-dayjs.tz.setDefault('Asia/Tokyo')
+import dayjs from 'dayjs'
+import timezone from 'dayjs/plugin/timezone.js'
+import utc from 'dayjs/plugin/utc.js'
 
-const { fetchIdolProfile } = require('./fetch-idol-profile')
-const { createMessage, createErrorMessage } = require('./create-flex')
+import { createErrorMessage, createReplyMessage } from './create.js'
+import { fetchIdolProfile } from './fetch.js'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
+dayjs.tz.setDefault('Asia/Tokyo')
 
 /**
  * プロフィールを検索
- *
  * @param {String} text メッセージテキスト
  * @returns FlexMessageオブジェクト
  */
-async function search(text) {
+export async function search(text) {
   const keyword = createSearchKeyword(text)
 
   try {
     const data = await fetchIdolProfile(keyword)
-    return createMessage(data)
+    return createReplyMessage(data)
   } catch (err) {
     console.error(err)
     return createErrorMessage(
@@ -30,7 +31,6 @@ async function search(text) {
 
 /**
  * 検索キーワードを作成
- *
  * @param {String} text メッセージテキスト
  * @returns 検索キーワード
  */
@@ -61,5 +61,3 @@ function createSearchKeyword(text) {
 
   return trimedText
 }
-
-module.exports = { search }

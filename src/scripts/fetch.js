@@ -1,6 +1,6 @@
-'use strict'
-const axios = require('axios')
-const { sanitizeRegexp } = require('./util')
+import axios from 'axios'
+
+import { sanitizeRegexp } from './util.js'
 
 const birthQuery = (keyword) => `
 schema:birthDate ?BD.
@@ -17,7 +17,6 @@ OPTIONAL{ ?d imas:givenNameKana ?名前ルビ }
 OPTIONAL{ ?d imas:alternateNameKana ?名前ルビ }
 FILTER(REGEX(?名前, "${keyword}") || REGEX(?本名, "${keyword}") || REGEX(?名前ルビ, "${keyword}"))
 `
-
 const compareQuery = (keywords) => {
   const regex = keywords.join('|')
   return nameQuery(regex)
@@ -76,17 +75,16 @@ LIMIT 5
 
 /**
  * imasparqlからプロフィールを取得
- *
  * @param  {String} keyword 検索文字列
  * @returns 検索結果
  */
-async function fetchIdolProfile(keyword) {
+export async function fetchIdolProfile(keyword) {
   const splited = keyword.split(/[\n\s]/).map((e) => sanitizeRegexp(e))
 
   let searchCriteria = ''
 
   if (splited.length > 1) {
-    // 複数アイドルの検索
+    // 複数アイドルの同時検索
     searchCriteria = compareQuery(splited)
   } else {
     // MM-DD形式なら誕生日検索、それ以外なら通常検索
@@ -112,5 +110,3 @@ async function fetchIdolProfile(keyword) {
     )
   }
 }
-
-module.exports = { fetchIdolProfile }

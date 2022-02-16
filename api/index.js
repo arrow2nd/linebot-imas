@@ -1,8 +1,9 @@
-'use strict'
-const express = require('express')
-const line = require('@line/bot-sdk')
-const { search } = require('../src/scripts/search')
-require('dotenv').config()
+import { Client, middleware } from '@line/bot-sdk'
+import 'dotenv/config'
+import express from 'express'
+
+import { createErrorMessage } from '../src/scripts/create.js'
+import { search } from '../src/scripts/search.js'
 
 const PORT = process.env.PORT
 const config = {
@@ -10,48 +11,42 @@ const config = {
   channelSecret: process.env.SECRET_KEY
 }
 
-const client = new line.Client(config)
+const client = new Client(config)
+const app = express()
 
 // ルーティング
-const app = express()
 app.get('/', (_req, res) => res.send("ζ*'ヮ')ζ＜GETですー"))
-app.post('/hook/', line.middleware(config), async (req, res) => {
+app.post('/hook/', middleware(config), async (req, res) => {
   await Promise.all(req.body.events.map((e) => main(e)))
   res.status(200).end()
 })
 
+// Botメイン
 async function main(ev) {
-  let keyword = ''
-
-  // イベントタイプで分岐
-  switch (ev.type) {
-    case 'message':
-      // テキスト以外なら処理しない
-      if (ev.message.type !== 'text') {
-        console.log(`[Non-text messages] : ${ev.message.type}`)
-        await client.replyMessage(ev.replyToken, {
-          type: 'text',
-          text: '検索したいアイドルのお名前を教えてください…！'
-        })
-        return
-      }
-
-      keyword = ev.message.text
-      break
-    case 'postback':
-      keyword = ev.postback.params.date
-      break
-    default:
-      console.log(`[Non-message events] : ${ev.type}`)
-      return
+  // メッセージイベント
+  if (ev.type === 'message') {
+    const isText = ev.message.type === 'text'
+    await client.replyMessage(
+      ev.replyToken,
+      isText
+        ? await search(ev.message.text)
+        : createErrorMessage('エラー', 'テキストを送信してください...！')
+    )
+    return
   }
 
-  // 返信
-  const flexMessage = await search(keyword)
-  await client.replyMessage(ev.replyToken, flexMessage)
+  // ポストバックイベント（日付情報）
+  if (ev.type === 'postback') {
+    await client.replyMessage(
+      ev.replyToken,
+      await search(ev.postback.params.date)
+    )
+  }
 }
 
-// vercel
-process.env.NOW_REGION
-  ? (module.exports = app)
-  : app.listen(PORT, () => console.log(`Listening on ${PORT}`))
+// ローカル環境
+if (!process.env.NOW_REGION) {
+  app.listen(PORT, () => console.log(`Listening on ${PORT}`))
+}
+
+export default app

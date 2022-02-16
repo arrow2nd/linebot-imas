@@ -1,23 +1,22 @@
-'use strict'
-const dayjs = require('dayjs')
-const convertData = require('../data/convert.json')
+import dayjs from 'dayjs'
+
+import { enConvert } from '../data/en-convert.js'
 
 /**
  * プロフィールデータを編集
- *
  * @param {Object} profile プロフィールデータ
  * @returns 編集したプロフィールデータ
  */
-function convertProfile(profile) {
+export function convertProfile(profile) {
+  const { gender, handedness, addUnit } = enConvert
+
   // 日本語に変換
   if (profile.性別) {
-    const gender = convertData.gender[profile.性別.value]
-    profile.性別.value = gender || '不明'
+    profile.性別.value = gender[profile.性別.value] || '不明'
   }
 
   if (profile.利き手) {
-    const handedness = convertData.handedness[profile.利き手.value]
-    profile.利き手.value = handedness || '不明'
+    profile.利き手.value = handedness[profile.利き手.value] || '不明'
   }
 
   if (profile.誕生日) {
@@ -27,7 +26,7 @@ function convertProfile(profile) {
   }
 
   // 単位が必要なら追加
-  for (let data of convertData.addUnit) {
+  for (let data of addUnit) {
     if (profile[data.key] && /[a-zA-Z0-9?]/.test(profile[data.key].value)) {
       profile[data.key].value += data.unit
     }
@@ -38,34 +37,37 @@ function convertProfile(profile) {
 
 /**
  * ブランド名を変換
- *
  * @param {String} brandName ブランド名（データそのまま）
  * @returns 読みやすい形式に変換したブランド名
  */
-function convertBrandName(brandName) {
-  if (!brandName) return '不明'
+export function convertBrandName(brandName) {
+  const { brand } = enConvert
 
-  const converted = convertData.brand[brandName]
-  if (!converted) return '不明'
+  if (!brandName) {
+    return '不明'
+  }
+
+  const converted = brand[brandName]
+  if (!converted) {
+    return '不明'
+  }
 
   return converted.name
 }
 
 /**
  * アイドルのイメージカラーを取得
- *
  * @param {Object} profile プロフィールデータ
  * @returns アイドルのイメージカラー
  */
-function getIdolColor(profile) {
-  if (profile.カラー) return profile.カラー.value
+export function getIdolColor(profile) {
+  const { brand } = enConvert
 
-  // 固有のイメージカラーが無いなら、ブランドカラーを返す
-  return convertData.brand[profile.ブランド.value]?.color || '#FF74B8'
-}
+  // 固有のイメージカラーを返す
+  if (profile.カラー) {
+    return profile.カラー.value
+  }
 
-module.exports = {
-  convertProfile,
-  convertBrandName,
-  getIdolColor
+  // ブランドカラーが存在しない場合、アイマス全体のイメージカラーを返す
+  return brand[profile.ブランド.value]?.color || '#FF74B8'
 }
