@@ -1,14 +1,14 @@
 /* eslint-disable no-undef */
-'use strict'
-const assert = require('assert')
-const {
-  convertProfile,
+import { strictEqual } from 'assert'
+
+import {
   convertBrandName,
+  convertProfile,
   getIdolColor
-} = require('../scripts/convert')
+} from '../scripts/convert.js'
 
 describe('convert.js', () => {
-  describe('convertProfile', () => {
+  describe('#convertProfile()', () => {
     describe('芹沢あさひ', () => {
       const results = convertProfile({
         性別: {
@@ -35,31 +35,31 @@ describe('convert.js', () => {
       })
 
       it('性別を変換', () => {
-        assert.strictEqual(results.性別.value, '女性')
+        strictEqual(results.性別.value, '女性')
       })
 
       it('利き手を変換', () => {
-        assert.strictEqual(results.利き手.value, '両利き')
+        strictEqual(results.利き手.value, '両利き')
       })
 
       it('誕生日を変換', () => {
-        assert.strictEqual(results.誕生日.value, '1月4日')
+        strictEqual(results.誕生日.value, '1月4日')
       })
 
       it('年齢を変換', () => {
-        assert.strictEqual(results.年齢.value, '14歳')
+        strictEqual(results.年齢.value, '14歳')
       })
 
       it('身長を変換', () => {
-        assert.strictEqual(results.身長.value, '153.0cm')
+        strictEqual(results.身長.value, '153.0cm')
       })
 
       it('体重を変換', () => {
-        assert.strictEqual(results.体重.value, '47.0kg')
+        strictEqual(results.体重.value, '47.0kg')
       })
 
       it('血液型を変換', () => {
-        assert.strictEqual(results.血液型.value, 'AB型')
+        strictEqual(results.血液型.value, 'AB型')
       })
     })
 
@@ -80,36 +80,36 @@ describe('convert.js', () => {
       })
 
       it('性別を変換', () => {
-        assert.strictEqual(results.性別.value, '不明')
+        strictEqual(results.性別.value, '不明')
       })
 
       it('利き手を変換', () => {
-        assert.strictEqual(results.利き手.value, '不明')
+        strictEqual(results.利き手.value, '不明')
       })
 
       it('年齢を変換', () => {
-        assert.strictEqual(results.年齢.value, '永遠の17歳')
+        strictEqual(results.年齢.value, '永遠の17歳')
       })
 
       it('体重を変換', () => {
-        assert.strictEqual(results.体重.value, 'リンゴたくさん')
+        strictEqual(results.体重.value, 'リンゴたくさん')
       })
     })
   })
 
-  describe('convertBrandName', () => {
+  describe('#convertBrandName()', () => {
     it('ShinyColors', () => {
-      assert.strictEqual(convertBrandName('ShinyColors'), 'SHINY COLORS')
+      strictEqual(convertBrandName('ShinyColors'), 'SHINY COLORS')
     })
 
     it('不明', () => {
-      assert.strictEqual(convertBrandName('none'), '不明')
+      strictEqual(convertBrandName('none'), '不明')
     })
   })
 
-  describe('getIdolColor', () => {
+  describe('#getIdolColor()', () => {
     it('個人カラーを取得（芹沢あさひ）', () => {
-      assert.strictEqual(
+      strictEqual(
         getIdolColor({
           カラー: {
             value: '#F30100'
@@ -120,7 +120,7 @@ describe('convert.js', () => {
     })
 
     it('ブランドカラーを取得（765AS）', () => {
-      assert.strictEqual(
+      strictEqual(
         getIdolColor({
           ブランド: {
             value: '765AS'
@@ -131,7 +131,7 @@ describe('convert.js', () => {
     })
 
     it('不明', () => {
-      assert.strictEqual(
+      strictEqual(
         getIdolColor({
           ブランド: {
             value: 'test'

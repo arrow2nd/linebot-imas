@@ -2,6 +2,21 @@
 
 ## [Unreleased]
 
+## [1.13.0] - 2022-02-16
+
+### Security
+
+- 依存パッケージを更新
+
+### Added
+
+- プライバシーポリシーを追加
+
+### Change
+
+- テキスト以外が送信された際のエラーメッセージを変更
+- モジュール機構を CommonJS から ES モジュールへ変更
+
 ## [1.12.2] - 2022-01-22
 
 ### Security
@@ -228,7 +243,8 @@
 
 - リリース
 
-[unreleased]: https://github.com/arrow2nd/linebot-imas/compare/v1.12.2...HEAD
+[unreleased]: https://github.com/arrow2nd/linebot-imas/compare/v1.13.0...HEAD
+[1.13.0]: https://github.com/arrow2nd/linebot-imas/compare/v1.12.2...v1.13.0
 [1.12.2]: https://github.com/arrow2nd/linebot-imas/compare/v1.12.1...v1.12.2
 [1.12.1]: https://github.com/arrow2nd/linebot-imas/compare/v1.12.0...v1.12.1
 [1.12.0]: https://github.com/arrow2nd/linebot-imas/compare/v1.10.0...v1.12.0

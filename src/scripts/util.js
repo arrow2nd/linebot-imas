@@ -1,15 +1,14 @@
-'use strict'
-const imageNames = require('../data/image-names.json')
+import { idolImages } from '../data/idol-images.js'
 
 /**
  * アイドルの画像のURLを取得
- *
  * @param {String} idolName アイドル名
- * @returns URL
+ * @return 画像URL
  */
-function getImageUrl(idolName) {
+export function getImageUrl(idolName) {
   const noImage = 'https://linebot-imas.vercel.app/noimage.png'
-  const filename = imageNames[idolName]
+  const filename = idolImages[idolName]
+
   return filename
     ? `https://idollist.idolmaster-official.jp/images/character_main/${filename}`
     : noImage
@@ -17,11 +16,10 @@ function getImageUrl(idolName) {
 
 /**
  * 白っぽい色かどうかを判定
- *
  * @param {String} hexColor 16進数カラーコード
- * @returns 白っぽい色かどうか
+ * @return 白っぽい色かどうか
  */
-function isWhitishColor(hexColor) {
+export function isWhitishColor(hexColor) {
   const hex = hexColor.match(/[0-9A-Fa-f]{2}/g).map((v) => parseInt(v, 16))
   const gs = Math.floor(
     (hex[0] * 0.299 + hex[1] * 0.587 + hex[2] * 0.114) / 2.55
@@ -32,17 +30,10 @@ function isWhitishColor(hexColor) {
 
 /**
  * 正規表現文字列をサニタイジングする
- *
  * @param {string} string 文字列
- * @returns サニタイジングした文字列
+ * @return サニタイジングした文字列
  */
-function sanitizeRegexp(string) {
+export function sanitizeRegexp(string) {
   const escape = /[\\^$.*+?()[\]{}|]/g
   return escape.test(string) ? string.replace(escape, '') : string
-}
-
-module.exports = {
-  getImageUrl,
-  isWhitishColor,
-  sanitizeRegexp
 }

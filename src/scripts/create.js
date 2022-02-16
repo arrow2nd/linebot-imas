@@ -1,14 +1,12 @@
-'use strict'
-const { convertProfile, convertBrandName, getIdolColor } = require('./convert')
-const { getImageUrl, isWhitishColor } = require('./util')
+import { convertBrandName, convertProfile, getIdolColor } from './convert.js'
+import { getImageUrl, isWhitishColor } from './util.js'
 
 /**
- * flexMessageを作成
- *
+ * 返信メッセージを作成
  * @param {Array} results 検索結果
  * @returns FlexMessageオブジェクト
  */
-function createMessage(results) {
+export function createReplyMessage(results) {
   // データが無い場合はエラー
   if (!results.length) {
     return createErrorMessage('みつかりませんでした', 'ごめんなさい…！')
@@ -28,7 +26,7 @@ function createMessage(results) {
     return createBubble(convertedProfile, component)
   })
 
-  const flexMessage = {
+  return {
     type: 'flex',
     altText: `${results.length}人 みつかりました！`,
     contents: {
@@ -36,13 +34,45 @@ function createMessage(results) {
       contents: carousel
     }
   }
+}
 
-  return flexMessage
+/**
+ * エラーメッセージを作成
+ * @param {String} title タイトル
+ * @param {String} text エラー内容
+ * @returns FlexMessageオブジェクト
+ */
+export function createErrorMessage(title, text) {
+  return {
+    type: 'flex',
+    altText: title,
+    contents: {
+      type: 'bubble',
+      body: {
+        type: 'box',
+        layout: 'vertical',
+        contents: [
+          {
+            type: 'text',
+            weight: 'bold',
+            size: 'md',
+            text: title
+          },
+          {
+            type: 'text',
+            text: text,
+            size: 'xs',
+            color: '#949494',
+            margin: 'sm'
+          }
+        ]
+      }
+    }
+  }
 }
 
 /**
  * バブルを作成
- *
  * @param {Object} profile プロフィールデータ
  * @param {Array} components プロフィールのコンポーネント
  * @returns バブルコンポーネント
@@ -51,11 +81,12 @@ function createBubble(profile, components) {
   const brandName = profile.ブランド
     ? convertBrandName(profile.ブランド.value)
     : '不明'
+
   const subText = `${profile.名前ルビ.value}・${brandName}`
   const imageUrl = getImageUrl(profile.名前.value)
   const footer = createFooter(profile)
 
-  const bubble = {
+  return {
     type: 'bubble',
     size: 'mega',
     body: {
@@ -118,19 +149,16 @@ function createBubble(profile, components) {
       contents: footer
     }
   }
-
-  return bubble
 }
 
 /**
  * テキストコンポーネントを作成
- *
  * @param {String} key 項目名
  * @param {String} value 内容
  * @returns テキストコンポーネント
  */
 function createTextComponent(key, value) {
-  const contents = {
+  return {
     type: 'box',
     layout: 'baseline',
     contents: [
@@ -152,20 +180,17 @@ function createTextComponent(key, value) {
     ],
     spacing: 'none'
   }
-
-  return contents
 }
 
 /**
  * フッターを作成
- *
  * @param {Object} profile プロフィールデータ
  * @returns フッターコンポーネント
  */
 function createFooter(profile) {
+  const footer = []
   const color = getIdolColor(profile)
   const style = isWhitishColor(color) ? 'secondary' : 'primary'
-  const footer = []
 
   // アイドル名鑑
   if (profile.URL) {
@@ -199,47 +224,4 @@ function createFooter(profile) {
   })
 
   return footer
-}
-
-/**
- * エラーメッセージを作成
- *
- * @param {String} title タイトル
- * @param {String} text エラー内容
- * @returns FlexMessageオブジェクト
- */
-function createErrorMessage(title, text) {
-  const errorMessage = {
-    type: 'flex',
-    altText: title,
-    contents: {
-      type: 'bubble',
-      body: {
-        type: 'box',
-        layout: 'vertical',
-        contents: [
-          {
-            type: 'text',
-            weight: 'bold',
-            size: 'md',
-            text: title
-          },
-          {
-            type: 'text',
-            text: text,
-            size: 'xs',
-            color: '#949494',
-            margin: 'sm'
-          }
-        ]
-      }
-    }
-  }
-
-  return errorMessage
-}
-
-module.exports = {
-  createMessage,
-  createErrorMessage
 }

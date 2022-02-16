@@ -1,10 +1,10 @@
-'use strict'
-const fs = require('fs')
-const imageNames = require('../../data/image-names.json')
-const { fetchIdolData, fetchOgpImageUrl } = require('./fetch')
+import { writeFileSync } from 'fs'
+
+import { idolImages } from '../../data/idol-images.js'
+import { fetchIdolData, fetchOgpImageUrl } from './fetch.js'
 
 ;(async () => {
-  const result = imageNames
+  const result = idolImages
   const idolList = await fetchIdolData().catch((err) => {
     throw new Error(err)
   })
@@ -27,9 +27,9 @@ const { fetchIdolData, fetchOgpImageUrl } = require('./fetch')
     await new Promise((resolve) => setTimeout(resolve, 2000))
   }
 
-  fs.writeFileSync(
-    './src/data/image-names.json',
-    JSON.stringify(result, null, '\t')
+  writeFileSync(
+    './src/data/idol-images.js',
+    'export const idolImages = ' + JSON.stringify(result, null, '\t')
   )
 
   console.log('[SUCCESS!]')
