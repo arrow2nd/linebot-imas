@@ -12,7 +12,7 @@
     "start": "node ./api/index.js",
     "test": "yarn mocha --timeout 5000 ./src/tests/",
     "fmt": "yarn prettier --write .",
-    "fmt:data": "yarn prettier --write ./src/data/*.json",
+    "fmt:cache": "yarn prettier --write ./src/data/*.js",
     "create:richmenu": "node ./src/tools/richmenu/create.js",
     "update:cache": "node ./src/tools/cache/create.js"
   },

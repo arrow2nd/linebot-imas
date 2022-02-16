@@ -1,11 +1,10 @@
 import { writeFileSync } from 'fs'
 
+import { idolImages } from '../../data/idol-images.js'
 import { fetchIdolData, fetchOgpImageUrl } from './fetch.js'
 
-const imageNames = require('../../data/image-names.json')
-
 ;(async () => {
-  const result = imageNames
+  const result = idolImages
   const idolList = await fetchIdolData().catch((err) => {
     throw new Error(err)
   })
