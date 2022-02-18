@@ -99,7 +99,7 @@ export async function fetchIdolProfile(keyword) {
 
   try {
     // 5000m秒でタイムアウト
-    const res = await axios.get(url, { timeout: 5000 })
+    const res = await axios.get(url.toString(), { timeout: 5000 })
     if (!res.data.results) {
       throw new Error('[Error] データがありません')
     }
