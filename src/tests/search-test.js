@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 import { match, strictEqual } from 'assert'
 
-import { search } from '../scripts/search.js'
+import { search } from '../libs/search.js'
 
 /**
  * メッセージオブジェクトのテスト

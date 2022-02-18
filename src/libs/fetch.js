@@ -79,34 +79,35 @@ LIMIT 5
  * @returns 検索結果
  */
 export async function fetchIdolProfile(keyword) {
-  const splited = keyword.split(/[\n\s]/).map((e) => sanitizeRegexp(e))
-
+  const keywords = sanitizeRegexp(keyword).split(/[\n\s]/)
   let searchCriteria = ''
 
-  if (splited.length > 1) {
+  if (keywords.length > 1) {
     // 複数アイドルの同時検索
-    searchCriteria = compareQuery(splited)
+    searchCriteria = compareQuery(keywords)
+  } else if (/^\d{1,2}-\d{1,2}/.test(keyword)) {
+    // MM-DD形式なら誕生日検索
+    searchCriteria = birthQuery(keywords[0])
   } else {
-    // MM-DD形式なら誕生日検索、それ以外なら通常検索
-    searchCriteria = /^\d{1,2}-\d{1,2}/.test(keyword)
-      ? birthQuery(splited[0])
-      : nameQuery(splited[0])
+    // それ以外なら通常検索
+    searchCriteria = nameQuery(keywords[0])
   }
 
-  const url = `https://sparql.crssnky.xyz/spql/imas/query?output=json&query=${encodeURIComponent(
-    query(searchCriteria)
-  )}`
+  // URL組み立て
+  const url = new URL('https://sparql.crssnky.xyz/spql/imas/query?output=json')
+  url.searchParams.append('query', query(searchCriteria))
 
   try {
-    const res = await axios.get(url, { timeout: 5000 })
+    // 5000m秒でタイムアウト
+    const res = await axios.get(url.toString(), { timeout: 5000 })
     if (!res.data.results) {
       throw new Error('[Error] データがありません')
     }
-
     return res.data.results.bindings
   } catch (err) {
+    console.error(err)
     throw new Error(
-      `[Error] im@sparqlにアクセスできません (${err.response?.status} : ${err.response?.statusText})`
+      `[Error] im@sparqlにアクセスできません (${err.response?.status})`
     )
   }
 }

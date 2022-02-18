@@ -1,6 +1,6 @@
 {
   "name": "linebot-imas",
-  "version": "1.13.0",
+  "version": "1.13.1",
   "description": "アイドルのプロフィールを検索するLINEBot",
   "main": "api/index.js",
   "type": "module",
@@ -21,7 +21,7 @@
     "axios": "^0.26.0",
     "dayjs": "^1.10.7",
     "dotenv": "^16.0.0",
-    "express": "^4.17.2"
+    "express": "^4.17.3"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^3.2.0",

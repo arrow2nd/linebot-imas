@@ -5,7 +5,7 @@ import {
   convertBrandName,
   convertProfile,
   getIdolColor
-} from '../scripts/convert.js'
+} from '../libs/convert.js'
 
 describe('convert.js', () => {
   describe('#convertProfile()', () => {

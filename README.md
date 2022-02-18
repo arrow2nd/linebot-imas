@@ -51,6 +51,10 @@ THE IDOLM@STER シリーズに登場するアイドルのプロフィールを�
 - 複数のプロフィールが見つかった場合、**上位 5 件まで**を返信します
 - 検索結果の順序は都度、異なる場合があります
 
+## プライバシーポリシー
+
+[こちら](https://arrow2nd.github.io/linebot-imas/) をご覧ください
+
 ## Thanks!
 
 プロフィール情報は [im@sparql](https://sparql.crssnky.xyz/imas/) より取得しています。
