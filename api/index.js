@@ -2,8 +2,8 @@ import { Client, middleware } from '@line/bot-sdk'
 import 'dotenv/config'
 import express from 'express'
 
-import { createErrorMessage } from '../src/scripts/create.js'
-import { search } from '../src/scripts/search.js'
+import { createErrorMessage } from '../src/libs/create.js'
+import { search } from '../src/libs/search.js'
 
 const PORT = process.env.PORT
 const config = {

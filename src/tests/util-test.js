@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 import { strictEqual } from 'assert'
 
-import { getImageUrl, isWhitishColor, sanitizeRegexp } from '../scripts/util.js'
+import { getImageUrl, isWhitishColor, sanitizeRegexp } from '../libs/util.js'
 
 describe('util.js', () => {
   describe('#getImageUrl()', () => {
