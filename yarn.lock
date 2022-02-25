@@ -1245,14 +1245,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-config-prettier@npm:^8.3.0":
-  version: 8.3.0
-  resolution: "eslint-config-prettier@npm:8.3.0"
+"eslint-config-prettier@npm:^8.4.0":
+  version: 8.4.0
+  resolution: "eslint-config-prettier@npm:8.4.0"
   peerDependencies:
     eslint: ">=7.0.0"
   bin:
     eslint-config-prettier: bin/cli.js
-  checksum: df4cea3032671995bb5ab07e016169072f7fa59f44a53251664d9ca60951b66cdc872683b5c6a3729c91497c11490ca44a79654b395dd6756beb0c3903a37196
+  checksum: ee8dc343f1fed15dc0658e190a966cc23644477f2331a7f56ae2bb79dd74892e3cde8ea5c142e7a3329a8291a1de041e13ca96e54d0c85ff4a2aba13390c5f10
   languageName: node
   linkType: hard
 
@@ -2135,10 +2135,10 @@ __metadata:
     dayjs: ^1.10.7
     dotenv: ^16.0.0
     eslint: ^8.9.0
-    eslint-config-prettier: ^8.3.0
+    eslint-config-prettier: ^8.4.0
     express: ^4.17.3
     jsdom: ^19.0.0
-    mocha: ^9.2.0
+    mocha: ^9.2.1
     mocha-junit-reporter: ^2.0.2
     prettier: ^2.5.1
   languageName: unknown
@@ -2388,9 +2388,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mocha@npm:^9.2.0":
-  version: 9.2.0
-  resolution: "mocha@npm:9.2.0"
+"mocha@npm:^9.2.1":
+  version: 9.2.1
+  resolution: "mocha@npm:9.2.1"
   dependencies:
     "@ungap/promise-all-settled": 1.1.2
     ansi-colors: 4.1.1
@@ -2419,7 +2419,7 @@ __metadata:
   bin:
     _mocha: bin/_mocha
     mocha: bin/mocha
-  checksum: 49efc4724cf17087c7e107bc8f6890db24525e6dcc153b801da58de3c2a2f940e22f7600ef195b8ac62a0dfd7baee5cf289fc4641a6b1fdf8bc9c819efc1a8ba
+  checksum: 10debdf2ee2232368852d80d8a7650a2c10d2bf5f47022c4d8111323b7fcd3115b2153f760b841d39207347a4d2df602fe96013f855587d80ff23332261b260e
   languageName: node
   linkType: hard
 
