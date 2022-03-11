@@ -10,7 +10,7 @@
   },
   "scripts": {
     "start": "node ./api/index.js",
-    "test": "yarn mocha --timeout 5000 ./src/tests/",
+    "test": "yarn mocha --timeout 7000 ./src/tests/",
     "fmt": "yarn prettier --write .",
     "fmt:cache": "yarn prettier --write ./src/data/*.js",
     "create:richmenu": "node ./src/tools/richmenu/create.js",
@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@line/bot-sdk": "^7.4.0",
-    "axios": "^0.26.0",
+    "axios": "^0.26.1",
     "dayjs": "^1.10.8",
     "dotenv": "^16.0.0",
     "express": "^4.17.3"
