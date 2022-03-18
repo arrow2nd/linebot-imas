@@ -29,11 +29,10 @@ export function isWhitishColor(hexColor) {
 }
 
 /**
- * 正規表現文字列をサニタイジングする
- * @param {string} string 文字列
- * @return サニタイジングした文字列
+ * 半角記号を除去する
+ * @param {string} text 文字列
+ * @return 除去済みの文字列
  */
-export function sanitizeRegexp(string) {
-  const escape = /[\\^$.*+?()[\]{}|]/g
-  return escape.test(string) ? string.replace(escape, '') : string
+export function removeSymbol(text) {
+  return text.replace(/[!-/:-@[-`{-~]/g, '')
 }

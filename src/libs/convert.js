@@ -4,22 +4,22 @@ import { enConvert } from '../data/en-convert.js'
 
 /**
  * プロフィールデータを編集
- * @param {Object} profile プロフィールデータ
+ * @param {any} profile プロフィールデータ
  * @returns 編集したプロフィールデータ
  */
 export function convertProfile(profile) {
   const { gender, handedness, addUnit } = enConvert
 
   // 日本語に変換
-  if (profile.性別) {
+  if (profile?.性別) {
     profile.性別.value = gender[profile.性別.value] || '不明'
   }
 
-  if (profile.利き手) {
+  if (profile?.利き手) {
     profile.利き手.value = handedness[profile.利き手.value] || '不明'
   }
 
-  if (profile.誕生日) {
+  if (profile?.誕生日) {
     profile.誕生日.value = dayjs(profile.誕生日.value, '-MM-DD').format(
       'M月D日'
     )
@@ -37,7 +37,7 @@ export function convertProfile(profile) {
 
 /**
  * ブランド名を変換
- * @param {String} brandName ブランド名（データそのまま）
+ * @param {string} brandName ブランド名（データそのまま）
  * @returns 読みやすい形式に変換したブランド名
  */
 export function convertBrandName(brandName) {
@@ -57,7 +57,7 @@ export function convertBrandName(brandName) {
 
 /**
  * アイドルのイメージカラーを取得
- * @param {Object} profile プロフィールデータ
+ * @param {any} profile プロフィールデータ
  * @returns アイドルのイメージカラー
  */
 export function getIdolColor(profile) {
