@@ -23,9 +23,7 @@ export async function search(text) {
     const data = await fetchDataFromDB(query)
 
     return createReplyMessage(data)
-  } catch (err) {
-    console.error(err)
-
+  } catch (_err) {
     return createErrorMessage(
       '検索に失敗しました',
       'im@sparqlにアクセスできません'
@@ -42,12 +40,12 @@ function createSearchKeyword(text) {
   const trimedText = text.trim()
 
   // 誕生日検索かチェック
-  if (/誕生日/.test(trimedText)) {
+  if (trimedText.includes('誕生日')) {
     let addNum = 0
 
-    if (/明日/.test(trimedText)) {
+    if (trimedText.includes('明日')) {
       addNum = 1
-    } else if (/昨日/.test(trimedText)) {
+    } else if (trimedText.includes('昨日')) {
       addNum = -1
     }
 
