@@ -1,3 +1,4 @@
+import { brandList } from '../data/convert-list.js'
 import { idolImages } from '../data/idol-images.js'
 
 /**
@@ -15,15 +16,27 @@ export function getImageUrl(idolName) {
 }
 
 /**
+ * ブランドのイメージカラーを取得
+ * @param {string | undefined} brandName ブランド名
+ * @returns 16進カラーコード
+ */
+export function getBrandColor(brandName) {
+  // ブランドカラーが存在しない場合、アイマス全体のイメージカラーを返す
+  return (brandName && brandList.get(brandName)?.color) || '#FF74B8'
+}
+
+/**
  * 白っぽい色かどうかを判定
  * @param {string} hexColor 16進数カラーコード
  * @return 白っぽい色かどうか
  */
 export function isWhitishColor(hexColor) {
-  const hex = hexColor.match(/[0-9A-Fa-f]{2}/g).map((v) => parseInt(v, 16))
-  const gs = Math.floor(
-    (hex[0] * 0.299 + hex[1] * 0.587 + hex[2] * 0.114) / 2.55
-  )
+  const [r, g, b] = hexColor
+    .match(/[0-9A-Fa-f]{2}/g)
+    .map((v) => parseInt(v, 16))
+
+  // グレースケール
+  const gs = Math.floor((r * 0.299 + g * 0.587 + b * 0.114) / 2.55)
 
   return gs > 65
 }

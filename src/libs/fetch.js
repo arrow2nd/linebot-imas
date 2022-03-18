@@ -7,7 +7,10 @@ import axios from 'axios'
  */
 export async function fetchDataFromDB(query) {
   const url = new URL('https://sparql.crssnky.xyz/spql/imas/query?output=json')
-  url.searchParams.append('query', query)
+
+  // 余分な空白・改行を除去
+  const trimedQuery = query.replace(/[\n\r\s]/g, ' ')
+  url.searchParams.append('query', trimedQuery)
 
   // 5000msでタイムアウト
   const res = await axios

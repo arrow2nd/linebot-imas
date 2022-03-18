@@ -1,8 +1,11 @@
-import { convertBrandName, convertProfile, getIdolColor } from './convert.js'
+import {
+  convert2ReadableBrandName,
+  convert2ReadableProfile
+} from './convert.js'
 
 describe('convertProfile', () => {
   describe('一般的なプロフィール', () => {
-    const results = convertProfile({
+    const results = convert2ReadableProfile({
       性別: {
         value: 'female'
       },
@@ -56,7 +59,7 @@ describe('convertProfile', () => {
   })
 
   describe('特殊なプロフィール', () => {
-    const results = convertProfile({
+    const results = convert2ReadableProfile({
       性別: {
         value: 'none'
       },
@@ -95,20 +98,6 @@ describe('convertBrandName', () => {
     ${'ShinyColors'} | ${'SHINY COLORS'}
     ${'none'}        | ${'不明'}
   `('ブランド名を変換できるか（$brand）', ({ brand, expected }) => {
-    expect(convertBrandName(brand)).toBe(expected)
+    expect(convert2ReadableBrandName(brand)).toBe(expected)
   })
-})
-
-describe('getIdolColor', () => {
-  test.each`
-    data                                | expected
-    ${{ カラー: { value: '#F30100' } }} | ${'#F30100'}
-    ${{ ブランド: { value: '765AS' } }} | ${'#F34F6D'}
-    ${{ ブランド: { value: 'test' } }}  | ${'#FF74B8'}
-  `(
-    'プロフィールデータからイメージカラーを取得できるか $#',
-    ({ data, expected }) => {
-      expect(getIdolColor(data)).toBe(expected)
-    }
-  )
 })

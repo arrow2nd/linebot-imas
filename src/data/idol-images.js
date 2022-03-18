@@ -1,3 +1,4 @@
+/** アイドルの画像パスリスト */
 export const idolImages = {
   川島瑞樹: 'kawashima_mizuki_01.jpg',
   水瀬伊織: 'iori_minase_01.jpg',

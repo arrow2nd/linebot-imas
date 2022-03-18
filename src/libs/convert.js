@@ -1,34 +1,40 @@
 import dayjs from 'dayjs'
 
-import { enConvert } from '../data/en-convert.js'
+import {
+  brandList,
+  genderList,
+  handednessList,
+  unitList
+} from '../data/convert-list.js'
 
 /**
- * プロフィールデータを編集
+ * プロフィールデータを読みやすい形式に変換
  * @param {any} profile プロフィールデータ
- * @returns 編集したプロフィールデータ
+ * @returns 変換後のプロフィールデータ
  */
-export function convertProfile(profile) {
-  const { gender, handedness, addUnit } = enConvert
-
+export function convert2ReadableProfile(profile) {
   // 日本語に変換
-  if (profile?.性別) {
-    profile.性別.value = gender[profile.性別.value] || '不明'
+  if (profile.性別?.value) {
+    profile.性別.value = genderList.get(profile.性別.value) || '不明'
   }
 
-  if (profile?.利き手) {
-    profile.利き手.value = handedness[profile.利き手.value] || '不明'
+  if (profile.利き手?.value) {
+    profile.利き手.value = handednessList.get(profile.利き手.value) || '不明'
   }
 
-  if (profile?.誕生日) {
-    profile.誕生日.value = dayjs(profile.誕生日.value, '-MM-DD').format(
-      'M月D日'
-    )
+  // 誕生日を日本語形式に変換
+  if (profile.誕生日?.value) {
+    const birthDay = dayjs(profile.誕生日.value, '-MM-DD')
+    profile.誕生日.value = birthDay.format('M月D日')
   }
 
-  // 単位が必要なら追加
-  for (let data of addUnit) {
-    if (profile[data.key] && /[a-zA-Z0-9?]/.test(profile[data.key].value)) {
-      profile[data.key].value += data.unit
+  // 単位を追加
+  for (const [key, unit] of unitList.entries()) {
+    if (!profile[key]?.value) continue
+
+    // 末尾が英数字なら追加
+    if (/[a-zA-Z0-9?]+$/.test(profile[key].value)) {
+      profile[key].value += unit
     }
   }
 
@@ -36,38 +42,10 @@ export function convertProfile(profile) {
 }
 
 /**
- * ブランド名を変換
- * @param {string} brandName ブランド名（データそのまま）
- * @returns 読みやすい形式に変換したブランド名
+ * ブランド名を読みやすい形式に変換
+ * @param {string | undefined} brandName ブランド名
+ * @returns 変換後のブランド名
  */
-export function convertBrandName(brandName) {
-  const { brand } = enConvert
-
-  if (!brandName) {
-    return '不明'
-  }
-
-  const converted = brand[brandName]
-  if (!converted) {
-    return '不明'
-  }
-
-  return converted.name
-}
-
-/**
- * アイドルのイメージカラーを取得
- * @param {any} profile プロフィールデータ
- * @returns アイドルのイメージカラー
- */
-export function getIdolColor(profile) {
-  const { brand } = enConvert
-
-  // 固有のイメージカラーを返す
-  if (profile.カラー) {
-    return profile.カラー.value
-  }
-
-  // ブランドカラーが存在しない場合、アイマス全体のイメージカラーを返す
-  return brand[profile.ブランド.value]?.color || '#FF74B8'
+export function convert2ReadableBrandName(brandName) {
+  return (brandName && brandList.get(brandName)?.name) || '不明'
 }

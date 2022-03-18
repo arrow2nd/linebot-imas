@@ -29,7 +29,8 @@ import { fetchIdolData, fetchOgpImageUrl } from './fetch.js'
 
   writeFileSync(
     './src/data/idol-images.js',
-    'export const idolImages = ' + JSON.stringify(result, null, '\t')
+    '/** アイドル画像名リスト */\nexport const idolImages = ' +
+      JSON.stringify(result, null, '\t')
   )
 
   console.log('[SUCCESS!]')

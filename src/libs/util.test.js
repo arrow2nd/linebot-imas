@@ -1,4 +1,9 @@
-import { getImageUrl, isWhitishColor, removeSymbol } from './util.js'
+import {
+  getBrandColor,
+  getImageUrl,
+  isWhitishColor,
+  removeSymbol
+} from './util.js'
 
 describe('getImageUrl', () => {
   test('アイドル名から画像URLを取得できるか', () => {
@@ -11,6 +16,17 @@ describe('getImageUrl', () => {
     expect(getImageUrl('七草はづき')).toBe(
       'https://linebot-imas.vercel.app/noimage.png'
     )
+  })
+})
+
+describe('getBrandColor', () => {
+  test.each`
+    brandName    | expected
+    ${'765AS'}   | ${'#F34F6D'}
+    ${'test'}    | ${'#FF74B8'}
+    ${undefined} | ${'#FF74B8'}
+  `('ブランドのイメージカラーを取得できるか $#', ({ brandName, expected }) => {
+    expect(getBrandColor(brandName)).toBe(expected)
   })
 })
 

@@ -127,8 +127,6 @@ function createSearchCriteria(keyword) {
  */
 export function createQuery(keyword) {
   const searchCriteria = createSearchCriteria(keyword)
-  const query = mainQuery(searchCriteria)
 
-  // 余分な空白・改行を除去
-  return query.replace(/[\n\r\s]/g, ' ')
+  return mainQuery(searchCriteria)
 }
