@@ -13,9 +13,8 @@ export async function fetchDataFromDB(query) {
   const res = await axios
     .get(url.toString(), { timeout: 5000 })
     .catch((err) => {
-      console.error(err)
       throw new Error(
-        `[Error] im@sparqlにアクセスできません (${err.response?.status})`
+        `[Error] im@sparqlにアクセスできません (status: ${err?.response?.status})`
       )
     })
 
