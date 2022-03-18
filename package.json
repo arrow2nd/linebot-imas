@@ -1,6 +1,6 @@
 {
   "name": "linebot-imas",
-  "version": "1.13.1",
+  "version": "1.14.0",
   "description": "アイドルのプロフィールを検索するLINEBot",
   "main": "api/index.js",
   "type": "module",
@@ -10,27 +10,27 @@
   },
   "scripts": {
     "start": "node ./api/index.js",
-    "test": "yarn mocha --timeout 7000 ./src/tests/",
+    "test": "NODE_OPTIONS='--experimental-vm-modules --no-warnings' jest",
     "fmt": "yarn prettier --write .",
-    "fmt:cache": "yarn prettier --write ./src/data/*.js",
-    "create:richmenu": "node ./src/tools/richmenu/create.js",
-    "update:cache": "node ./src/tools/cache/create.js"
+    "fmt:data": "yarn prettier --write ./src/data/*.js",
+    "create:richmenu": "node ./src/tools/richmenu/index.js",
+    "create:data": "node ./src/tools/data/index.js"
   },
   "dependencies": {
     "@line/bot-sdk": "^7.4.0",
     "axios": "^0.26.1",
-    "dayjs": "^1.10.8",
+    "dayjs": "^1.11.0",
     "dotenv": "^16.0.0",
     "express": "^4.17.3"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^3.2.0",
-    "eslint": "^8.10.0",
+    "eslint": "^8.11.0",
     "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-jest": "^26.1.1",
+    "jest": "^27.5.1",
     "jsdom": "^19.0.0",
-    "mocha": "^9.2.1",
-    "mocha-junit-reporter": "^2.0.2",
-    "prettier": "^2.5.1"
+    "prettier": "^2.6.0"
   },
   "packageManager": "yarn@3.1.1"
 }

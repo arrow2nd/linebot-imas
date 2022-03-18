@@ -1,9 +1,12 @@
-import { convertBrandName, convertProfile, getIdolColor } from './convert.js'
-import { getImageUrl, isWhitishColor } from './util.js'
+import {
+  convert2ReadableBrandName,
+  convert2ReadableProfile
+} from './convert.js'
+import { getBrandColor, getImageUrl, isWhitishColor } from './util.js'
 
 /**
  * 返信メッセージを作成
- * @param {Array} results 検索結果
+ * @param {any[]} results 検索結果
  * @returns FlexMessageオブジェクト
  */
 export function createReplyMessage(results) {
@@ -14,16 +17,16 @@ export function createReplyMessage(results) {
 
   // カルーセル作成
   const carousel = results.map((profile) => {
-    const convertedProfile = convertProfile(profile)
+    const readableProfile = convert2ReadableProfile(profile)
 
     // プロフィールのコンポーネントを作成
     const component = []
-    for (const key in convertedProfile) {
+    for (const key in readableProfile) {
       if (['名前', '名前ルビ', 'ブランド', 'URL'].includes(key)) continue
       component.push(createTextComponent(key, profile[key].value))
     }
 
-    return createBubble(convertedProfile, component)
+    return createBubble(readableProfile, component)
   })
 
   return {
@@ -38,8 +41,8 @@ export function createReplyMessage(results) {
 
 /**
  * エラーメッセージを作成
- * @param {String} title タイトル
- * @param {String} text エラー内容
+ * @param {string} title タイトル
+ * @param {string} text エラー内容
  * @returns FlexMessageオブジェクト
  */
 export function createErrorMessage(title, text) {
@@ -73,15 +76,12 @@ export function createErrorMessage(title, text) {
 
 /**
  * バブルを作成
- * @param {Object} profile プロフィールデータ
- * @param {Array} components プロフィールのコンポーネント
+ * @param {any} profile プロフィールデータ
+ * @param {any[]} components プロフィールのコンポーネント
  * @returns バブルコンポーネント
  */
 function createBubble(profile, components) {
-  const brandName = profile.ブランド
-    ? convertBrandName(profile.ブランド.value)
-    : '不明'
-
+  const brandName = convert2ReadableBrandName(profile.ブランド?.value)
   const subText = `${profile.名前ルビ.value}・${brandName}`
   const imageUrl = getImageUrl(profile.名前.value)
   const footer = createFooter(profile)
@@ -153,8 +153,8 @@ function createBubble(profile, components) {
 
 /**
  * テキストコンポーネントを作成
- * @param {String} key 項目名
- * @param {String} value 内容
+ * @param {string} key 項目名
+ * @param {string} value 内容
  * @returns テキストコンポーネント
  */
 function createTextComponent(key, value) {
@@ -184,16 +184,14 @@ function createTextComponent(key, value) {
 
 /**
  * フッターを作成
- * @param {Object} profile プロフィールデータ
+ * @param {any} profile プロフィールデータ
  * @returns フッターコンポーネント
  */
 function createFooter(profile) {
   const footer = []
-  const color = getIdolColor(profile)
-  const style = isWhitishColor(color) ? 'secondary' : 'primary'
 
-  // アイドル名鑑
-  if (profile.URL) {
+  // アイドル名鑑へのリンクボタン
+  if (profile?.URL) {
     footer.push({
       type: 'button',
       height: 'sm',
@@ -207,12 +205,16 @@ function createFooter(profile) {
     })
   }
 
-  // Googleで検索
+  // ボタンのスタイル
+  const color = profile.カラー?.value || getBrandColor(profile.ブランド?.value)
+  const style = isWhitishColor(color) ? 'secondary' : 'primary'
+
+  // Googleで検索ボタン
   footer.push({
     type: 'button',
     height: 'sm',
-    style: style,
-    color: color,
+    style,
+    color,
     offsetTop: '-5px',
     action: {
       type: 'uri',

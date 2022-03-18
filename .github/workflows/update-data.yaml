@@ -1,4 +1,4 @@
-name: UpdateCache
+name: update-data
 
 on:
   workflow_dispatch:
@@ -31,22 +31,22 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable
 
-      - name: Update cache
-        run: yarn update:cache
+      - name: Recreate data
+        run: yarn create:data
 
       - name: Run formatter
-        run: yarn fmt:cache
+        run: yarn fmt:data
 
       - name: Commit the changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           branch: ${{ env.NEW_BRANCH_NAME }}
-          commit_message: 'update: cache'
+          commit_message: 'chore: データを更新'
 
       - name: Create pull request
         uses: repo-sync/pull-request@v2
         with:
           source_branch: ${{ env.NEW_BRANCH_NAME }}
           destination_branch: 'master'
-          pr_title: 'update: キャッシュ'
+          pr_title: 'chore: データを更新'
           github_token: ${{ secrets.GITHUB_TOKEN }}

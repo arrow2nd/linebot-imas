@@ -2,8 +2,9 @@ import dayjs from 'dayjs'
 import timezone from 'dayjs/plugin/timezone.js'
 import utc from 'dayjs/plugin/utc.js'
 
-import { createErrorMessage, createReplyMessage } from './create.js'
-import { fetchIdolProfile } from './fetch.js'
+import { fetchDataFromDB } from './fetch.js'
+import { createErrorMessage, createReplyMessage } from './message.js'
+import { createQuery } from './query.js'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -11,17 +12,18 @@ dayjs.tz.setDefault('Asia/Tokyo')
 
 /**
  * プロフィールを検索
- * @param {String} text メッセージテキスト
+ * @param {string} text メッセージテキスト
  * @returns FlexMessageオブジェクト
  */
 export async function search(text) {
   const keyword = createSearchKeyword(text)
 
   try {
-    const data = await fetchIdolProfile(keyword)
+    const query = createQuery(keyword)
+    const data = await fetchDataFromDB(query)
+
     return createReplyMessage(data)
-  } catch (err) {
-    console.error(err)
+  } catch (_err) {
     return createErrorMessage(
       '検索に失敗しました',
       'im@sparqlにアクセスできません'
@@ -31,19 +33,19 @@ export async function search(text) {
 
 /**
  * 検索キーワードを作成
- * @param {String} text メッセージテキスト
+ * @param {string} text メッセージテキスト
  * @returns 検索キーワード
  */
 function createSearchKeyword(text) {
   const trimedText = text.trim()
 
   // 誕生日検索かチェック
-  if (/誕生日/.test(trimedText)) {
+  if (trimedText.includes('誕生日')) {
     let addNum = 0
 
-    if (/明日/.test(trimedText)) {
+    if (trimedText.includes('明日')) {
       addNum = 1
-    } else if (/昨日/.test(trimedText)) {
+    } else if (trimedText.includes('昨日')) {
       addNum = -1
     }
 
@@ -54,6 +56,7 @@ function createSearchKeyword(text) {
   // メッセージが日付かチェック
   for (const format of ['YYYY-MM-DD', 'M-D']) {
     const day = dayjs(trimedText, format).tz()
+
     if (day.isValid()) {
       return day.format('MM-DD')
     }
