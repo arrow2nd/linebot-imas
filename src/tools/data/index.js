@@ -31,7 +31,7 @@ import { fetchIdolData, fetchOgpImageUrl } from './fetch.js'
   }
 
   const json = JSON.stringify(
-    result.sort((a, b) => a.name.localeCompare(b.name)),
+    result.sort((a, b) => a.name.localeCompare(b.name, 'ja')),
     null,
     '\t'
   )
