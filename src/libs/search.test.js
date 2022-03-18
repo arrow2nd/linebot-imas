@@ -11,26 +11,25 @@ describe('search', () => {
   `(
     'アイドルを検索できるか（$title）',
     ({ keyword, expectedName, expectedNameKana }) => {
-      let result
+      let body
 
       beforeAll(async () => {
-        result = await search(keyword)
+        const result = await search(keyword)
+        body = result.contents.contents[0].body
       })
 
       test('名前が正しいか', () => {
-        const name =
-          result.contents.contents[0].body.contents[2].contents[0].text
+        const name = body.contents[2].contents[0].text
         expect(name).toBe(expectedName)
       })
 
       test('読み仮名が正しいか', () => {
-        const subText =
-          result.contents.contents[0].body.contents[2].contents[1].text
+        const subText = body.contents[2].contents[1].text
         expect(subText).toContain(expectedNameKana)
       })
 
       test('画像URLが存在するか', () => {
-        const url = result.contents.contents[0].body.contents[0].url
+        const url = body.contents[0].url
         expect(url).toBeTruthy()
       })
     }
