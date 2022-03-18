@@ -2,7 +2,7 @@ import axios from 'axios'
 
 /**
  * imasparqlからデータを取得
- * @param  {String} query クエリ
+ * @param  {string} query クエリ
  * @returns 検索結果
  */
 export async function fetchDataFromDB(query) {

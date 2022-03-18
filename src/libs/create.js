@@ -3,7 +3,7 @@ import { getImageUrl, isWhitishColor } from './util.js'
 
 /**
  * 返信メッセージを作成
- * @param {Array} results 検索結果
+ * @param {any[]} results 検索結果
  * @returns FlexMessageオブジェクト
  */
 export function createReplyMessage(results) {
@@ -38,8 +38,8 @@ export function createReplyMessage(results) {
 
 /**
  * エラーメッセージを作成
- * @param {String} title タイトル
- * @param {String} text エラー内容
+ * @param {string} title タイトル
+ * @param {string} text エラー内容
  * @returns FlexMessageオブジェクト
  */
 export function createErrorMessage(title, text) {
@@ -73,8 +73,8 @@ export function createErrorMessage(title, text) {
 
 /**
  * バブルを作成
- * @param {Object} profile プロフィールデータ
- * @param {Array} components プロフィールのコンポーネント
+ * @param {any} profile プロフィールデータ
+ * @param {any[]} components プロフィールのコンポーネント
  * @returns バブルコンポーネント
  */
 function createBubble(profile, components) {
@@ -153,8 +153,8 @@ function createBubble(profile, components) {
 
 /**
  * テキストコンポーネントを作成
- * @param {String} key 項目名
- * @param {String} value 内容
+ * @param {string} key 項目名
+ * @param {string} value 内容
  * @returns テキストコンポーネント
  */
 function createTextComponent(key, value) {
@@ -184,7 +184,7 @@ function createTextComponent(key, value) {
 
 /**
  * フッターを作成
- * @param {Object} profile プロフィールデータ
+ * @param {any} profile プロフィールデータ
  * @returns フッターコンポーネント
  */
 function createFooter(profile) {

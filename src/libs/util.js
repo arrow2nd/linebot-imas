@@ -2,7 +2,7 @@ import { idolImages } from '../data/idol-images.js'
 
 /**
  * アイドルの画像のURLを取得
- * @param {String} idolName アイドル名
+ * @param {string} idolName アイドル名
  * @return 画像URL
  */
 export function getImageUrl(idolName) {
@@ -16,7 +16,7 @@ export function getImageUrl(idolName) {
 
 /**
  * 白っぽい色かどうかを判定
- * @param {String} hexColor 16進数カラーコード
+ * @param {string} hexColor 16進数カラーコード
  * @return 白っぽい色かどうか
  */
 export function isWhitishColor(hexColor) {
