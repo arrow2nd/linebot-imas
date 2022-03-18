@@ -1,3 +1,4 @@
+/** 通常 */
 export const hotaru = {
   名前: { type: 'literal', value: '白菊ほたる' },
   名前ルビ: { type: 'literal', 'xml:lang': 'ja', value: 'しらぎくほたる' },
@@ -37,7 +38,8 @@ export const hotaru = {
   }
 }
 
-export const sika = {
+/** 一部の名前が判明している */
+export const shika = {
   名前: { type: 'literal', value: '詩花' },
   名前ルビ: { type: 'literal', 'xml:lang': 'ja', value: 'しいか' },
   ブランド: { type: 'literal', 'xml:lang': 'en', value: 'Other' },
@@ -77,6 +79,49 @@ export const sika = {
   }
 }
 
+/** 本名が判明していない */
+export const julia = {
+  名前: { type: 'literal', value: 'ジュリア' },
+  名前ルビ: { type: 'literal', 'xml:lang': 'ja', value: 'じゅりあ' },
+  ブランド: { type: 'literal', 'xml:lang': 'en', value: 'MillionLive' },
+  性別: { type: 'literal', value: 'female' },
+  年齢: {
+    type: 'literal',
+    datatype: 'http://www.w3.org/2001/XMLSchema#integer',
+    value: '16'
+  },
+  身長: {
+    type: 'literal',
+    datatype: 'http://www.w3.org/2001/XMLSchema#float',
+    value: '157.0'
+  },
+  体重: {
+    type: 'literal',
+    datatype: 'http://www.w3.org/2001/XMLSchema#float',
+    value: '43.0'
+  },
+  BWH: { type: 'literal', value: '79.0 / 54.0 / 80.0' },
+  誕生日: {
+    type: 'literal',
+    datatype: 'http://www.w3.org/2001/XMLSchema#gMonthDay',
+    value: '--09-26'
+  },
+  星座: { type: 'literal', 'xml:lang': 'ja', value: '天秤座' },
+  血液型: { type: 'literal', value: 'O' },
+  利き手: { type: 'literal', value: 'left' },
+  出身地: { type: 'literal', 'xml:lang': 'ja', value: '福岡' },
+  趣味: { type: 'literal', value: 'なし' },
+  好きな物: { type: 'literal', value: 'パンクロック' },
+  特技: { type: 'literal', value: 'ギター' },
+  CV: { type: 'literal', 'xml:lang': 'ja', value: '愛美' },
+  カラー: { type: 'literal', value: '#D7385F' },
+  URL: {
+    type: 'uri',
+    value: 'https://idollist.idolmaster-official.jp/detail/30013'
+  }
+}
+
+/** スタッフ */
 export const hazuki = {
   名前: { type: 'literal', value: '七草はづき' },
   名前ルビ: { type: 'literal', 'xml:lang': 'ja', value: 'ななくさはづき' },
