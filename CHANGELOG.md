@@ -2,7 +2,13 @@
 
 ## [Unreleased]
 
-## [1.13.1] - 2022/02/18
+## [1.14.0] - 2022-03-18
+
+### Changed
+
+- 画像リストのデータ形式を変更
+
+## [1.13.1] - 2022-02-18
 
 ### Security
 
@@ -18,7 +24,7 @@
 
 - プライバシーポリシーを追加
 
-### Change
+### Changed
 
 - テキスト以外が送信された際のエラーメッセージを変更
 - モジュール機構を CommonJS から ES モジュールへ変更
@@ -249,7 +255,8 @@
 
 - リリース
 
-[unreleased]: https://github.com/arrow2nd/linebot-imas/compare/v1.13.1...HEAD
+[unreleased]: https://github.com/arrow2nd/linebot-imas/compare/v1.14.0...HEAD
+[1.14.0]: https://github.com/arrow2nd/linebot-imas/compare/v1.13.1...v1.14.0
 [1.13.1]: https://github.com/arrow2nd/linebot-imas/compare/v1.13.0...v1.13.1
 [1.13.0]: https://github.com/arrow2nd/linebot-imas/compare/v1.12.2...v1.13.0
 [1.12.2]: https://github.com/arrow2nd/linebot-imas/compare/v1.12.1...v1.12.2
