@@ -8,10 +8,10 @@ import { idolImages } from '../data/idol-images.js'
  */
 export function getImageUrl(idolName) {
   const noImage = 'https://linebot-imas.vercel.app/noimage.png'
-  const filename = idolImages[idolName]
+  const imageName = idolImages.find((e) => e.name === idolName)?.image
 
-  return filename
-    ? `https://idollist.idolmaster-official.jp/images/character_main/${filename}`
+  return imageName
+    ? `https://idollist.idolmaster-official.jp/images/character_main/${imageName}`
     : noImage
 }
 
