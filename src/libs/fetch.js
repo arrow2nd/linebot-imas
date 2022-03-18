@@ -9,20 +9,19 @@ export async function fetchDataFromDB(query) {
   const url = new URL('https://sparql.crssnky.xyz/spql/imas/query?output=json')
   url.searchParams.append('query', query)
 
-  try {
-    // 5000msでタイムアウト
-    const res = await axios.get(url.toString(), { timeout: 5000 })
+  // 5000msでタイムアウト
+  const res = await axios
+    .get(url.toString(), { timeout: 5000 })
+    .catch((err) => {
+      console.error(err)
+      throw new Error(
+        `[Error] im@sparqlにアクセスできません (${err.response?.status})`
+      )
+    })
 
-    if (!res?.data?.results?.bindings) {
-      throw new Error('[Error] データがありません')
-    }
-
-    return res.data.results.bindings
-  } catch (err) {
-    console.error(err)
-
-    throw new Error(
-      `[Error] im@sparqlにアクセスできません (${err.response?.status})`
-    )
+  if (!res?.data?.results?.bindings) {
+    throw new Error('[Error] データがありません')
   }
+
+  return res.data.results.bindings
 }

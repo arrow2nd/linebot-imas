@@ -1,6 +1,8 @@
 import axios from 'axios'
 import { JSDOM } from 'jsdom'
 
+import { fetchDataFromDB } from '../../libs/fetch.js'
+
 /**
  * アイドル名鑑のURLを持つアイドルを取得
  * @return 検索結果
@@ -15,18 +17,8 @@ export async function fetchIdolData() {
     imas:IdolListURL ?URL.
   }
   `
-  const url = `https://sparql.crssnky.xyz/spql/imas/query?output=json&query=${encodeURIComponent(
-    query
-  )}`
 
-  try {
-    const res = await axios.get(url)
-    return res.data.results.bindings
-  } catch (err) {
-    throw new Error(
-      `[Error] ${err.response.statusText} : ${err.response.status}`
-    )
-  }
+  return fetchDataFromDB(query)
 }
 
 /**
