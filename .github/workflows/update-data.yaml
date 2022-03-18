@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Set branch name as environment variable
-        run: echo "NEW_BRANCH_NAME=update-cache-$(date '+%s')" >> $GITHUB_ENV
+        run: echo "NEW_BRANCH_NAME=chore-update-data-$(date '+%s')" >> $GITHUB_ENV
 
       - name: Checkout
         uses: actions/checkout@v2
@@ -47,6 +47,6 @@ jobs:
         uses: repo-sync/pull-request@v2
         with:
           source_branch: ${{ env.NEW_BRANCH_NAME }}
-          destination_branch: 'master'
+          destination_branch: 'main'
           pr_title: 'chore: データを更新'
           github_token: ${{ secrets.GITHUB_TOKEN }}
