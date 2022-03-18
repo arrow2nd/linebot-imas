@@ -12,9 +12,9 @@
     "start": "node ./api/index.js",
     "test": "NODE_OPTIONS='--experimental-vm-modules --no-warnings' jest",
     "fmt": "yarn prettier --write .",
-    "fmt:cache": "yarn prettier --write ./src/data/*.js",
-    "create:richmenu": "node ./src/tools/richmenu/create.js",
-    "update:cache": "node ./src/tools/cache/create.js"
+    "fmt:data": "yarn prettier --write ./src/data/*.js",
+    "create:richmenu": "node ./src/tools/richmenu/index.js",
+    "create:data": "node ./src/tools/data/index.js"
   },
   "dependencies": {
     "@line/bot-sdk": "^7.4.0",
