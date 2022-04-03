@@ -2,9 +2,9 @@
 
 THE IDOLM@STER シリーズに登場するアイドルのプロフィールを検索できる LINEBot
 
-[![update-data](https://github.com/arrow2nd/linebot-imas/actions/workflows/update-data.yaml/badge.svg)](https://github.com/arrow2nd/linebot-imas/actions/workflows/update-data.yaml)
+[![update](https://github.com/arrow2nd/linebot-imas/actions/workflows/update.yaml/badge.svg)](https://github.com/arrow2nd/linebot-imas/actions/workflows/update.yaml)
 [![test](https://github.com/arrow2nd/linebot-imas/actions/workflows/test.yaml/badge.svg)](https://github.com/arrow2nd/linebot-imas/actions/workflows/test.yaml)
-[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat)](https://github.com/prettier/prettier)
+[![Depfu](https://badges.depfu.com/badges/c74acef232e4fe4ea1ba4a4feef6173d/overview.svg)](https://depfu.com/github/arrow2nd/linebot-imas?project_id=34194)
 ![GitHub](https://img.shields.io/github/license/arrow2nd/linebot-imas)
 
 ![トーク画面](https://user-images.githubusercontent.com/44780846/130342672-dcc586d2-868d-49c2-8a68-dcd7dce3f3bd.png)
@@ -54,6 +54,28 @@ THE IDOLM@STER シリーズに登場するアイドルのプロフィールを�
 ## プライバシーポリシー
 
 [こちら](https://arrow2nd.github.io/linebot-imas/) をご覧ください
+
+## 実行
+
+以下の内容で `.env`を作成
+
+```
+PORT=<ポート番号>
+ACCESS_TOKEN=<LINEBotアクセストークン>
+SECRET_KEY=<LINEBotシークレットキー>
+```
+
+ngrok 等でポートを公開し、吐き出された URL を LINEBot の 管理画面から Webhook に登録
+
+```
+ngrok http <ポート番号>
+```
+
+実行！
+
+```
+yarn start
+```
 
 ## Thanks!
 
