@@ -17,7 +17,7 @@
     "create:data": "node ./src/tools/data/index.js"
   },
   "dependencies": {
-    "@line/bot-sdk": "^7.4.0",
+    "@line/bot-sdk": "^7.5.0",
     "axios": "^0.26.1",
     "dayjs": "^1.11.0",
     "dotenv": "^16.0.0",
