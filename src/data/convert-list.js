@@ -1,6 +1,6 @@
 /** ブランド名 EN->JP 変換リスト */
 export const brandList = new Map([
-  ['istVision', { name: 'THE IDOLM@STER (旧)', color: '#F34F6D' }],
+  ['1stVision', { name: 'THE IDOLM@STER (旧)', color: '#F34F6D' }],
   ['765AS', { name: 'THE IDOLM@STER', color: '#F34F6D' }],
   ['DearlyStars', { name: 'Dearly Stars', color: '#FF74B8' }],
   ['MillionLive', { name: 'MILLION LIVE!', color: '#FFC30B' }],
