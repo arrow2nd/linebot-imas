@@ -1,13 +1,13 @@
 {
-  "version": 2,
-  "routes": [
+  "rewrites": [
     {
-      "src": "/",
-      "dest": "api/index.js"
+      "source": "/",
+      "destination": "api/index.js"
     },
     {
-      "src": "/hook/",
-      "dest": "api/index.js"
+      "source": "/hook/",
+      "destination": "api/index.js"
     }
-  ]
+  ],
+  "regions": ["hnd1"]
 }
