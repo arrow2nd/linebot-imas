@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+## [1.14.2] - 2022-09-07
+
+### Changed
+
+- `vercel.json` を最新の書式に更新
+
+### Security
+
+- 依存関係を更新
+
 ## [1.14.1] - 2022-07-25
 
 ### Security

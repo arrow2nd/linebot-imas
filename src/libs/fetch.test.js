@@ -27,7 +27,7 @@ describe('fetchDataFromDB', () => {
     const getApiMock = jest.spyOn(axios, 'get')
     getApiMock.mockResolvedValue(res)
 
-    await expect(fetchDataFromDB('')).rejects.toThrowError(
+    await expect(fetchDataFromDB('')).rejects.toThrow(
       new Error('[Error] データがありません')
     )
   })
@@ -36,7 +36,7 @@ describe('fetchDataFromDB', () => {
     const getApiMock = jest.spyOn(axios, 'get')
     getApiMock.mockRejectedValueOnce()
 
-    await expect(fetchDataFromDB('')).rejects.toThrowError(
+    await expect(fetchDataFromDB('')).rejects.toThrow(
       /^\[Error\] im@sparqlにアクセスできません/
     )
   })
