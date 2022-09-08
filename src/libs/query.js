@@ -104,7 +104,7 @@ const mainQuery = (searchCriteria) => `
  * @returns 検索クエリ
  */
 function createSearchCriteria(keyword) {
-  const keywords = keyword.split(/[\n\s]/)
+  const keywords = keyword.replace('"', '\\"').split(/[\n\s]/)
 
   // 複数検索
   if (keywords.length > 1) {
