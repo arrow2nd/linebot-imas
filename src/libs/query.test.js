@@ -9,4 +9,10 @@ describe('createQuery', () => {
   `('$titleのクエリを作成できるか', ({ keyword, expected }) => {
     expect(createQuery(keyword)).toContain(expected)
   })
+
+  test('ダブルクオートをエスケープできているか', () => {
+    expect(createQuery('"')).toContain(
+      'FILTER(CONTAINS(?名前, "\\"") || CONTAINS(?本名, "\\"") || CONTAINS(?名前ルビ, "\\""))'
+    )
+  })
 })
