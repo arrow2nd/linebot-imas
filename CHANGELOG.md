@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [1.14.4] - 2022-10-22
+
+### Security
+
+- 依存関係を更新
+
 ## [1.14.3] - 2022-09-08
 
 ### Security
@@ -277,7 +283,8 @@
 
 - リリース
 
-[unreleased]: https://github.com/arrow2nd/linebot-imas/compare/v1.14.1...HEAD
+[unreleased]: https://github.com/arrow2nd/linebot-imas/compare/v1.14.4...HEAD
+[1.14.4]: https://github.com/arrow2nd/linebot-imas/compare/v1.14.3...v1.14.4
 [1.14.3]: https://github.com/arrow2nd/linebot-imas/compare/v1.14.2...v1.14.3
 [1.14.2]: https://github.com/arrow2nd/linebot-imas/compare/v1.14.1...v1.14.2
 [1.14.1]: https://github.com/arrow2nd/linebot-imas/compare/v1.14.0...v1.14.1
