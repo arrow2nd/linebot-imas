@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+## [1.14.5] - 2022-12-06
+
+### Security
+
+- 依存関係を更新
+- 対象の Node.js のバージョンを v18 に変更
+
 ## [1.14.4] - 2022-10-22
 
 ### Security
@@ -283,7 +290,8 @@
 
 - リリース
 
-[unreleased]: https://github.com/arrow2nd/linebot-imas/compare/v1.14.4...HEAD
+[unreleased]: https://github.com/arrow2nd/linebot-imas/compare/v1.14.5...HEAD
+[1.14.5]: https://github.com/arrow2nd/linebot-imas/compare/v1.14.4...v1.14.5
 [1.14.4]: https://github.com/arrow2nd/linebot-imas/compare/v1.14.3...v1.14.4
 [1.14.3]: https://github.com/arrow2nd/linebot-imas/compare/v1.14.2...v1.14.3
 [1.14.2]: https://github.com/arrow2nd/linebot-imas/compare/v1.14.1...v1.14.2
