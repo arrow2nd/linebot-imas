@@ -19,7 +19,7 @@ jobs:
       - name: Install Node.js, npm and Yarn
         uses: actions/setup-node@v2
         with:
-          node-version: '16'
+          node-version: '18'
           cache: yarn
 
       - name: Create new branch
@@ -32,7 +32,7 @@ jobs:
         run: yarn install --immutable
 
       - name: Recreate data
-        run: yarn create:data
+        run: yarn update:data
 
       - name: Run formatter
         run: yarn fmt:data
