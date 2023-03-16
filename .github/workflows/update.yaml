@@ -14,13 +14,21 @@ jobs:
         run: echo "NEW_BRANCH_NAME=chore-update-data-$(date '+%s')" >> $GITHUB_ENV
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Install Node.js, npm and Yarn
-        uses: actions/setup-node@v2
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
           node-version: '18'
-          cache: yarn
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
 
       - name: Create new branch
         env:
@@ -28,14 +36,11 @@ jobs:
         run: |
           git switch -c ${{ env.NEW_BRANCH_NAME }}
 
-      - name: Install dependencies
-        run: yarn install --immutable
-
       - name: Recreate data
-        run: yarn update:data
+        run: pnpm update:data
 
       - name: Run formatter
-        run: yarn fmt:data
+        run: pnpm fmt:data
 
       - name: Commit the changes
         uses: stefanzweifel/git-auto-commit-action@v4

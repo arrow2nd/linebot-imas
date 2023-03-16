@@ -6,7 +6,7 @@ export default {
   moduleDirectories: ['node_modules', '<rootDir>/src'],
 
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
-  testPathIgnorePatterns: ['/node_modules/', '/.yarn/', '/public/'],
+  testPathIgnorePatterns: ['/node_modules/', '/public/'],
 
   /** @link https://stackoverflow.com/questions/64582674/jest-mock-of-es6-class-yields-referenceerror-require-is-not-defined */
   transform: {}
