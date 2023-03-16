@@ -74,7 +74,8 @@ ngrok http <ポート番号>
 実行！
 
 ```
-yarn start
+pnpm install
+pnpm start
 ```
 
 ## Thanks!

@@ -2,12 +2,3 @@ node_modules
 .vercel
 .env
 .tool-versions
-
-# yarn (not using Zero-Installs)
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/releases
-!.yarn/plugins
-!.yarn/sdks
-!.yarn/versions

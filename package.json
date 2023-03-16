@@ -11,8 +11,8 @@
   "scripts": {
     "start": "node ./api/index.js",
     "test": "NODE_OPTIONS='--experimental-vm-modules --no-warnings' jest",
-    "fmt": "yarn prettier --write .",
-    "fmt:data": "yarn prettier --write ./src/data/*.js",
+    "fmt": "prettier --write .",
+    "fmt:data": "prettier --write ./src/data/*.js",
     "create:richmenu": "node ./src/tools/richmenu/index.js",
     "update:data": "node ./src/tools/data/index.js"
   },
@@ -31,6 +31,5 @@
     "jest": "^29.5.0",
     "jsdom": "^20.0.3",
     "prettier": "^2.8.4"
-  },
-  "packageManager": "yarn@3.1.1"
+  }
 }
