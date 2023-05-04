@@ -1069,6 +1069,10 @@ export const idolImages = [
     image: 'yagami_makino_01.jpg'
   },
   {
+    name: '斑鳩ルカ',
+    image: 'ruka_ikaruga_01.jpg'
+  },
+  {
     name: '緋田美琴',
     image: 'mikoto_aketa_01.jpg'
   },
