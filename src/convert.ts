@@ -1,7 +1,8 @@
-import { dayjs } from "https://deno.land/x/dayjs@v1.11.9";
+import dayjs from "https://esm.sh/dayjs@v1.11.9";
 
 import type { Binding, BindingKey } from "./types/imasparql.ts";
-import { idolImages } from "./data/images.ts";
+
+import { idolImages } from "../data/images.ts";
 import { getTypedEntries } from "./util.ts";
 
 export type Brand = {
@@ -94,11 +95,7 @@ export function getBrandColor(brandName: string | undefined) {
   return (brandName && brandList.get(brandName)?.color) || "#FF74B8";
 }
 
-export function getImageUrl(idolName) {
+export function getImageUrl(idolName: string): string {
   const noImage = "https://linebot-imas.vercel.app/noimage.png";
-  const imageName = idolImages.find((e) => e.name === idolName)?.image;
-
-  return imageName
-    ? `https://idollist.idolmaster-official.jp/images/character_main/${imageName}`
-    : noImage;
+  return idolImages.get(idolName) || noImage;
 }

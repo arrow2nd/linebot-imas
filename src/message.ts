@@ -1,11 +1,12 @@
+import type { Binding } from "./types/imasparql.ts";
+import type { FlexMessage } from "./types/message.ts";
+
 import {
   convert2ReadableBrandName,
   convert2ReadableProfile,
   getBrandColor,
+  getImageUrl,
 } from "./convert.ts";
-
-import type { Binding } from "./types/imasparql.ts";
-import type { FlexMessage } from "./types/message.ts";
 import { getTypedEntries, isWhitishColor } from "./util.ts";
 
 function createTextComponent(key: string, value: string) {
@@ -74,9 +75,12 @@ function createFooterComponents(profile: Binding) {
   return footer;
 }
 
-function createBubble(profile, components) {
+function createBubble(profile: Binding, components: any[]) {
   const brandName = convert2ReadableBrandName(profile.ブランド?.value);
-  const subText = `${profile.名前ルビ.value}・${brandName}`;
+  const subText = profile.名前ルビ?.value
+    ? `${profile.名前ルビ.value}・${brandName}`
+    : brandName;
+
   const imageUrl = getImageUrl(profile.名前.value);
   const footer = createFooterComponents(profile);
 
