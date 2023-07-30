@@ -1,5 +1,1 @@
-node_modules
-.vercel
 .env
-.tool-versions
-pnpm-lock.yaml
