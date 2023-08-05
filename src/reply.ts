@@ -17,7 +17,7 @@ export async function reply(event: WebhookEvent): Promise<void> {
     case "message":
       message = (event.message.type === "text")
         ? await searchByKeyword(event.message.text)
-        : createTextMessage("⚠ エラー", "テキストを送信してください！");
+        : createTextMessage("エラー", "テキストを送信してください 🙏");
       break;
 
     // 日付指定の誕生日検索
