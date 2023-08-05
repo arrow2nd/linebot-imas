@@ -1,3 +1,11 @@
+import dayjs from "https://esm.sh/dayjs@v1.11.9";
+import timezone from "https://esm.sh/dayjs@v1.11.9/plugin/timezone.js";
+import utc from "https://esm.sh/dayjs@v1.11.9/plugin/utc.js";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.tz.setDefault("Asia/Tokyo");
+
 /**
  * ベースの検索クエリ
  * @param searchCriteria 条件クエリ
@@ -118,8 +126,17 @@ export function createSearchQuery(keyword: string): string {
 
   // 誕生日検索
   if (trimed.includes("誕生日")) {
-    // TODO: 昨日・今日・明日に対応
-    return createBirthdaySearchQuery("4-19");
+    let addNum = 0;
+
+    if (trimed.includes("明日")) {
+      addNum = 1;
+    } else if (trimed.includes("昨日")) {
+      addNum = -1;
+    }
+
+    // 日付を返す
+    const date = dayjs.tz().add(addNum, "d").format("MM-DD");
+    return createBirthdaySearchQuery(date);
   }
 
   // 複数検索

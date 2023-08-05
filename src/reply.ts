@@ -1,4 +1,4 @@
-import type { WebhookEvent } from "./types/api.ts";
+import type { WebhookEvent } from "./types/line.ts";
 import type { FlexMessage } from "./types/message.ts";
 
 import { config } from "./env.ts";
