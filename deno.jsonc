@@ -2,5 +2,6 @@
   "tasks": {
     "dev": "deno run --allow-net --allow-read --allow-env --watch ./src/server.ts",
     "gen:images": "deno run --allow-net --allow-write ./tools/gen-images.ts && deno fmt ./data/images.ts"
-  }
+  },
+  "lock": false
 }
