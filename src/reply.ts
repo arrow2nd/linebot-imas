@@ -5,6 +5,10 @@ import { config } from "./env.ts";
 import { searchByBirthday, searchByKeyword } from "./search.ts";
 import { createTextMessage } from "./message.ts";
 
+/**
+ * 返信
+ * @param event イベント
+ */
 export async function reply(event: WebhookEvent): Promise<void> {
   let message: FlexMessage;
 
@@ -27,8 +31,9 @@ export async function reply(event: WebhookEvent): Promise<void> {
   }
 
   // 送信
-  const res = await send(event.replyToken, message);
-  console.log(res);
+  await send(event.replyToken, message).catch((err) => {
+    console.error(err);
+  });
 }
 
 /**
