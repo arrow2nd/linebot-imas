@@ -9,7 +9,6 @@ app.post("/hook", async (ctx: Context) => {
   // TODO: リクエストを検証する
 
   const req = await ctx.req.json<WebhookRequestBody>();
-  console.log(req);
 
   await Promise.all(req.events.map((event) => {
     return reply(event);
