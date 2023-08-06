@@ -121,5 +121,5 @@ export function createSearchQuery(keyword: string): string {
   }
 
   // 名前検索
-  return createNameSearchQuery(keyword);
+  return createNameSearchQuery(keywords[0]);
 }
