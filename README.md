@@ -1,9 +1,6 @@
 # linebot-imas
 
-THE IDOLM@STER シリーズに登場するアイドルのプロフィールを検索できる LINEBot
-
-[![update](https://github.com/arrow2nd/linebot-imas/actions/workflows/update.yaml/badge.svg)](https://github.com/arrow2nd/linebot-imas/actions/workflows/update.yaml)
-[![test](https://github.com/arrow2nd/linebot-imas/actions/workflows/test.yaml/badge.svg)](https://github.com/arrow2nd/linebot-imas/actions/workflows/test.yaml)
+THE IDOLM@STER シリーズに登場するアイドルのプロフィールを検索できる LINE Bot
 
 ![トーク画面](https://user-images.githubusercontent.com/44780846/130342672-dcc586d2-868d-49c2-8a68-dcd7dce3f3bd.png)
 
@@ -32,8 +29,6 @@ THE IDOLM@STER シリーズに登場するアイドルのプロフィールを�
 
 - 「昨日・今日・明日」と「誕生日」を含む文を送ると、その日が誕生日のアイドルのプロフィールを検索します。
 
-- 「月/日」の形で日付を送ると、その日が誕生日のアイドルのプロフィールを検索します。（例: 7/7）
-
 </details>
 
 ### 同時検索
@@ -58,7 +53,6 @@ THE IDOLM@STER シリーズに登場するアイドルのプロフィールを�
 以下の内容で `.env`を作成
 
 ```
-PORT=<ポート番号>
 ACCESS_TOKEN=<LINEBotアクセストークン>
 SECRET_KEY=<LINEBotシークレットキー>
 ```
@@ -72,8 +66,7 @@ ngrok http <ポート番号>
 実行！
 
 ```
-pnpm install
-pnpm start
+deno task dev
 ```
 
 ## Thanks!
