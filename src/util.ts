@@ -1,3 +1,5 @@
+import { crypto } from "https://deno.land/std@0.197.0/crypto/mod.ts";
+
 /**
  * imasparqlからデータを取得
  * @param query クエリ
@@ -50,4 +52,26 @@ export function isWhitishColor(colorCode: string): boolean {
   const gs = Math.floor((r * 0.299 + g * 0.587 + b * 0.114) / 2.55);
 
   return gs > 65;
+}
+
+export const hmacAlgorithm = { name: "HMAC", hash: "SHA-256" };
+
+export async function hmac(secretKey: string, body: string): Promise<string> {
+  const enc = new TextEncoder();
+
+  const key = await crypto.subtle.importKey(
+    "raw",
+    enc.encode(secretKey),
+    hmacAlgorithm,
+    false,
+    ["sign", "verify"],
+  );
+
+  const sign = await crypto.subtle.sign(
+    hmacAlgorithm.name,
+    key,
+    enc.encode(body),
+  );
+
+  return btoa(String.fromCharCode(...new Uint8Array(sign)));
 }
