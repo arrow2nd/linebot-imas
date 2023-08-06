@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+## [2.0.0] - 2023-08-06
+
+- Node.js から Deno で再実装
+- デプロイ先を Vercel から Deno Deploy に移行
+
+### Removed
+
+- MM/DD 形式での誕生日検索を廃止
+
 ## [1.14.5] - 2022-12-06
 
 ### Security
