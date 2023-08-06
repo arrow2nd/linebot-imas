@@ -1,6 +1,6 @@
-import { DOMParser } from "https://deno.land/x/deno_dom@v0.1.38/deno-dom-wasm.ts";
-
 import type { ImasparqlResponse } from "../src/types/imasparql.ts";
+
+import { DOMParser } from "deno-dom-wasm";
 
 import { idolImages } from "../data/images.ts";
 import { fetchFromImasparql } from "../src/util.ts";

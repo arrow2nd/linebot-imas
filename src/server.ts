@@ -1,7 +1,8 @@
-import { Context, Hono } from "https://deno.land/x/hono@v3.3.4/mod.ts";
-import { Status } from "https://deno.land/std@0.197.0/http/http_status.ts";
-
 import type { WebhookRequestBody } from "./types/line.ts";
+
+import { Context, Hono } from "hono";
+import { Status } from "http_status";
+
 import { reply } from "./reply.ts";
 import { hmac } from "./util.ts";
 import { config } from "./env.ts";

@@ -1,6 +1,6 @@
-import dayjs from "https://esm.sh/dayjs@v1.11.9";
-
 import type { Binding, BindingKey } from "./types/imasparql.ts";
+
+import dayjs from "dayjs";
 
 import { idolImages } from "../data/images.ts";
 import { getTypedEntries } from "./util.ts";

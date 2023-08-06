@@ -3,5 +3,15 @@
     "dev": "deno run --allow-net --allow-read --allow-env --watch ./src/server.ts",
     "gen:images": "deno run --allow-net --allow-write ./tools/gen-images.ts && deno fmt ./data/images.ts"
   },
+  "imports": {
+    "deno-dom-wasm": "https://deno.land/x/deno_dom@v0.1.38/deno-dom-wasm.ts",
+    "dayjs": "https://esm.sh/dayjs@v1.11.9",
+    "dayjs/plugin/timezone": "https://esm.sh/dayjs@v1.11.9/plugin/timezone.js",
+    "dayjs/plugin/utc": "https://esm.sh/dayjs@v1.11.9/plugin/utc.js",
+    "dotenv/load": "https://deno.land/x/dotenv@v3.2.2/load.ts",
+    "hono": "https://deno.land/x/hono@v3.3.4/mod.ts",
+    "http_status": "https://deno.land/std@0.197.0/http/http_status.ts",
+    "crypto": "https://deno.land/std@0.197.0/crypto/mod.ts"
+  },
   "lock": false
 }

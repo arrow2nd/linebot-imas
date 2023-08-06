@@ -13,7 +13,7 @@ import { getTypedEntries, isWhitishColor } from "./util.ts";
  * キーバリュー形式のテキストコンポーネントを作成
  * @param key キー
  * @param value 値
- * @retuens テキストコンポーネント
+ * @returns テキストコンポーネント
  */
 function createTextComponent(key: string, value: string) {
   return {
@@ -43,7 +43,7 @@ function createTextComponent(key: string, value: string) {
 /**
  * フッターコンポーネントを作成
  * @param profile プロフィールデータ
- * @retuens フッターコンポーネント
+ * @returns フッターコンポーネント
  */
 function createFooterComponents(profile: Binding) {
   const footer = [];

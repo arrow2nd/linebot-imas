@@ -1,13 +1,13 @@
-import dayjs from "https://esm.sh/dayjs@v1.11.9";
-import timezone from "https://esm.sh/dayjs@v1.11.9/plugin/timezone.js";
-import utc from "https://esm.sh/dayjs@v1.11.9/plugin/utc.js";
-
-import { createReplyMessage, createTextMessage } from "./message.ts";
-import { createBirthdaySearchQuery, createSearchQuery } from "./query.ts";
-import { fetchFromImasparql } from "./util.ts";
-
 import type { ImasparqlResponse } from "./types/imasparql.ts";
 import type { FlexMessage } from "./types/message.ts";
+
+import dayjs from "dayjs";
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
+
+import { createProfileMessage, createTextMessage } from "./message.ts";
+import { createBirthdaySearchQuery, createSearchQuery } from "./query.ts";
+import { fetchFromImasparql } from "./util.ts";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -42,7 +42,7 @@ export async function searchByKeyword(keyword: string): Promise<FlexMessage> {
 
   const res = await fetchFromImasparql<ImasparqlResponse>(query);
 
-  return createReplyMessage(res.results.bindings);
+  return createProfileMessage(res.results.bindings);
 }
 
 /**
@@ -61,5 +61,5 @@ export async function searchByBirthday(input: string): Promise<FlexMessage> {
   const query = createBirthdaySearchQuery(day.format("MM-DD"));
   const res = await fetchFromImasparql<ImasparqlResponse>(query);
 
-  return createReplyMessage(res.results.bindings);
+  return createProfileMessage(res.results.bindings);
 }
