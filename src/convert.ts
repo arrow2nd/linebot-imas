@@ -4,6 +4,7 @@ import dayjs from "dayjs";
 
 import { idolImages } from "../data/images.ts";
 import { getTypedEntries } from "./util.ts";
+import { baseUrl } from "./env.ts";
 
 export type Brand = {
   name: string;
@@ -84,18 +85,33 @@ export function convert2ReadableProfile(profile: Binding): Binding {
   return profile;
 }
 
+/**
+ * ブランド名を読み易い形式に変換
+ * @param brandName ブランド名
+ * @returns 変換後
+ */
 export function convert2ReadableBrandName(
   brandName: string | undefined,
 ): string {
   return (brandName && brandList.get(brandName)?.name) || "不明";
 }
 
+/**
+ * ブランドのイメージカラーを取得
+ * @param brandName ブランド名
+ * @returns 16進数カラーコード
+ */
 export function getBrandColor(brandName: string | undefined) {
   // ブランドカラーが存在しない場合、アイマス全体のイメージカラーを返す
   return (brandName && brandList.get(brandName)?.color) || "#FF74B8";
 }
 
+/**
+ * アイドルの画像URLを取得
+ * @param idolName アイドル名
+ * @returns URL
+ */
 export function getImageUrl(idolName: string): string {
-  const noImage = "https://linebot-imas.vercel.app/noimage.png";
-  return idolImages.get(idolName) || noImage;
+  const noImage = new URL("./static/noimage.png", baseUrl);
+  return idolImages.get(idolName) || noImage.toString();
 }
