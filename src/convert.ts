@@ -4,6 +4,7 @@ import dayjs from "dayjs";
 
 import { idolImages } from "../data/images.ts";
 import { getTypedEntries } from "./util.ts";
+import { baseUrl } from "./env.ts";
 
 export type Brand = {
   name: string;
@@ -111,6 +112,6 @@ export function getBrandColor(brandName: string | undefined) {
  * @returns URL
  */
 export function getImageUrl(idolName: string): string {
-  const noImage = "https://linebot-imas.vercel.app/noimage.png";
-  return idolImages.get(idolName) || noImage;
+  const noImage = new URL("./static/noimage.png", baseUrl);
+  return idolImages.get(idolName) || noImage.toString();
 }

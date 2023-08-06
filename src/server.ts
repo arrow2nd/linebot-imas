@@ -9,6 +9,28 @@ import { config } from "./env.ts";
 
 const app = new Hono();
 
+const staticEntries = [
+  "noimage.png",
+  "error.png",
+  "gradation.png",
+];
+
+app.get("/static/:path", async (ctx: Context) => {
+  const path = ctx.req.param("path");
+
+  if (!staticEntries.includes(path)) {
+    return ctx.notFound();
+  }
+
+  const file = await Deno.readFile(`${Deno.cwd()}/static/${path}`);
+
+  return new Response(file, {
+    headers: {
+      "content-type": "image/png",
+    },
+  });
+});
+
 app.post("/hook", async (ctx: Context) => {
   // リクエストを検証する
   const signature = ctx.req.headers.get("x-line-signature");

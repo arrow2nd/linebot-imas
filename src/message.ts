@@ -8,6 +8,7 @@ import {
   getImageUrl,
 } from "./convert.ts";
 import { getTypedEntries, isWhitishColor } from "./util.ts";
+import { baseUrl } from "./env.ts";
 
 /**
  * キーバリュー形式のテキストコンポーネントを作成
@@ -100,6 +101,8 @@ function createBubble(profile: Binding, components: any[]) {
     : brandName;
 
   const imageUrl = getImageUrl(profile.名前.value);
+  const gradationUrl = new URL("./static/gradation.png", baseUrl).toString();
+
   const footer = createFooterComponents(profile);
 
   return {
@@ -119,7 +122,7 @@ function createBubble(profile: Binding, components: any[]) {
         },
         {
           type: "image",
-          url: "https://linebot-imas.vercel.app/gradation.png",
+          url: gradationUrl,
           size: "full",
           aspectMode: "cover",
           aspectRatio: "16:9",
