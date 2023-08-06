@@ -33,6 +33,11 @@ export async function fetchFromImasparql<T>(query: string): Promise<T> {
   return await res.json();
 }
 
+/**
+ * 型付きのentriesを取得
+ * @param obj Object
+ * @returns entries
+ */
 // deno-lint-ignore no-explicit-any
 export function getTypedEntries<T extends Record<string, any>>(
   obj: T,
@@ -40,6 +45,11 @@ export function getTypedEntries<T extends Record<string, any>>(
   return Object.entries(obj);
 }
 
+/**
+ * 白っぽい色かどうか
+ * @param colorCode 16進数カラーコード
+ * @returns 結果
+ */
 export function isWhitishColor(colorCode: string): boolean {
   // 16進数カラーコードを分解
   const rgb = colorCode.match(/[0-9A-Fa-f]{2}/g);
@@ -54,8 +64,17 @@ export function isWhitishColor(colorCode: string): boolean {
   return gs > 65;
 }
 
+/**
+ * HMAC-SHA256
+ */
 export const hmacAlgorithm = { name: "HMAC", hash: "SHA-256" };
 
+/**
+ * HMAC-SHA256 でリクエストボディのダイジェスト値を取得
+ * @param secretKey シークレットキー
+ * @param body リクエストボディ
+ * @returns Base64でエンコードされたダイジェスト値
+ */
 export async function hmac(secretKey: string, body: string): Promise<string> {
   const enc = new TextEncoder();
 

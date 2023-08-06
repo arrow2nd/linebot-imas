@@ -9,6 +9,12 @@ import {
 } from "./convert.ts";
 import { getTypedEntries, isWhitishColor } from "./util.ts";
 
+/**
+ * キーバリュー形式のテキストコンポーネントを作成
+ * @param key キー
+ * @param value 値
+ * @retuens テキストコンポーネント
+ */
 function createTextComponent(key: string, value: string) {
   return {
     type: "box",
@@ -34,6 +40,11 @@ function createTextComponent(key: string, value: string) {
   };
 }
 
+/**
+ * フッターコンポーネントを作成
+ * @param profile プロフィールデータ
+ * @retuens フッターコンポーネント
+ */
 function createFooterComponents(profile: Binding) {
   const footer = [];
 
@@ -75,6 +86,13 @@ function createFooterComponents(profile: Binding) {
   return footer;
 }
 
+/**
+ * バブルを作成
+ * @param profile プロフィールデータ
+ * @param components コンポーネント
+ * @returns バブルコンポーネント
+ */
+// deno-lint-ignore no-explicit-any
 function createBubble(profile: Binding, components: any[]) {
   const brandName = convert2ReadableBrandName(profile.ブランド?.value);
   const subText = profile.名前ルビ?.value
@@ -149,7 +167,12 @@ function createBubble(profile: Binding, components: any[]) {
   };
 }
 
-export function createReplyMessage(results: Binding[]): FlexMessage {
+/**
+ * プロフィール検索結果のFlexMessageを作成
+ * @param results Binding
+ * @returns FlexMessage
+ */
+export function createProfileMessage(results: Binding[]): FlexMessage {
   // 結果がない場合はエラーを返す
   if (results.length === 0) {
     return createTextMessage("みつかりませんでした", "ごめんなさい…！");
