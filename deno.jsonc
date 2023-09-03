@@ -4,7 +4,6 @@
     "gen:images": "deno run --allow-net --allow-write ./tools/gen-images.ts && deno fmt ./data/images.ts"
   },
   "imports": {
-    "deno-dom-wasm": "https://deno.land/x/deno_dom@v0.1.38/deno-dom-wasm.ts",
     "dayjs": "https://esm.sh/dayjs@v1.11.9",
     "dayjs/plugin/timezone": "https://esm.sh/dayjs@v1.11.9/plugin/timezone.js",
     "dayjs/plugin/utc": "https://esm.sh/dayjs@v1.11.9/plugin/utc.js",
