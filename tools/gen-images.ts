@@ -13,7 +13,6 @@ for (const { name, url } of ogImages) {
     if (url === "") {
       idolImages.delete(name);
     }
-    console.log(name);
     continue;
   }
 
