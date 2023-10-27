@@ -8,7 +8,7 @@
     "dayjs/plugin/timezone": "https://esm.sh/dayjs@1.11.10//plugin/timezone.js",
     "dayjs/plugin/utc": "https://esm.sh/dayjs@1.11.10//plugin/utc.js",
     "dotenv/load": "https://deno.land/x/dotenv@v3.2.2/load.ts",
-    "hono": "https://deno.land/x/hono@v3.8.3/mod.ts",
+    "hono": "https://deno.land/x/hono@v3.8.4/mod.ts",
     "http_status": "https://deno.land/std@0.204.0/http/http_status.ts",
     "crypto": "https://deno.land/std@0.204.0/crypto/mod.ts",
     "asserts": "https://deno.land/std@0.204.0/assert/mod.ts",
