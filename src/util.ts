@@ -17,10 +17,8 @@ export async function fetchFromImasparql<T>(query: string): Promise<T> {
   const id = setTimeout(() => ctrl.abort(), 5000);
 
   const res = await fetch(url.toString(), { signal: ctrl.signal }).catch(
-    (err) => {
-      throw new Error(
-        `[Error] im@sparqlにアクセスできません (${err.response.status})`,
-      );
+    () => {
+      throw new Error("[Error] im@sparqlにアクセスできません");
     },
   );
 

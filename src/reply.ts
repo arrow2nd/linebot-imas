@@ -12,22 +12,29 @@ import { createTextMessage } from "./message.ts";
 export async function reply(event: WebhookEvent): Promise<void> {
   let message: FlexMessage;
 
-  switch (event.type) {
-    // キーワード検索
-    case "message":
-      message = (event.message.type === "text")
-        ? await searchByKeyword(event.message.text)
-        : createTextMessage("エラー", "テキストを送信してください 🙏");
-      break;
+  try {
+    switch (event.type) {
+      // キーワード検索
+      case "message":
+        message = (event.message.type === "text")
+          ? await searchByKeyword(event.message.text)
+          : createTextMessage("エラー", "テキストを送信してください 🙏");
+        break;
 
-    // 日付指定の誕生日検索
-    case "postback":
-      message = await searchByBirthday(event.postback.params.date);
-      break;
+      // 日付指定の誕生日検索
+      case "postback":
+        message = await searchByBirthday(event.postback.params.date);
+        break;
 
-    // それ以外のイベントでは何もしない
-    default:
-      return;
+      // それ以外のイベントでは何もしない
+      default:
+        return;
+    }
+  } catch (_) {
+    message = createTextMessage(
+      "検索に失敗しました",
+      "しばらくしてから再度お試しください",
+    );
   }
 
   // 送信
