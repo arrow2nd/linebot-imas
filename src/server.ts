@@ -1,7 +1,6 @@
 import type { WebhookRequestBody } from "./types/line.ts";
 
 import { Context, Hono } from "hono";
-import { Status } from "http_status";
 
 import { reply } from "./reply.ts";
 import { hmac } from "./util.ts";
@@ -33,12 +32,12 @@ app.get("/static/:path", async (ctx: Context) => {
 
 app.post("/hook", async (ctx: Context) => {
   // リクエストを検証する
-  const signature = ctx.req.headers.get("x-line-signature");
+  const signature = ctx.req.header("x-line-signature");
   const json = await ctx.req.text();
   const hash = await hmac(config.channelSecret, json);
 
   if (signature !== hash) {
-    return new Response("bad request", { status: Status.BadRequest });
+    return new Response("bad request", { status: 400 });
   }
 
   // リクエストを処理
