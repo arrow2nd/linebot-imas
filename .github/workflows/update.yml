@@ -14,32 +14,23 @@ jobs:
         run: echo "NEW_BRANCH_NAME=chore-update-data-$(date '+%s')" >> $GITHUB_ENV
 
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup deno
         uses: denoland/setup-deno@v1
         with:
           deno-version: v1.x
 
-      - name: Create new branch
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          git switch -c ${{ env.NEW_BRANCH_NAME }}
-
       - name: Recreate image list
         run: deno task gen:images
 
-      - name: Commit the changes
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          branch: ${{ env.NEW_BRANCH_NAME }}
-          commit_message: '🍱 画像リストを更新'
-
       - name: Create pull request
-        uses: repo-sync/pull-request@v2
+        uses: peter-evans/create-pull-request@v6
         with:
-          source_branch: ${{ env.NEW_BRANCH_NAME }}
-          destination_branch: 'main'
-          pr_title: '🍱 画像リストを更新'
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 🍱 画像リストを更新
+          branch: ${{ env.NEW_BRANCH_NAME }}
+          delete-branch: true
+          title: "🍱 画像リストを更新"
+          body: "このPRは自動生成されました 🤖"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
