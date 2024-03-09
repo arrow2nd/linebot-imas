@@ -1291,4 +1291,12 @@ export const idolImages = new Map([
     "櫻木真乃",
     "https://idollist.idolmaster-official.jp/images/character_main/mano_sakuragi_01.jpg",
   ],
+  [
+    "郁田はるき",
+    "https://idollist.idolmaster-official.jp/images/character_main/haruki_ikuta_01.jpg",
+  ],
+  [
+    "鈴木羽那",
+    "https://idollist.idolmaster-official.jp/images/character_main/hana_suzuki_01.jpg",
+  ],
 ]);
