@@ -8,11 +8,11 @@
     "dayjs/plugin/timezone": "https://esm.sh/dayjs@1.11.10//plugin/timezone.js",
     "dayjs/plugin/utc": "https://esm.sh/dayjs@1.11.10//plugin/utc.js",
     "dotenv/load": "https://deno.land/x/dotenv@v3.2.2/load.ts",
-    "hono": "https://deno.land/x/hono@v3.12.0/mod.ts",
-    "http_status": "https://deno.land/std@0.214.0/http/http_status.ts",
-    "crypto": "https://deno.land/std@0.214.0/crypto/mod.ts",
-    "asserts": "https://deno.land/std@0.214.0/assert/mod.ts",
-    "mock": "https://deno.land/std@0.214.0/testing/mock.ts"
+    "hono": "https://deno.land/x/hono@v4.2.4/mod.ts",
+    "http_status": "https://deno.land/std@0.223.0/http/http_status.ts",
+    "crypto": "https://deno.land/std@0.223.0/crypto/mod.ts",
+    "asserts": "https://deno.land/std@0.223.0/assert/mod.ts",
+    "mock": "https://deno.land/std@0.223.0/testing/mock.ts"
   },
   "lock": false
 }
