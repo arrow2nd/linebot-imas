@@ -4,6 +4,7 @@
     "config:recommended",
     "github>Omochice/renovate-config:deno"
   ],
+  "automerge": true,
   "commitMessagePrefix": ":arrow_up: ",
   "unicodeEmoji": true
 }
