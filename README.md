@@ -57,7 +57,8 @@ ACCESS_TOKEN=<LINEBotアクセストークン>
 SECRET_KEY=<LINEBotシークレットキー>
 ```
 
-ngrok 等でポートを公開し、吐き出された URL を LINEBot の 管理画面から Webhook に登録
+ngrok 等でポートを公開し、吐き出された URL を LINEBot の 管理画面から Webhook
+に登録
 
 ```
 ngrok http <ポート番号>
@@ -71,4 +72,6 @@ deno task dev
 
 ## Thanks!
 
-プロフィール情報は [im@sparql](https://sparql.crssnky.xyz/imas/) より取得しています。
+プロフィール情報は [im@sparql](https://sparql.crssnky.xyz/imas/)
+より取得しています。
+
