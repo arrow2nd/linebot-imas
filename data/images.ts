@@ -1339,4 +1339,16 @@ export const idolImages = new Map([
     "有村麻央",
     "https://idollist.idolmaster-official.jp/images/character_main/mao_arimura_01.jpg",
   ],
+  [
+    "レトラ",
+    "https://idollist.idolmaster-official.jp/images/character_main/letora_01.jpg",
+  ],
+  [
+    "上水流宇宙",
+    "https://idollist.idolmaster-official.jp/images/character_main/cosmo_kamizuru_01.jpg",
+  ],
+  [
+    "灯里愛夏",
+    "https://idollist.idolmaster-official.jp/images/character_main/manaka_tomori_01.jpg",
+  ],
 ]);
