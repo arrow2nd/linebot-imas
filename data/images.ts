@@ -1299,4 +1299,56 @@ export const idolImages = new Map([
     "鈴木羽那",
     "https://idollist.idolmaster-official.jp/images/character_main/hana_suzuki_01.jpg",
   ],
+  [
+    "花海咲季",
+    "https://idollist.idolmaster-official.jp/images/character_main/saki_hanami_01.jpg",
+  ],
+  [
+    "花海佑芽",
+    "https://idollist.idolmaster-official.jp/images/character_main/ume_hanami_01.jpg",
+  ],
+  [
+    "葛城リーリヤ",
+    "https://idollist.idolmaster-official.jp/images/character_main/lilja_katsuragi_01.jpg",
+  ],
+  [
+    "月村手毬",
+    "https://idollist.idolmaster-official.jp/images/character_main/temari_tsukimura_01.jpg",
+  ],
+  [
+    "紫雲清夏",
+    "https://idollist.idolmaster-official.jp/images/character_main/sumika_shiun_01.jpg",
+  ],
+  [
+    "篠澤広",
+    "https://idollist.idolmaster-official.jp/images/character_main/hiro_shinosawa_01.jpg",
+  ],
+  [
+    "倉本千奈",
+    "https://idollist.idolmaster-official.jp/images/character_main/china_kuramoto_01.jpg",
+  ],
+  [
+    "藤田ことね",
+    "https://idollist.idolmaster-official.jp/images/character_main/kotone_fujita_01.jpg",
+  ],
+  [
+    "姫崎莉波",
+    "https://idollist.idolmaster-official.jp/images/character_main/rinami_himesaki_01.jpg",
+  ],
+  [
+    "有村麻央",
+    "https://idollist.idolmaster-official.jp/images/character_main/mao_arimura_01.jpg",
+  ],
+  [
+    "レトラ",
+    "https://idollist.idolmaster-official.jp/images/character_main/letora_01.jpg",
+  ],
+  [
+    "上水流宇宙",
+    "https://idollist.idolmaster-official.jp/images/character_main/cosmo_kamizuru_01.jpg",
+  ],
+  [
+    "灯里愛夏",
+    "https://idollist.idolmaster-official.jp/images/character_main/manaka_tomori_01.jpg",
+  ],
 ]);

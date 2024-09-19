@@ -20,6 +20,8 @@ const brandList = new Map<string, Brand>([
   ["SideM", { name: "SideM", color: "#0FBE94" }],
   ["CinderellaGirls", { name: "CINDERELLA GIRLS", color: "#2681C8" }],
   ["ShinyColors", { name: "SHINY COLORS", color: "#8dBBFF" }],
+  ["Gakuen", { name: "初星学園", color: "#F39800" }],
+  ["va-liv", { name: "vα-liv", color: "#656A75" }],
   ["Other", { name: "Other", color: "#FF74B8" }],
 ]);
 
