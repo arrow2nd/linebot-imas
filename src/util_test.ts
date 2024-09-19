@@ -1,4 +1,4 @@
-import { assert, assertFalse } from "asserts";
+import { assert, assertFalse } from "@std/assert";
 import { hmac, isWhitishColor } from "./util.ts";
 
 Deno.test("isWhitishColor", async (t) => {

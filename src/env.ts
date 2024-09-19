@@ -1,6 +1,6 @@
 import type { Config } from "./types/line.ts";
 
-import "dotenv/load";
+import "@std/dotenv/load";
 
 export const baseUrl = Deno.env.get("BASE_URL") ?? "http://localhost:3000/";
 

@@ -1,4 +1,4 @@
-import { assertMatch, assertStringIncludes } from "asserts";
+import { assertMatch, assertStringIncludes } from "@std/assert";
 import { createBirthdaySearchQuery, createSearchQuery } from "./query.ts";
 
 Deno.test("createBirthdaySearchQuery", () => {
