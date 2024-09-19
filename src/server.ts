@@ -1,6 +1,6 @@
 import type { WebhookRequestBody } from "./types/line.ts";
 
-import { Context, Hono } from "hono";
+import { Context, Hono } from "@hono/hono";
 
 import { reply } from "./reply.ts";
 import { hmac } from "./util.ts";

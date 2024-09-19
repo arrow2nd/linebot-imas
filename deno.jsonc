@@ -4,15 +4,13 @@
     "gen:images": "deno run --allow-net --allow-write ./tools/gen-images.ts && deno fmt ./data/images.ts"
   },
   "imports": {
+    "@hono/hono": "jsr:@hono/hono@^4.6.2",
+    "@std/assert": "jsr:@std/assert@^1.0.5",
+    "@std/crypto": "jsr:@std/crypto@^1.0.3",
+    "@std/dotenv": "jsr:@std/dotenv@^0.225.2",
     "dayjs": "https://esm.sh/dayjs@1.11.10/",
     "dayjs/plugin/timezone": "https://esm.sh/dayjs@1.11.10//plugin/timezone.js",
-    "dayjs/plugin/utc": "https://esm.sh/dayjs@1.11.10//plugin/utc.js",
-    "dotenv/load": "https://deno.land/x/dotenv@v3.2.2/load.ts",
-    "hono": "https://deno.land/x/hono@v4.2.8/mod.ts",
-    "http_status": "https://deno.land/std@0.224.0/http/http_status.ts",
-    "crypto": "https://deno.land/std@0.224.0/crypto/mod.ts",
-    "asserts": "https://deno.land/std@0.224.0/assert/mod.ts",
-    "mock": "https://deno.land/std@0.224.0/testing/mock.ts"
+    "dayjs/plugin/utc": "https://esm.sh/dayjs@1.11.10//plugin/utc.js"
   },
   "lock": false
 }

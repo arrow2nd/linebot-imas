@@ -1,4 +1,4 @@
-import { crypto } from "crypto";
+import { crypto } from "@std/crypto";
 
 /**
  * imasparqlからデータを取得
@@ -9,8 +9,8 @@ export async function fetchFromImasparql<T>(query: string): Promise<T> {
   const url = new URL("https://sparql.crssnky.xyz/spql/imas/query?output=json");
 
   // クエリから空白・改行を削除
-  const trimedQuery = query.replace(/[\n\r\s]/g, " ");
-  url.searchParams.append("query", trimedQuery);
+  const trimmedQuery = query.replace(/[\n\r\s]/g, " ");
+  url.searchParams.append("query", trimmedQuery);
 
   // 5sでタイムアウト
   const ctrl = new AbortController();

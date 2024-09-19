@@ -1,4 +1,4 @@
-import { assertEquals } from "asserts";
+import { assertEquals } from "@std/assert";
 
 import {
   convert2ReadableBrandName,

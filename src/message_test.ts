@@ -1,4 +1,4 @@
-import { assertObjectMatch } from "asserts";
+import { assertObjectMatch } from "@std/assert";
 
 import { hazuki, hotaru, julia, shika } from "../data/mock.ts";
 import { createProfileMessage, createTextMessage } from "./message.ts";
