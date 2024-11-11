@@ -3,7 +3,7 @@
  * @param searchCriteria 条件クエリ
  * @returns クエリ
  */
-const baseQuery = (searchCriteria: string) => `
+const baseQuery = (searchCriteria: string, disableLimit = false) => `
  PREFIX schema: <http://schema.org/>
  PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
  PREFIX imas: <https://sparql.crssnky.xyz/imasrdf/URIs/imas-schema.ttl#>
@@ -52,7 +52,7 @@ const baseQuery = (searchCriteria: string) => `
    OPTIONAL { ?d imas:IdolListURL ?URL }
  }
  ORDER BY ?名前
- LIMIT 5
+${disableLimit ? "" : "LIMIT 5"}
  `;
 
 /**
@@ -105,7 +105,7 @@ export function createBirthdaySearchQuery(date: string): string {
     OPTIONAL{ ?d imas:alternateNameKana ?名前ルビ }
   `;
 
-  return baseQuery(searchCriteria);
+  return baseQuery(searchCriteria, true);
 }
 
 /**
