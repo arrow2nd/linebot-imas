@@ -1,4 +1,4 @@
-import { assertMatch, assertStringIncludes } from "@std/assert";
+import { assertMatch, assertNotMatch, assertStringIncludes } from "@std/assert";
 import { createBirthdaySearchQuery, createSearchQuery } from "./query.ts";
 
 Deno.test("createBirthdaySearchQuery", () => {
@@ -6,7 +6,8 @@ Deno.test("createBirthdaySearchQuery", () => {
   const query = createBirthdaySearchQuery(date);
 
   const expected = new RegExp(`FILTER CONTAINS\\(STR\\(\\?BD\\), "${date}"\\)`);
-  assertMatch(query, expected);
+  assertMatch(query, expected, "誕生日のフィルターが含まれる");
+  assertNotMatch(query, /LIMIT 5/, "LIMITが含まれない");
 });
 
 Deno.test("createSearchQuery (通常検索)", () => {
