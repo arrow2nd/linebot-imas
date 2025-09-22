@@ -1351,4 +1351,8 @@ export const idolImages = new Map([
     "灯里愛夏",
     "https://idollist.idolmaster-official.jp/images/character_main/manaka_tomori_01.jpg",
   ],
+  [
+    "秦谷美鈴",
+    "https://idollist.idolmaster-official.jp/images/character_main/misuzu_hataya_01.jpg",
+  ],
 ]);
