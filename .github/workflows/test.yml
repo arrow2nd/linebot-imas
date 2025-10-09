@@ -18,7 +18,7 @@ jobs:
       - name: Setup deno
         uses: denoland/setup-deno@v1
         with:
-          deno-version: v1.x
+          deno-version: 2.x
 
       - name: Run test
         run: deno test --allow-env --allow-read
