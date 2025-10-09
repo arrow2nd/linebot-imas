@@ -19,7 +19,7 @@ jobs:
       - name: Setup deno
         uses: denoland/setup-deno@v1
         with:
-          deno-version: v1.x
+          deno-version: 2.x
 
       - name: Recreate image list
         run: deno task gen:images
