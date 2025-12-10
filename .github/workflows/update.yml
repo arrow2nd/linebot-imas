@@ -25,7 +25,7 @@ jobs:
         run: deno task gen:images
 
       - name: Create pull request
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           commit-message: 🍱 画像リストを更新
           branch: ${{ env.NEW_BRANCH_NAME }}
