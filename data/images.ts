@@ -1355,4 +1355,12 @@ export const idolImages = new Map([
     "秦谷美鈴",
     "https://idollist.idolmaster-official.jp/images/character_main/misuzu_hataya_01.jpg",
   ],
+  [
+    "雨夜燕",
+    "https://idollist.idolmaster-official.jp/images/character_main/tsubame_amaya_01.jpg",
+  ],
+  [
+    "十王星南",
+    "https://idollist.idolmaster-official.jp/images/character_main/sena_juo_01.jpg",
+  ],
 ]);
